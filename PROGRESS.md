@@ -29,9 +29,13 @@
 ### 🟡 Currently In Progress
 
 - **Authentication System Refinements**
+  - Role-based access control implementation
+    - Admin dashboard
+    - Route protection middleware
   - User profile management
-  - Role-based access control
-  - Session management
+    - Profile page creation
+    - Profile editing functionality
+    - Profile image handling
 
 ### 🔵 Pending Implementation
 
