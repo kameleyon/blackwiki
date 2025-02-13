@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
@@ -20,8 +20,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -40,20 +39,20 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          String    @default("user") // "user", "editor", "admin"
-  password      String?   // Hashed password for email/password auth
-  bio          String?   // User biography
-  location     String?
-  website      String?
-  twitter      String?
-  expertise    String?   // JSON string of expertise areas
-  interests    String?   // JSON string of interests
-  joinedAt     DateTime  @default(now())
-  lastActive   DateTime  @default(now())
-  accounts     Account[]
-  sessions     Session[]
-  articles     Article[] @relation("AuthoredArticles")
-  edits        Edit[]
+  role          String    @default("user")
+  password      String?
+  bio           String?
+  location      String?
+  website       String?
+  wecherp       String?
+  expertise     String?
+  interests     String?
+  joinedAt      DateTime  @default(now())
+  lastActive    DateTime  @default(now())
+  accounts      Account[]
+  articles      Article[] @relation("AuthoredArticles")
+  edits         Edit[]
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -67,35 +66,39 @@ model VerificationToken {
 model Article {
   id          String      @id @default(cuid())
   title       String
-  content     String      // Markdown content
+  content     String
   summary     String
   slug        String      @unique
+  image       String?
+  imageAlt    String?
+  imageWidth  Int?
+  imageHeight Int?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   authorId    String
-  author      User        @relation("AuthoredArticles", fields: [authorId], references: [id])
-  categories  Category[]
-  tags        Tag[]
-  references  Reference[]
-  edits       Edit[]
   views       Int         @default(0)
   isPublished Boolean     @default(false)
+  author      User        @relation("AuthoredArticles", fields: [authorId], references: [id])
+  edits       Edit[]
+  references  Reference[]
+  categories  Category[]  @relation("ArticleToCategory")
+  tags        Tag[]       @relation("ArticleToTag")
 }
 
 model Category {
   id          String    @id @default(cuid())
   name        String    @unique
   description String?
-  articles    Article[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  articles    Article[] @relation("ArticleToCategory")
 }
 
 model Tag {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  articles    Article[]
-  createdAt   DateTime  @default(now())
+  id        String    @id @default(cuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  articles  Article[] @relation("ArticleToTag")
 }
 
 model Reference {
@@ -104,17 +107,17 @@ model Reference {
   title       String
   description String?
   articleId   String
-  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
+  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }
 
 model Edit {
-  id          String   @id @default(cuid())
-  content     String   // Previous content for version history
-  summary     String?  // Edit summary
-  createdAt   DateTime @default(now())
-  articleId   String
-  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  content   String
+  summary   String?
+  createdAt DateTime @default(now())
+  articleId String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }

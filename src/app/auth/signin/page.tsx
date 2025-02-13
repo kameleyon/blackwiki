@@ -20,7 +20,8 @@ export default function SignIn() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: "/profile"
       });
 
       if (result?.error) {

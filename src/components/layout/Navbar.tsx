@@ -34,12 +34,22 @@ export function Navbar() {
                 />
               )}
               <span className="text-sm font-medium">{session.user?.name}</span>
-              <Link
-                href="/profile"
-                className="px-4 py-2 text-sm bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
-              >
-                Profile
-              </Link>
+              <>
+                <Link
+                  href="/profile"
+                  className="px-4 py-2 text-sm bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+                >
+                  Profile
+                </Link>
+                {session.user?.role === "admin" && (
+                  <Link
+                    href="/admin"
+                    className="px-4 py-2 text-sm bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
+                  >
+                    Admin
+                  </Link>
+                )}
+              </>
               <button
                 onClick={() => signOut()}
                 className="px-4 py-2 text-sm bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"

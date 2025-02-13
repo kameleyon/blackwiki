@@ -19,29 +19,45 @@ export async function PUT(request: Request) {
       bio,
       location,
       website,
-      twitter,
+      wecherp,
       expertise,
       interests,
     } = data;
 
     // Convert expertise and interests arrays to JSON strings for storage
-    const expertiseJson = Array.isArray(expertise) 
-      ? JSON.stringify(expertise) 
-      : JSON.stringify(expertise.split(',').map((item: string) => item.trim()));
+    const expertiseJson = expertise
+      ? Array.isArray(expertise)
+        ? JSON.stringify(expertise)
+        : JSON.stringify(expertise.split(',').map((item: string) => item.trim()))
+      : "[]";
     
-    const interestsJson = Array.isArray(interests)
-      ? JSON.stringify(interests)
-      : JSON.stringify(interests.split(',').map((item: string) => item.trim()));
+    const interestsJson = interests
+      ? Array.isArray(interests)
+        ? JSON.stringify(interests)
+        : JSON.stringify(interests.split(',').map((item: string) => item.trim()))
+      : "[]";
 
     // Update user profile
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.user.upsert({
       where: { email: session.user.email },
-      data: {
+      create: {
+        email: session.user.email,
+        name: name || "",
+        bio: bio || "",
+        location: location || "",
+        website: website || "",
+        wecherp: wecherp || "",
+        expertise: expertiseJson,
+        interests: interestsJson,
+        lastActive: new Date(),
+        role: "user",
+      },
+      update: {
         name: name || undefined,
         bio: bio || undefined,
         location: location || undefined,
         website: website || undefined,
-        twitter: twitter || undefined,
+        wecherp: wecherp || undefined,
         expertise: expertiseJson,
         interests: interestsJson,
         lastActive: new Date(),
@@ -53,7 +69,7 @@ export async function PUT(request: Request) {
         bio: true,
         location: true,
         website: true,
-        twitter: true,
+        wecherp: true,
         expertise: true,
         interests: true,
         role: true,
@@ -101,7 +117,7 @@ export async function GET() {
         bio: true,
         location: true,
         website: true,
-        twitter: true,
+        wecherp: true,
         expertise: true,
         interests: true,
         role: true,

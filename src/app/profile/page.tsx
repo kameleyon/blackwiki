@@ -8,12 +8,22 @@ import Image from "next/image";
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+  interface ProfileFormData {
+    name: string;
+    bio: string;
+    location: string;
+    website: string;
+    wecherp: string;
+    expertise: string;
+    interests: string;
+  }
+
+  const [formData, setFormData] = useState<ProfileFormData>({
     name: session?.user?.name || "",
     bio: "",
     location: "",
     website: "",
-    twitter: "",
+    wecherp: "",
     expertise: "",
     interests: "",
   });
@@ -41,7 +51,7 @@ export default function ProfilePage() {
         bio: data.user.bio || '',
         location: data.user.location || '',
         website: data.user.website || '',
-        twitter: data.user.twitter || '',
+        wecherp: data.user.wecherp || '',
         expertise: Array.isArray(data.user.expertise) 
           ? data.user.expertise.join(', ')
           : data.user.expertise || '',
@@ -71,7 +81,7 @@ export default function ProfilePage() {
               bio: data.user.bio || '',
               location: data.user.location || '',
               website: data.user.website || '',
-              twitter: data.user.twitter || '',
+              wecherp: data.user.wecherp || '',
               expertise: Array.isArray(data.user.expertise)
                 ? data.user.expertise.join(', ')
                 : data.user.expertise || '',
@@ -118,12 +128,20 @@ export default function ProfilePage() {
       >
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Profile</h1>
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
-          >
-            {isEditing ? "Cancel" : "Edit Profile"}
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => window.location.href = '/articles/new'}
+              className="px-4 py-2 bg-primary/20 hover:bg-primary/30 rounded-lg transition-colors"
+            >
+              Create Article
+            </button>
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+            >
+              {isEditing ? "Cancel" : "Edit Profile"}
+            </button>
+          </div>
         </div>
 
         <div className="bg-white/5 rounded-xl p-6 mb-8">
@@ -136,6 +154,7 @@ export default function ProfilePage() {
                     width={100}
                     height={100}
                     className="rounded-full"
+                    unoptimized
                   />
                 ) : (
                   <div className="w-24 h-24 rounded-full bg-background/70 border-white/20 border-1 flex items-center justify-center">
@@ -173,8 +192,16 @@ export default function ProfilePage() {
                         throw new Error(data.error || "Failed to upload image");
                       }
 
-                      // Refresh the session to update the image
-                      window.location.reload();
+                      if (data.image) {
+                        // Update the session
+                        const event = new Event('visibilitychange');
+                        document.dispatchEvent(event);
+                        
+                        // Wait a bit for the session to update
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 500);
+                      }
                     } catch (error) {
                       console.error("Error uploading image:", error);
                       // TODO: Add error notification
@@ -209,8 +236,9 @@ export default function ProfilePage() {
               <textarea
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20 h-32"
-                placeholder="Tell us about yourself..."
+                className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20 h-48"
+                placeholder="Tell us about yourself...&#10;&#10;Use multiple paragraphs to format your text.&#10;Press Enter twice for a new paragraph."
+                style={{ lineHeight: '1.7' }}
               />
             </div>
 
@@ -239,13 +267,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Twitter</label>
+              <label className="block text-sm font-medium mb-2">Wecherp</label>
               <input
                 type="text"
-                value={formData.twitter}
-                onChange={(e) => setFormData({ ...formData, twitter: e.target.value })}
+                value={formData.wecherp}
+                onChange={(e) => setFormData({ ...formData, wecherp: e.target.value })}
                 className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20"
-                placeholder="@username"
+                placeholder="username"
               />
             </div>
 
@@ -291,32 +319,68 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold mb-2">About</h3>
-              <p className="text-muted-foreground">
-                No bio provided yet.
-              </p>
+              <div 
+                className="text-muted-foreground whitespace-pre-wrap"
+                style={{ lineHeight: '1.7' }}
+                dangerouslySetInnerHTML={{
+                  __html: formData.bio ? 
+                    formData.bio.split('\n').map(line => line.trim()).filter(Boolean).join('<br /><br />') 
+                    : "No bio provided yet."
+                }}
+              />
             </div>
 
             <div>
               <h3 className="text-lg font-semibold mb-2">Location</h3>
-              <p className="text-muted-foreground">Not specified</p>
+              <p className="text-muted-foreground">
+                {formData.location || "Not specified"}
+              </p>
             </div>
 
             <div>
               <h3 className="text-lg font-semibold mb-2">Contact</h3>
               <div className="space-y-2 text-muted-foreground">
-                <p>Website: Not specified</p>
-                <p>Twitter: Not specified</p>
+                <p>Website: {formData.website ? (
+                  <a href={formData.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                    {formData.website}
+                  </a>
+                ) : "Not specified"}</p>
+                <p>Wecherp: {formData.wecherp ? (
+                  <span className="text-primary">
+                    {formData.wecherp}
+                  </span>
+                ) : "Not specified"}</p>
               </div>
             </div>
 
             <div>
               <h3 className="text-lg font-semibold mb-2">Expertise</h3>
-              <p className="text-muted-foreground">No areas of expertise specified</p>
+              {formData.expertise ? (
+                <div className="flex flex-wrap gap-2">
+                  {formData.expertise.split(',').map((item, index) => (
+                    <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+                      {item.trim()}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No areas of expertise specified</p>
+              )}
             </div>
 
             <div>
               <h3 className="text-lg font-semibold mb-2">Interests</h3>
-              <p className="text-muted-foreground">No interests specified</p>
+              {formData.interests ? (
+                <div className="flex flex-wrap gap-2">
+                  {formData.interests.split(',').map((item, index) => (
+                    <span key={index} className="px-3 py-1 bg-primary/10 text-white rounded-full text-sm">
+                      {item.trim()}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No interests specified</p>
+              )}
             </div>
           </div>
         )}
