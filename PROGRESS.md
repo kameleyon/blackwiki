@@ -18,6 +18,10 @@
   - GitHub OAuth integration
   - Email/password authentication
   - User roles (user, editor, admin)
+  - Profile management
+    - Profile page with editing
+    - Profile information display
+    - Session handling
 
 - **Database Structure**
   - Articles schema
@@ -28,14 +32,10 @@
 
 ### 🟡 Currently In Progress
 
-- **Authentication System Refinements**
-  - Role-based access control implementation
-    - Admin dashboard
-    - Route protection middleware
-  - User profile management
-    - Profile page creation
-    - Profile editing functionality
-    - Profile image handling
+- **Role-based Access Control**
+  - Admin dashboard implementation
+  - Route protection middleware
+  - Content moderation system
 
 ### 🔵 Pending Implementation
 

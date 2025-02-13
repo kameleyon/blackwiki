@@ -30,12 +30,13 @@ export function Navbar() {
                   className="w-8 h-8 rounded-full"
                 />
               )}
-              <div className="flex flex-col text-sm">
-                <span className="font-medium">{session.user?.name}</span>
-                <span className="text-muted-foreground text-xs">
-                  {session.user?.role || "User"}
-                </span>
-              </div>
+              <span className="text-sm font-medium">{session.user?.name}</span>
+              <Link
+                href="/profile"
+                className="px-4 py-2 text-sm bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+              >
+                Profile
+              </Link>
               <button
                 onClick={() => signOut()}
                 className="px-4 py-2 text-sm bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
