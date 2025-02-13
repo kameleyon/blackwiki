@@ -88,7 +88,7 @@ export default function Register() {
               type="text"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary"
               required
             />
           </div>
@@ -103,7 +103,7 @@ export default function Register() {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary"
               required
             />
           </div>
@@ -118,7 +118,7 @@ export default function Register() {
               type="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary"
               required
               minLength={8}
             />
@@ -134,7 +134,7 @@ export default function Register() {
               type="password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary"
               required
             />
           </div>
@@ -142,7 +142,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-primary/10 hover:bg-primary/20 text-primary font-medium py-2 rounded-lg transition-colors"
+            className="w-full bg-gray-500 hover:bg-secondary/80 text-primary font-medium py-2 rounded-lg transition-colors"
           >
             {isLoading ? "Creating account..." : "Create Account"}
           </button>

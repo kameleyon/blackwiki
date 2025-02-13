@@ -2,6 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 export function Navbar() {
@@ -24,10 +25,12 @@ export function Navbar() {
               className="flex items-center gap-4"
             >
               {session.user?.image && (
-                <img
+                <Image
                   src={session.user.image}
                   alt={session.user.name || "Profile"}
-                  className="w-8 h-8 rounded-full"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
                 />
               )}
               <span className="text-sm font-medium">{session.user?.name}</span>

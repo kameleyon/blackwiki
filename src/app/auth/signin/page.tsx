@@ -7,14 +7,14 @@ import Link from "next/link";
 
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setErrorMessage("");
 
     try {
       const result = await signIn("credentials", {
@@ -24,10 +24,10 @@ export default function SignIn() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        setErrorMessage("Invalid email or password");
       }
-    } catch (error) {
-      setError("An error occurred. Please try again.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -47,9 +47,9 @@ export default function SignIn() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-          {error && (
+          {errorMessage && (
             <div className="p-3 text-sm bg-destructive/10 text-destructive rounded-lg">
-              {error}
+              {errorMessage}
             </div>
           )}
           
@@ -62,7 +62,7 @@ export default function SignIn() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 bg-white/5 rounded-lg  focus:ring-2 focus:ring-primary"
               required
             />
           </div>
@@ -76,7 +76,7 @@ export default function SignIn() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 bg-white/5 rounded-lg  rounded-lg focus:ring-2 focus:ring-primary"
               required
             />
           </div>
@@ -84,7 +84,7 @@ export default function SignIn() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-primary/10 hover:bg-primary/20 text-primary font-medium py-2 rounded-lg transition-colors"
+            className="w-full bg-gray-500 hover:bg-secondary/80 text-primary font-medium py-2 rounded-lg transition-colors"
           >
             {isLoading ? "Signing in..." : "Sign in"}
           </button>
@@ -101,7 +101,7 @@ export default function SignIn() {
 
         <button
           onClick={() => signIn("github", { callbackUrl: "/" })}
-          className="w-full flex items-center justify-center gap-3 bg-secondary/10 hover:bg-secondary/20 
+          className="w-full flex items-center justify-center gap-3 bg-gray-500 hover:bg-secondary/80 
                      text-foreground px-6 py-3 rounded-lg transition-colors"
         >
           <svg
@@ -121,7 +121,7 @@ export default function SignIn() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/auth/register" className="text-primary hover:underline">
               Sign up
             </Link>
