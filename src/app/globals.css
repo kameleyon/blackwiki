@@ -82,17 +82,17 @@
 }
 
 .search-container {
-  @apply relative w-full max-w-2xl mx-auto mt-20;
+  @apply relative w-full max-w-2xl mx-auto mt-8;
 }
 
 .search-input {
-  @apply w-full h-14 px-6 text-lg bg-secondary/50 border-2 border-secondary/80 rounded-full 
+  @apply w-full h-14 px-6 text-sm bg-secondary/50 border-2 border-secondary/80 shadow-md rounded-full 
          focus:outline-none focus:border-primary/50 transition-all duration-300
          dark:bg-secondary/20 dark:border-secondary/30 dark:focus:border-primary/30;
 }
 
 .logo-text {
-  @apply text-6xl font-bold text-center mb-8 bg-clip-text text-transparent 
+  @apply text-6xl font-bold text-center mt-28 mb-8 bg-clip-text text-transparent 
          bg-gradient-to-r from-primary to-primary/70 animate-gradient;
 }
 

@@ -1,66 +1,46 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
+  const router = useRouter();
 
   return (
-    <nav className="border-b border-secondary/20">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <nav className="bg-[#1a1a1a] h-16 fixed top-0 left-0 right-0 z-50 shadow-md shadow-black">
+      <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <Link href="/" className="text-xl font-bold">
           BlackWiki
         </Link>
 
         <div className="flex items-center gap-4">
-          {status === "loading" ? (
-            <div className="w-8 h-8 rounded-full border-2 border-primary/50 border-t-transparent animate-spin" />
-          ) : session ? (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center gap-4"
-            >
-              {session.user?.image && (
-                <Image
-                  src={session.user.image}
-                  alt={session.user.name || "Profile"}
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
-              )}
-              <span className="text-sm font-medium">{session.user?.name}</span>
-              <>
-                <Link
-                  href="/profile"
-                  className="px-4 py-2 text-sm bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
-                >
-                  Profile
-                </Link>
-                {session.user?.role === "admin" && (
-                  <Link
-                    href="/admin"
-                    className="px-4 py-2 text-sm bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
-                  >
-                    Admin
-                  </Link>
-                )}
-              </>
-              <button
-                onClick={() => signOut()}
-                className="px-4 py-2 text-sm bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
+          {session ? (
+            <>
+              <Link
+                href="/articles/new"
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg  transition-colors"
               >
-                Sign Out
-              </button>
-            </motion.div>
+                Create Article
+              </Link>
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg  transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/profile"
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg  transition-colors"
+              >
+                Profile
+              </Link>
+            </>
           ) : (
             <Link
               href="/auth/signin"
-              className="px-4 py-2 text-sm bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
             >
               Sign In
             </Link>
@@ -70,3 +50,5 @@ export function Navbar() {
     </nav>
   );
 }
+
+export default Navbar;
