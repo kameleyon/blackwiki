@@ -6,15 +6,6 @@ import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi'
 import { ArticleStatus } from '@/types/index'
 import DashboardNav from '@/components/dashboard/DashboardNav'
 
-type Article = {
-  id: string
-  title: string
-  slug: string
-  status: ArticleStatus
-  views: number
-  createdAt: Date
-}
-
 export default async function DashboardPage() {
   const user = await getCurrentUser()
   
@@ -95,7 +86,7 @@ export default async function DashboardPage() {
 
         {articles.length === 0 && (
           <div className="p-8 text-center text-gray-500 text-sm md:text-md ">
-            No articles yet. Click "Create Article" to get started.
+            No articles yet. Click &quot;Create Article&quot; to get started.
           </div>
         )}
       </div>

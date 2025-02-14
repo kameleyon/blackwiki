@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const expertise = formData.get("expertise")?.toString() || '';
     const interests = formData.get("interests")?.toString() || '';
 
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: session.id },
       data: {
         name,

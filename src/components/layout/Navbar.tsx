@@ -2,12 +2,10 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { CircleUserRound } from "lucide-react";
 
 export function Navbar() {
   const { data: session } = useSession();
-  const router = useRouter();
 
   return (
     <nav className="bg-[#1a1a1a] h-16 fixed top-0 left-0 right-0 z-50 shadow-md shadow-black">
