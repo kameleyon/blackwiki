@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi'
-import { ArticleStatus } from '@/types'
+import { ArticleStatus } from '@/types/index'
 
 type Article = {
   id: string
