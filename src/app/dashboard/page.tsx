@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
-import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi'
+import { FiEdit, FiTrash2, FiEye, FiList, FiFilePlus, FiSliders, FiUser, FiSettings, FiLogOut } from 'react-icons/fi'
 import { ArticleStatus } from '@/types/index'
 
 type Article = {
@@ -32,37 +32,46 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header with actions */}
+      {/* Navigation */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold pl-4">My Articles</h1>
-        <Link 
-          href="/articles/new" 
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Create Article
-        </Link>
+      <h1 className="text-2xl font-semibold pl-4">My Articles</h1>
       </div>
-
-      {/* Search and filters */}
-      <div className="mb-6">
-        <div className="flex gap-4">
-          <input
-            type="search"
-            placeholder="Search articles..."
-            className="search-input flex-1 px-4 py-1 border rounded-lg"
-          />
-          <select className="px-6 py-2 bg-white/10 border rounded-xl">
-            <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="in review">In Review</option>
-            <option value="denied">Denied</option>
-          </select>
+        <div className="flex items-center gap-6 mb-8">
+        <input
+          type="search"
+          placeholder="Search articles..."
+          className="w-40 search-input flex-1 px-4 py-1 border rounded-lg"
+        />
+          <Link href="/dashboard" className="flex items-center gap-2 text-gray-200 font-medium">
+            <FiList size={20} />
+            <span>Articles</span>
+          </Link>
+          <Link href="/articles/new" className="flex items-center gap-2 text-gray-600 hover:text-gray-200">
+            <FiFilePlus size={20} />
+            <span>Add New</span>
+          </Link>
+          <button className="flex items-center gap-2 text-gray-600 hover:text-gray-200">
+            <FiSliders size={20} />
+            <span>Filter</span>
+          </button>
+          <Link href="/profile" className="flex items-center gap-2 text-gray-600 hover:text-gray-200">
+            <FiUser size={20} />
+            <span>My profile</span>
+          </Link>
+          <Link href="/settings" className="flex items-center gap-2 text-gray-600 hover:text-gray-200">
+            <FiSettings size={20} />
+            <span>Settings</span>
+          </Link>
+          <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-200">
+            <FiLogOut size={20} />
+            <span>Log out</span>
+          </Link>
         </div>
-      </div>
+        
+    
 
       {/* Articles list */}
-      <div className="bg-white/5 rounded-xl shadow-md shadow-black">
+      <div className="bg-white/5 rounded-xl shadow-sm shadow-black">
         <div className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-4 p-4 text-white/80 font-semibold border-b border-gray-700">
           <div>Date & Time</div>
           <div>Title</div>
