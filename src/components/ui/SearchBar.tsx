@@ -27,7 +27,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          className="search-input"
+          className="search-input text-sm"
           placeholder="Search Black history, culture, and knowledge..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
