@@ -1,12 +1,16 @@
+'use client';
+
 import { getCurrentUser } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import UserNav from '@/components/user/UserNav'
 import Link from 'next/link'
 import TagInput from '@/components/ui/TagInput'
-
 interface EditProfilePageProps {
-  searchParams?: { error?: string }
+  searchParams?: { 
+    error?: string;
+    message?: string;
+  }
 }
 
 export default async function EditProfilePage({ searchParams }: EditProfilePageProps) {
@@ -23,27 +27,29 @@ export default async function EditProfilePage({ searchParams }: EditProfilePageP
   const totalLikes = 0 // TODO: Add likes to articles model
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold pl-4">Edit Profile</h1>
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="flex justify-between items-center mb-4 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-semibold pl-2 sm:pl-4">Edit Profile</h1>
       </div>
       <UserNav currentPath="/profile" />
 
       <div>
-        <div className="bg-white/5 rounded-xl shadow-sm shadow-black p-8">
+        <div className="bg-white/5 rounded-xl shadow-sm shadow-black p-4 sm:p-8">
           {searchParams?.error && (
             <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500">
-              Failed to update profile. Please try again.
+              {searchParams.message === 'name-required' 
+                ? 'Name is required to update your profile.'
+                : 'Failed to update profile. Please try again.'}
             </div>
           )}
           {/* Profile Header */}
-          <div className="flex items-start gap-6 mb-8">
-            <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center text-3xl">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-700 rounded-full flex items-center justify-center text-2xl sm:text-3xl">
               {user.name?.[0]?.toUpperCase() || 'A'}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-medium text-gray-200">{user.name}</h2>
+            <div className="text-center sm:text-left">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <h2 className="text-xl sm:text-2xl font-medium text-gray-200">{user.name}</h2>
               </div>
               <p className="text-gray-400">{user.email}</p>
               <p className="text-sm text-gray-500 mt-2">Member since {new Date(user.joinedAt).toLocaleDateString()}</p>
@@ -51,7 +57,7 @@ export default async function EditProfilePage({ searchParams }: EditProfilePageP
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
             <div className="bg-white/5 rounded-lg p-4">
               <p className="text-sm text-gray-400">Articles</p>
               <p className="text-2xl font-medium text-gray-200">{articles.length}</p>
@@ -67,7 +73,23 @@ export default async function EditProfilePage({ searchParams }: EditProfilePageP
           </div>
 
           {/* Edit Form */}
-          <form action="/api/profile/update" method="POST" className="space-y-6">
+          <form 
+            className="space-y-4 sm:space-y-6"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const response = await fetch('/api/profile/update', {
+                method: 'POST',
+                body: formData,
+              });
+              
+              if (response.ok) {
+                window.location.href = '/profile';
+              } else {
+                window.location.href = '/profile/edit?error=true';
+              }
+            }}
+          >
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-1">
                 Name
@@ -154,16 +176,17 @@ export default async function EditProfilePage({ searchParams }: EditProfilePageP
               defaultValue={user.interests || ''}
             />
 
-            <div className="flex justify-end gap-4">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
               <Link 
                 href="/profile"
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white font-medium rounded-lg transition-colors"
+                className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-sm sm:text-base font-medium rounded-lg transition-colors text-center"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
-                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition-colors"
+                className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm sm:text-base font-medium rounded-lg transition-colors"
+                formNoValidate
               >
                 Save Changes
               </button>

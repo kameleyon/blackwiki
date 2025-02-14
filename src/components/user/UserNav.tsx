@@ -10,7 +10,7 @@ type UserNavProps = {
 
 export default function UserNav({ currentPath }: UserNavProps) {
   return (
-    <div className="flex items-center justify-end gap-6 mb-8">
+    <div className="flex items-center justify-end gap-3 sm:gap-6 mb-4 sm:mb-8">
       <Link 
         href="/dashboard" 
         className={`flex items-center gap-2 ${
@@ -18,9 +18,10 @@ export default function UserNav({ currentPath }: UserNavProps) {
             ? 'text-gray-200 font-medium' 
             : 'text-gray-600 hover:text-gray-200'
         }`}
+        title="Articles"
       >
         <FiList size={20} />
-        <span>Articles</span>
+        <span className="hidden sm:inline">Articles</span>
       </Link>
       <Link 
         href="/articles/new" 
@@ -29,9 +30,10 @@ export default function UserNav({ currentPath }: UserNavProps) {
             ? 'text-gray-200 font-medium' 
             : 'text-gray-600 hover:text-gray-200'
         }`}
+        title="New Post"
       >
         <FiFilePlus size={20} />
-        <span>New Post</span>
+        <span className="hidden sm:inline">New Post</span>
       </Link>
       <Link 
         href="/profile" 
@@ -40,9 +42,10 @@ export default function UserNav({ currentPath }: UserNavProps) {
             ? 'text-gray-200 font-medium' 
             : 'text-gray-600 hover:text-gray-200'
         }`}
+        title="My Profile"
       >
         <FiUser size={20} />
-        <span>My profile</span>
+        <span className="hidden sm:inline">My profile</span>
       </Link>
       <Link 
         href="/settings" 
@@ -51,16 +54,18 @@ export default function UserNav({ currentPath }: UserNavProps) {
             ? 'text-gray-200 font-medium' 
             : 'text-gray-600 hover:text-gray-200'
         }`}
+        title="Settings"
       >
         <FiSettings size={20} />
-        <span>Settings</span>
+        <span className="hidden sm:inline">Settings</span>
       </Link>
       <button 
         onClick={() => signOut({ callbackUrl: '/' })}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
+        title="Log out"
       >
         <FiLogOut size={20} />
-        <span>Log out</span>
+        <span className="hidden sm:inline">Log out</span>
       </button>
     </div>
   )

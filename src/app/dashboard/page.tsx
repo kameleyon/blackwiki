@@ -43,8 +43,8 @@ export default async function DashboardPage() {
 
       {/* Articles list */}
       <div className="bg-white/5 rounded-xl shadow-sm shadow-black">
-        <div className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-4 p-4 text-white/80 font-semibold border-b border-gray-700">
-          <div>Date & Time</div>
+        <div className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-2 sm:gap-4 p-3 sm:p-4 text-xs sm:text-sm text-white/80 font-semibold border-b border-gray-700">
+          <div>Date</div>
           <div>Title</div>
           <div>Status</div>
           <div>Views</div>
@@ -53,9 +53,9 @@ export default async function DashboardPage() {
         </div>
         
         {articles.map((article) => (
-          <div key={article.id} className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-4 p-4 border-b hover:bg-gray-50">
-            <div className="text-sm text-gray-600">
-              {new Date(article.createdAt).toLocaleString()}
+          <div key={article.id} className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-2 sm:gap-4 p-3 sm:p-4 border-b hover:bg-gray-50">
+            <div className="text-xs sm:text-sm text-gray-600">
+              {new Date(article.createdAt).toLocaleDateString()}
             </div>
             <div className="font-medium">{article.title}</div>
             <div>
@@ -94,7 +94,7 @@ export default async function DashboardPage() {
         ))}
 
         {articles.length === 0 && (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-gray-500 text-sm md:text-md ">
             No articles yet. Click "Create Article" to get started.
           </div>
         )}
