@@ -22,7 +22,7 @@ export default function SignIn() {
         email,
         password,
         redirect: true,
-        callbackUrl: "/profile"
+        callbackUrl: "/dashboard"
       });
 
       if (result?.error) {
@@ -123,7 +123,7 @@ export default function SignIn() {
         </div>
 
         <button
-          onClick={() => signIn("github", { callbackUrl: "/" })}
+          onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
           className="w-full flex items-center justify-center gap-3 bg-gray-500 hover:bg-secondary/80 
                      text-foreground px-6 py-3 rounded-lg transition-colors"
         >

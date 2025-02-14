@@ -34,7 +34,7 @@ export default async function DashboardPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header with actions */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">My Articles</h1>
+        <h1 className="text-2xl font-semibold pl-4">My Articles</h1>
         <Link 
           href="/articles/new" 
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -49,9 +49,9 @@ export default async function DashboardPage() {
           <input
             type="search"
             placeholder="Search articles..."
-            className="flex-1 px-4 py-2 border rounded-lg"
+            className="search-input flex-1 px-4 py-1 border rounded-lg"
           />
-          <select className="px-4 py-2 border rounded-lg">
+          <select className="px-6 py-2 bg-white/10 border rounded-xl">
             <option value="">All Status</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
@@ -62,8 +62,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* Articles list */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-4 p-4 font-semibold border-b">
+      <div className="bg-white/5 rounded-xl shadow-md shadow-black">
+        <div className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-4 p-4 text-white/80 font-semibold border-b border-gray-700">
           <div>Date & Time</div>
           <div>Title</div>
           <div>Status</div>
