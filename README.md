@@ -2,48 +2,59 @@
 
 <div align="center">
 
-![BlackWiki Logo](public/vercel.svg)
+![BlackWiki Logo](public/bwikilogo.png)
 
 An AI-driven encyclopedia focused on Black and African culture, knowledge, and history.
 
-[![Next.js](https://img.shields.io/badge/Next.js-13-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38B2AC)](https://tailwindcss.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-6-2D3748)](https://www.prisma.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
 
 ## Overview
 
-BlackWiki is a modern, AI-enhanced knowledge platform dedicated to documenting and preserving Black history, culture, and achievements worldwide. By combining Wikipedia's extensive database with community-contributed content and AI-driven insights, BlackWiki provides a comprehensive and focused resource for exploring Black heritage and contemporary culture.
+BlackWiki is a modern, AI-enhanced knowledge platform dedicated to documenting and preserving Black history, culture, and achievements worldwide. Our platform combines community-contributed content with AI-driven insights to provide a comprehensive and focused resource for exploring Black heritage and contemporary culture.
 
 ## Features
 
 ### Core Functionality
 
-- **Unified Search System**
-  - Integration with Wikipedia API for broad knowledge base
-  - Custom database for community-contributed content
-  - Smart result ranking and categorization
-
-- **Authentication & Authorization**
+- **Authentication System**
   - Multiple sign-in options (GitHub, Email/Password)
+  - Secure session management with JWT
+  - User profile management with image upload
   - Role-based access control (User, Editor, Admin)
-  - Secure session management
 
-- **Modern UI/UX**
-  - Clean, dark-themed interface
-  - Responsive design for all devices
-  - Smooth animations and transitions
-  - Accessibility-focused implementation
+- **Content Management**
+  - Article submission and review workflow
+  - Rich text editing with markdown support
+  - Version control for content tracking
+  - Category and tag organization
+  - AI-powered content verification
 
-### Upcoming Features
+- **Search & Discovery**
+  - Advanced search with filters
+  - Category-based browsing
+  - Smart result ranking
+  - Content recommendations
 
-- Markdown-based content editing
-- Version control for articles
-- AI-powered content analysis
-- Full-text search capabilities
-- Community contribution system
+### Technical Features
+
+- **Modern Stack**
+  - Next.js 14 App Router
+  - TypeScript for type safety
+  - Prisma ORM for database management
+  - Tailwind CSS for styling
+  - Framer Motion for animations
+
+- **Performance**
+  - Server-side rendering
+  - Optimized image handling
+  - Responsive design
+  - Dark mode by default
 
 See our [Progress Tracker](PROGRESS.md) for detailed development status.
 
@@ -59,7 +70,7 @@ See our [Progress Tracker](PROGRESS.md) for detailed development status.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/kameleyon/blackwiki.git
+   git clone https://github.com/yourusername/blackwiki.git
    cd blackwiki
    ```
 
@@ -72,11 +83,14 @@ See our [Progress Tracker](PROGRESS.md) for detailed development status.
    ```bash
    cp .env.example .env
    ```
-   Fill in the required environment variables:
-   - `NEXTAUTH_SECRET`: Your NextAuth secret key
-   - `GITHUB_ID`: GitHub OAuth app client ID
-   - `GITHUB_SECRET`: GitHub OAuth app client secret
-   - Additional variables as needed
+   Required environment variables:
+   ```env
+   DATABASE_URL="file:./dev.db"
+   NEXTAUTH_SECRET="your-secret-key"
+   NEXTAUTH_URL="http://localhost:3000"
+   GITHUB_ID="your-github-oauth-id"
+   GITHUB_SECRET="your-github-oauth-secret"
+   ```
 
 4. Initialize the database:
    ```bash
@@ -89,47 +103,26 @@ See our [Progress Tracker](PROGRESS.md) for detailed development status.
    npm run dev
    ```
 
-Visit `http://localhost:3000` to see the application running.
+The application will be available at `http://localhost:3000`.
 
 ## Project Structure
 
 ```
 blackwiki/
 ├── prisma/               # Database schema and migrations
-├── public/               # Static assets
+├── public/              # Static assets
 ├── src/
-│   ├── app/             # Next.js 13 app directory
-│   │   ├── api/         # API routes
-│   │   ├── auth/        # Authentication pages
-│   │   └── search/      # Search functionality
-│   ├── components/      # Reusable React components
-│   └── lib/            # Utility functions and configurations
-├── .env                 # Environment variables
-└── package.json        # Project dependencies and scripts
+│   ├── app/            # Next.js 14 app directory
+│   │   ├── api/       # API routes
+│   │   ├── articles/  # Article pages
+│   │   ├── auth/      # Authentication pages
+│   │   └── profile/   # User profile pages
+│   ├── components/    # Reusable React components
+│   │   ├── layout/   # Layout components
+│   │   └── ui/       # UI components
+│   └── lib/          # Utility functions and configurations
+└── types/            # TypeScript type definitions
 ```
-
-## Technology Stack
-
-- **Frontend**
-  - Next.js 13 (App Router)
-  - React
-  - Tailwind CSS
-  - Framer Motion
-
-- **Backend**
-  - Next.js API Routes
-  - Prisma ORM
-  - SQLite Database
-
-- **Authentication**
-  - NextAuth.js
-  - GitHub OAuth
-  - Email/Password
-
-- **Development Tools**
-  - TypeScript
-  - ESLint
-  - Prettier
 
 ## Contributing
 
@@ -138,12 +131,12 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 ### Development Guidelines
 
 1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature-name`
+2. Create a feature branch: `git checkout -b feature/your-feature`
 3. Make your changes
-4. Run tests: `npm test`
-5. Commit your changes: `git commit -m 'Add some feature'`
-6. Push to the branch: `git push origin feature/your-feature-name`
-7. Submit a pull request
+4. Run tests and linting: `npm run lint`
+5. Commit your changes: `git commit -m 'Add feature'`
+6. Push to your fork: `git push origin feature/your-feature`
+7. Create a pull request
 
 ## License
 
@@ -151,13 +144,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Wikipedia API for providing base knowledge content
 - The open-source community for various tools and libraries
 - All contributors who help make BlackWiki better
+- The Black community for inspiring this project
 
 ## Contact
 
-For questions or support, please [open an issue](https://github.com/kameleyon/blackwiki/issues) on our GitHub repository.
+For questions or support, please open an issue in our GitHub repository.
 
 ---
 
