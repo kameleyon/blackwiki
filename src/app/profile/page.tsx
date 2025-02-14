@@ -19,9 +19,9 @@ export default async function ProfilePage() {
   const totalLikes = 0 // TODO: Add likes to articles model
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+<div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-4 sm:mb-8">
-        <h1 className="text-xl sm:text-2xl font-semibold pl-2 sm:pl-4">Profile</h1>
+<h1 className="text-2xl font-semibold pl-4">Profile</h1>
       </div>
       <UserNav currentPath="/profile" />
 
