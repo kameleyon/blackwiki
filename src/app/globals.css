@@ -3,6 +3,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tag {
+  @apply bg-transparent rounded-lg px-0 py-0 w-full border-none text-gray-200 placeholder-gray-500;
+}
  
 @layer base {
   :root {
@@ -78,6 +82,10 @@
   }
   input:not(.search-input), textarea {
     @apply bg-white/5 border border-white/10 rounded-lg px-4 py-2 w-full shadow-sm shadow-black focus:outline-none focus:ring-2 focus:ring-white/20 transition-all;
+  }
+
+  input .tag {
+    @apply rounded-lg px-4 py-2 w-full ;
   }
 }
 

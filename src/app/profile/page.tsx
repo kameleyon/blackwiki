@@ -1,390 +1,119 @@
-"use client";
+import { getCurrentUser } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/db'
+import UserNav from '@/components/user/UserNav'
+import Link from 'next/link'
+import { FiEdit } from 'react-icons/fi'
 
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
-
-export default function ProfilePage() {
-  const { data: session, status } = useSession();
-  const [isEditing, setIsEditing] = useState(false);
-  interface ProfileFormData {
-    name: string;
-    bio: string;
-    location: string;
-    website: string;
-    wecherp: string;
-    expertise: string;
-    interests: string;
+export default async function ProfilePage() {
+  const user = await getCurrentUser()
+  
+  if (!user) {
+    redirect('/auth/signin')
   }
 
-  const [formData, setFormData] = useState<ProfileFormData>({
-    name: session?.user?.name || "",
-    bio: "",
-    location: "",
-    website: "",
-    wecherp: "",
-    expertise: "",
-    interests: "",
-  });
+  const articles = await prisma.article.findMany({
+    where: { authorId: user.id }
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('/api/profile/update', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to update profile');
-      }
-
-      // Update local state with the returned user data
-      setFormData({
-        name: data.user.name || '',
-        bio: data.user.bio || '',
-        location: data.user.location || '',
-        website: data.user.website || '',
-        wecherp: data.user.wecherp || '',
-        expertise: Array.isArray(data.user.expertise) 
-          ? data.user.expertise.join(', ')
-          : data.user.expertise || '',
-        interests: Array.isArray(data.user.interests)
-          ? data.user.interests.join(', ')
-          : data.user.interests || '',
-      });
-
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      // TODO: Add error notification
-    }
-  };
-
-  // Fetch user profile data on component mount
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (session?.user?.email) {
-        try {
-          const response = await fetch('/api/profile/update');
-          const data = await response.json();
-
-          if (response.ok && data.user) {
-            setFormData({
-              name: data.user.name || '',
-              bio: data.user.bio || '',
-              location: data.user.location || '',
-              website: data.user.website || '',
-              wecherp: data.user.wecherp || '',
-              expertise: Array.isArray(data.user.expertise)
-                ? data.user.expertise.join(', ')
-                : data.user.expertise || '',
-              interests: Array.isArray(data.user.interests)
-                ? data.user.interests.join(', ')
-                : data.user.interests || '',
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching profile:', error);
-        }
-      }
-    };
-
-    fetchProfile();
-  }, [session?.user?.email]);
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center bg-white/5 rounded-lg p-6">
-          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground">Please sign in to view your profile.</p>
-        </div>
-      </div>
-    );
-  }
+  const totalLikes = 0 // TODO: Add likes to articles model
 
   return (
-    <div className="container  mx-auto px-4 py-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl mx-auto"
-      >
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Profile</h1>
-          <div className="flex gap-4">
-            <button
-              onClick={() => window.location.href = '/articles/new'}
-              className="px-4 py-2 bg-primary/20 hover:bg-primary/30 rounded-lg transition-colors"
-            >
-              Create Article
-            </button>
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
-            >
-              {isEditing ? "Cancel" : "Edit Profile"}
-            </button>
-          </div>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold pl-4">Profile</h1>
+      </div>
+      <UserNav currentPath="/profile" />
 
-        <div className="bg-white/5 rounded-xl p-6 mb-8">
-          <div className="flex items-center gap-6">
-              <div className="relative group">
-                {session?.user?.image ? (
-                  <Image
-                    src={session.user.image}
-                    alt={session.user.name || "Profile"}
-                    width={100}
-                    height={100}
-                    className="rounded-full"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="w-24 h-24 rounded-full bg-background/70 border-white/20 border-1 flex items-center justify-center">
-                    <span className="text-2xl">{session?.user?.name?.[0]}</span>
-                  </div>
-                )}
-                <label 
-                  htmlFor="profile-image"
-                  className="absolute inset-0 flex items-center  justify-center bg-black/50 rounded-full 
-                           opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity"
-                >
-                  <span className="text-white text-sm">Change Photo</span>
-                </label>
-                <input
-                  type="file"
-                  id="profile-image"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-
-                    const formData = new FormData();
-                    formData.append("file", file);
-
-                    try {
-                      const response = await fetch("/api/profile/upload", {
-                        method: "POST",
-                        body: formData,
-                      });
-
-                      const data = await response.json();
-
-                      if (!response.ok) {
-                        throw new Error(data.error || "Failed to upload image");
-                      }
-
-                      if (data.image) {
-                        // Update the session
-                        const event = new Event('visibilitychange');
-                        document.dispatchEvent(event);
-                        
-                        // Wait a bit for the session to update
-                        setTimeout(() => {
-                          window.location.reload();
-                        }, 500);
-                      }
-                    } catch (error) {
-                      console.error("Error uploading image:", error);
-                      // TODO: Add error notification
-                    }
-                  }}
-                />
-              </div>
+      <div>
+        <div className="bg-white/5 rounded-xl shadow-sm shadow-black p-8">
+          {/* Profile Header */}
+          <div className="flex items-start gap-6 mb-8">
+            <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center text-3xl">
+              {user.name?.[0]?.toUpperCase() || 'A'}
+            </div>
             <div>
-              <h2 className="text-xl font-semibold">{session?.user?.name}</h2>
-              <p className="text-muted-foreground">{session?.user?.email}</p>
-              <p className="text-sm mt-1 bg-primary/10 text-primary px-2 py-1 rounded-full inline-block">
-                {session?.user?.role || "User"}
-              </p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-medium text-gray-200">{user.name}</h2>
+                <Link href="/profile/edit" className="text-gray-400 hover:text-gray-200">
+                  <FiEdit size={20} />
+                </Link>
+              </div>
+              <p className="text-gray-400">{user.email}</p>
+              <p className="text-sm text-gray-500 mt-2">Member since {new Date(user.joinedAt).toLocaleDateString()}</p>
             </div>
           </div>
-        </div>
 
-        {isEditing ? (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Name</label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20"
-              />
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-white/5 rounded-lg p-4">
+              <p className="text-sm text-gray-400">Articles</p>
+              <p className="text-2xl font-medium text-gray-200">{articles.length}</p>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Bio</label>
-              <textarea
-                value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20 h-48"
-                placeholder="Tell us about yourself...&#10;&#10;Use multiple paragraphs to format your text.&#10;Press Enter twice for a new paragraph."
-                style={{ lineHeight: '1.7' }}
-              />
+            <div className="bg-white/5 rounded-lg p-4">
+              <p className="text-sm text-gray-400">Total Likes</p>
+              <p className="text-2xl font-medium text-gray-200">{totalLikes}</p>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Location</label>
-                <input
-                  type="text"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20"
-                  placeholder="City, Country"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Website</label>
-                <input
-                  type="url"
-                  value={formData.website}
-                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                  className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20"
-                  placeholder="https://..."
-                />
-              </div>
+            <div className="bg-white/5 rounded-lg p-4">
+              <p className="text-sm text-gray-400">Role</p>
+              <p className="text-2xl font-medium text-gray-200">{user.role}</p>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Wecherp</label>
-              <input
-                type="text"
-                value={formData.wecherp}
-                onChange={(e) => setFormData({ ...formData, wecherp: e.target.value })}
-                className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20"
-                placeholder="username"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Areas of Expertise</label>
-              <input
-                type="text"
-                value={formData.expertise}
-                onChange={(e) => setFormData({ ...formData, expertise: e.target.value })}
-                className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20"
-                placeholder="e.g., African History, Black Literature, Civil Rights"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Topics of Interest</label>
-              <input
-                type="text"
-                value={formData.interests}
-                onChange={(e) => setFormData({ ...formData, interests: e.target.value })}
-                className="w-full px-4 py-2 bg-secondary/10 rounded-lg focus:ring-2 focus:ring-primary/20"
-                placeholder="e.g., Music, Art, Politics"
-              />
-            </div>
-
-            <div className="flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)}
-                className="px-6 py-2 bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors"
-              >
-                Save Changes
-              </button>
-            </div>
-          </form>
-        ) : (
+          {/* Profile Info */}
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold mb-2">About</h3>
-              <div 
-                className="text-muted-foreground whitespace-pre-wrap"
-                style={{ lineHeight: '1.7' }}
-                dangerouslySetInnerHTML={{
-                  __html: formData.bio ? 
-                    formData.bio.split('\n').map(line => line.trim()).filter(Boolean).join('<br /><br />') 
-                    : "No bio provided yet."
-                }}
-              />
+              <h3 className="text-lg font-medium text-gray-200 mb-2">About</h3>
+              <p className="text-gray-400">{user.bio || 'No bio provided yet.'}</p>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-2">Location</h3>
-              <p className="text-muted-foreground">
-                {formData.location || "Not specified"}
-              </p>
+              <h3 className="text-lg font-medium text-gray-200 mb-2">Location</h3>
+              <p className="text-gray-400">{user.location || 'Not specified'}</p>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-2">Contact</h3>
-              <div className="space-y-2 text-muted-foreground">
-                <p>Website: {formData.website ? (
-                  <a href={formData.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                    {formData.website}
-                  </a>
-                ) : "Not specified"}</p>
-                <p>Wecherp: {formData.wecherp ? (
-                  <span className="text-primary">
-                    {formData.wecherp}
-                  </span>
-                ) : "Not specified"}</p>
+              <h3 className="text-lg font-medium text-gray-200 mb-2">Areas of Expertise</h3>
+              <div className="flex flex-wrap gap-2">
+                {user.expertise ? (
+                  user.expertise.split(',').map((tag, index) => (
+                    <span key={index} className="px-2 py-1 bg-white/10 rounded-md text-sm text-gray-200">
+                      {tag.trim()}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-gray-400">No areas of expertise specified</p>
+                )}
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-2">Expertise</h3>
-              {formData.expertise ? (
-                <div className="flex flex-wrap gap-2">
-                  {formData.expertise.split(',').map((item, index) => (
-                    <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                      {item.trim()}
+              <h3 className="text-lg font-medium text-gray-200 mb-2">Interests</h3>
+              <div className="flex flex-wrap gap-2">
+                {user.interests ? (
+                  user.interests.split(',').map((tag, index) => (
+                    <span key={index} className="px-2 py-1 bg-white/10 rounded-md text-sm text-gray-200">
+                      {tag.trim()}
                     </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground">No areas of expertise specified</p>
-              )}
+                  ))
+                ) : (
+                  <p className="text-gray-400">No interests specified</p>
+                )}
+              </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-2">Interests</h3>
-              {formData.interests ? (
-                <div className="flex flex-wrap gap-2">
-                  {formData.interests.split(',').map((item, index) => (
-                    <span key={index} className="px-3 py-1 bg-primary/10 text-white rounded-full text-sm">
-                      {item.trim()}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground">No interests specified</p>
-              )}
+              <h3 className="text-lg font-medium text-gray-200 mb-2">Contact</h3>
+              <div className="space-y-2 text-gray-400">
+                {user.website && (
+                  <p>Website: <a href={user.website} className="text-blue-400 hover:underline">{user.website}</a></p>
+                )}
+                {user.wecherp && <p>Wecherp: {user.wecherp}</p>}
+              </div>
             </div>
           </div>
-        )}
-      </motion.div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }

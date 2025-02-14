@@ -1,150 +1,43 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-export async function PUT(request: Request) {
+export async function POST(request: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getCurrentUser();
     
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
+    if (!session) {
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const data = await request.json();
-    const {
-      name,
-      bio,
-      location,
-      website,
-      wecherp,
-      expertise,
-      interests,
-    } = data;
+    const formData = await request.formData();
+    const name = formData.get("name")?.toString() || '';
+    const bio = formData.get("bio")?.toString() || '';
+    const location = formData.get("location")?.toString() || '';
+    const website = formData.get("website")?.toString() || '';
+    const wecherp = formData.get("wecherp")?.toString() || '';
+    const expertise = formData.get("expertise")?.toString() || '';
+    const interests = formData.get("interests")?.toString() || '';
 
-    // Convert expertise and interests arrays to JSON strings for storage
-    const expertiseJson = expertise
-      ? Array.isArray(expertise)
-        ? JSON.stringify(expertise)
-        : JSON.stringify(expertise.split(',').map((item: string) => item.trim()))
-      : "[]";
-    
-    const interestsJson = interests
-      ? Array.isArray(interests)
-        ? JSON.stringify(interests)
-        : JSON.stringify(interests.split(',').map((item: string) => item.trim()))
-      : "[]";
-
-    // Update user profile
-    const updatedUser = await prisma.user.upsert({
-      where: { email: session.user.email },
-      create: {
-        email: session.user.email,
-        name: name || "",
-        bio: bio || "",
-        location: location || "",
-        website: website || "",
-        wecherp: wecherp || "",
-        expertise: expertiseJson,
-        interests: interestsJson,
-        lastActive: new Date(),
-        role: "user",
-      },
-      update: {
-        name: name || undefined,
-        bio: bio || undefined,
-        location: location || undefined,
-        website: website || undefined,
-        wecherp: wecherp || undefined,
-        expertise: expertiseJson,
-        interests: interestsJson,
+    const updatedUser = await prisma.user.update({
+      where: { id: session.id },
+      data: {
+        name,
+        bio,
+        location,
+        website,
+        wecherp,
+        expertise,
+        interests,
         lastActive: new Date(),
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        bio: true,
-        location: true,
-        website: true,
-        wecherp: true,
-        expertise: true,
-        interests: true,
-        role: true,
-        image: true,
-      },
     });
 
-    // Parse JSON strings back to arrays for response
-    const formattedUser = {
-      ...updatedUser,
-      expertise: JSON.parse(updatedUser.expertise || "[]"),
-      interests: JSON.parse(updatedUser.interests || "[]"),
-    };
-
-    return NextResponse.json({
-      message: "Profile updated successfully",
-      user: formattedUser,
-    });
+    const baseUrl = request.headers.get('origin') || 'http://localhost:3000';
+    return NextResponse.redirect(`${baseUrl}/profile`);
   } catch (error) {
-    console.error("Profile update error:", error);
-    return NextResponse.json(
-      { error: "Failed to update profile" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET() {
-  try {
-    const session = await getServerSession();
-    
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        bio: true,
-        location: true,
-        website: true,
-        wecherp: true,
-        expertise: true,
-        interests: true,
-        role: true,
-        image: true,
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
-    }
-
-    // Parse JSON strings to arrays
-    const formattedUser = {
-      ...user,
-      expertise: JSON.parse(user.expertise || "[]"),
-      interests: JSON.parse(user.interests || "[]"),
-    };
-
-    return NextResponse.json({ user: formattedUser });
-  } catch (error) {
-    console.error("Profile fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch profile" },
-      { status: 500 }
-    );
+    console.error("[PROFILE_UPDATE]", error);
+    const baseUrl = request.headers.get('origin') || 'http://localhost:3000';
+    return NextResponse.redirect(`${baseUrl}/profile/edit?error=true`);
   }
 }

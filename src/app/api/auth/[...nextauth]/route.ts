@@ -29,6 +29,14 @@ const handler = NextAuth({
             name: true,
             password: true,
             role: true,
+            bio: true,
+            location: true,
+            website: true,
+            wecherp: true,
+            expertise: true,
+            interests: true,
+            joinedAt: true,
+            lastActive: true,
           },
         });
 
@@ -46,10 +54,8 @@ const handler = NextAuth({
         }
 
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          ...user,
+          password: undefined,
         };
       },
     }),
@@ -62,14 +68,21 @@ const handler = NextAuth({
           const dbUser = await prisma.user.findUnique({
             where: { email: token.email || "" },
             select: {
-              id: true,
-              role: true,
+            id: true,
+            role: true,
+            bio: true,
+            location: true,
+            website: true,
+            wecherp: true,
+            expertise: true,
+            interests: true,
+            joinedAt: true,
+            lastActive: true,
             },
           });
 
           if (dbUser) {
-            token.role = dbUser.role;
-            token.id = dbUser.id;
+            Object.assign(token, dbUser);
           } else {
             // Create new user if they don't exist
             const newUser = await prisma.user.create({
@@ -80,12 +93,19 @@ const handler = NextAuth({
                 role: "user", // Default role
               },
               select: {
-                id: true,
-                role: true,
+            id: true,
+            role: true,
+            bio: true,
+            location: true,
+            website: true,
+            wecherp: true,
+            expertise: true,
+            interests: true,
+            joinedAt: true,
+            lastActive: true,
               },
             });
-            token.role = newUser.role;
-            token.id = newUser.id;
+            Object.assign(token, newUser);
           }
         } catch (error) {
           console.error("Error handling auth:", error);
@@ -95,8 +115,7 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role as string;
-        session.user.id = token.id as string;
+        Object.assign(session.user, token);
       }
       return session;
     },

@@ -6,11 +6,27 @@ declare module "next-auth" {
     user: {
       id: string;
       role: string;
+      bio?: string | null;
+      location?: string | null;
+      website?: string | null;
+      wecherp?: string | null;
+      expertise?: string | null;
+      interests?: string | null;
+      joinedAt: Date;
+      lastActive: Date;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     role: string;
+    bio?: string | null;
+    location?: string | null;
+    website?: string | null;
+    wecherp?: string | null;
+    expertise?: string | null;
+    interests?: string | null;
+    joinedAt: Date;
+    lastActive: Date;
   }
 }
 
