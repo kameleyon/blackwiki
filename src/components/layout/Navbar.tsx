@@ -1,9 +1,9 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CircleUserRound, LogOut } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -23,12 +23,6 @@ export function Navbar() {
               <Link href="/dashboard">
                 <CircleUserRound className="w-6 h-6 text-gray-300 hover:text-white transition-colors" />
               </Link>
-              <button 
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                <LogOut className="w-6 h-6" />
-              </button>
             </div>
           ) : (
             <Link href="/auth/signin">
