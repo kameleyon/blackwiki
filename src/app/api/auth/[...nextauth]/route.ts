@@ -100,14 +100,21 @@ const handler = NextAuth({
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl + '/dashboard'
+    }
   },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
   },
   session: {
-    strategy: 'jwt',
-  },
+    strategy: 'jwt'
+  }
 });
 
 export { handler as GET, handler as POST };

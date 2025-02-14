@@ -1,8 +1,9 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CircleUserRound, LogOut } from "lucide-react";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -17,32 +18,21 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           {session ? (
-            <>
-              <Link
-                href="/articles/new"
-                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg  transition-colors"
-              >
-                Create Article
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-300">{session.user.name}</span>
+              <Link href="/dashboard">
+                <CircleUserRound className="w-6 h-6 text-gray-300 hover:text-white transition-colors" />
               </Link>
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg  transition-colors"
+              <button 
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="text-gray-300 hover:text-white transition-colors"
               >
-                Dashboard
-              </Link>
-              <Link
-                href="/profile"
-                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg  transition-colors"
-              >
-                Profile
-              </Link>
-            </>
+                <LogOut className="w-6 h-6" />
+              </button>
+            </div>
           ) : (
-            <Link
-              href="/auth/signin"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-            >
-              Sign In
+            <Link href="/auth/signin">
+              <CircleUserRound className="w-6 h-6 text-gray-300 hover:text-white transition-colors" />
             </Link>
           )}
         </div>
