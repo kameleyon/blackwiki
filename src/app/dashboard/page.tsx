@@ -44,41 +44,41 @@ export default async function DashboardPage() {
         </div>
         
         {articles.map((article) => (
-          <div key={article.id} className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-2 sm:gap-4 p-3 sm:p-4 border-b hover:bg-gray-50">
-            <div className="text-xs sm:text-sm text-gray-600">
+          <div key={article.id} className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,0.5fr] gap-2 sm:gap-4 p-3 sm:p-4 border-b hover:bg-black/30">
+            <div className="text-xs sm:text-sm text-gray-400">
               {new Date(article.createdAt).toLocaleDateString()}
             </div>
-            <div className="font-medium">{article.title}</div>
+            <div className="font-light text-xs sm:text-sm">{article.title}</div>
             <div>
               <span className={`px-2 py-1 rounded-full text-xs ${
                 (article.status as ArticleStatus) === 'approved'
-                  ? 'bg-green-100 text-green-800'
+                  ? 'bg-white/40 text-white/80 text-xs sm:text-sm'
                   : (article.status as ArticleStatus) === 'in review'
-                  ? 'bg-yellow-100 text-yellow-800'
+                  ? 'bg-white/20 text-white/80 text-xs sm:text-sm'
                   : (article.status as ArticleStatus) === 'denied'
-                  ? 'bg-red-100 text-red-800'
-                  : 'bg-gray-100 text-gray-800'
+                  ? 'bg-white/10 text-white/80 text-xs sm:text-sm'
+                  : 'bg-gray-100 text-gray-800 text-xs sm:text-sm'
               }`}>
                 {(article.status as ArticleStatus) === 'approved' 
                   ? 'Approved' 
                   : (article.status as ArticleStatus) === 'in review'
-                  ? 'In Review'
+                  ? 'Pending'
                   : (article.status as ArticleStatus) === 'denied'
                   ? 'Denied'
                   : 'Pending'}
               </span>
             </div>
-            <div>{article.views}</div>
-            <div>0</div>
-            <div className="flex gap-2">
-              <Link href={`/articles/${article.slug}`} className="text-blue-600 hover:text-blue-800">
-                <FiEye size={18} />
+            <div className="font-light text-xs sm:text-sm">{article.views}</div>
+            <div className="font-light text-xs sm:text-sm">0</div>
+            <div className="flex items-top gap-2">
+              <Link href={`/articles/${article.slug}`} className="text-white/60 hover:text-white/80 flex items-top">
+                <FiEye size={14} />
               </Link>
-              <Link href={`/articles/${article.slug}/edit`} className="text-gray-600 hover:text-gray-800">
-                <FiEdit size={18} />
+              <Link href={`/articles/${article.slug}/edit`} className="text-white/60 hover:text-white/80 flex items-top">
+                <FiEdit size={14} />
               </Link>
-              <button className="text-red-600 hover:text-red-800">
-                <FiTrash2 size={18} />
+              <button className="text-white/60 hover:text-white/80 flex items-top">
+                <FiTrash2 size={14} />
               </button>
             </div>
           </div>
