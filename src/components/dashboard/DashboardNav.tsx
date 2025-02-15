@@ -10,7 +10,7 @@ export default function DashboardNav() {
       <input
         type="search"
         placeholder="Search articles..."
-        className="w-32 sm:w-40 search-input flex-1 px-3 sm:px-4 py-1 sm:shadow-sm md:shadow-md border rounded-lg text-sm sm:text-base"
+        className="w-32 sm:w-40 h-2 search-input flex-1 px-3 sm:px-4 py-0 sm:shadow-sm md:shadow-md border rounded-full text-sm sm:text-base"
       />
       <Link 
         href="/dashboard" 
@@ -20,6 +20,14 @@ export default function DashboardNav() {
         <FiList size={20} />
         <span className="hidden sm:inline">Articles</span>
       </Link>
+      
+      <button 
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
+        title="Filter"
+      >
+        <FiSliders size={20} />
+        <span className="hidden sm:inline">Filter</span>
+      </button>
       <Link 
         href="/articles/new" 
         className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
@@ -28,13 +36,6 @@ export default function DashboardNav() {
         <FiFilePlus size={20} />
         <span className="hidden sm:inline">New Post</span>
       </Link>
-      <button 
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
-        title="Filter"
-      >
-        <FiSliders size={20} />
-        <span className="hidden sm:inline">Filter</span>
-      </button>
       <Link 
         href="/profile" 
         className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
