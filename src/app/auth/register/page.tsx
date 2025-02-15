@@ -35,7 +35,10 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const { getBaseUrl } = await import('@/lib/config').then(m => m.config);
+      const baseUrl = getBaseUrl();
+      
+      const response = await fetch(`${baseUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

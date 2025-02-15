@@ -119,7 +119,10 @@ const handler = NextAuth({
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
+    async redirect({ url }) {
+      const { getBaseUrl } = await import('@/lib/config').then(m => m.config);
+      const baseUrl = getBaseUrl();
+      
       // Handle error pages
       if (url.includes('/auth/error')) {
         return `${baseUrl}/auth/error`
