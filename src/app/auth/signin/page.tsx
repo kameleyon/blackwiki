@@ -18,14 +18,11 @@ export default function SignIn() {
     setErrorMessage("");
 
     try {
-      const { getBaseUrl } = await import('@/lib/config').then(m => m.config);
-      const baseUrl = getBaseUrl();
-      
       const result = await signIn("credentials", {
         email,
         password,
         redirect: true,
-        callbackUrl: `${baseUrl}/dashboard`
+        callbackUrl: 'https://jellyfish-app-2-7ub8x.ondigitalocean.app/dashboard'
       });
 
       if (result?.error) {
@@ -127,9 +124,7 @@ export default function SignIn() {
 
         <button
           onClick={async () => {
-            const { getBaseUrl } = await import('@/lib/config').then(m => m.config);
-            const baseUrl = getBaseUrl();
-            signIn("github", { callbackUrl: `${baseUrl}/dashboard` });
+            signIn("github", { callbackUrl: 'https://jellyfish-app-2-7ub8x.ondigitalocean.app/dashboard' });
           }}
           className="w-full flex items-center justify-center gap-3 bg-gray-500 hover:bg-secondary/80 
                      text-foreground px-6 py-3 rounded-lg transition-colors"

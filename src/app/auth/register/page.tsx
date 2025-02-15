@@ -35,10 +35,7 @@ export default function Register() {
     }
 
     try {
-      const { getBaseUrl } = await import('@/lib/config').then(m => m.config);
-      const baseUrl = getBaseUrl();
-      
-      const response = await fetch(`${baseUrl}/api/auth/register`, {
+      const response = await fetch('https://jellyfish-app-2-7ub8x.ondigitalocean.app/api/auth/register', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
