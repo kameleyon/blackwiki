@@ -8,12 +8,12 @@ export const config = {
    * In development, it defaults to localhost
    */
   getBaseUrl: () => {
-    if (process.env.NEXT_PUBLIC_BASE_URL) {
-      return process.env.NEXT_PUBLIC_BASE_URL;
+    if (process.env.BASE_URL) {
+      return process.env.BASE_URL;
     }
     if (process.env.NODE_ENV === 'production') {
       // In production, base URL must be set via environment variable
-      throw new Error('NEXT_PUBLIC_BASE_URL environment variable is not set');
+      throw new Error('BASE_URL environment variable is not set');
     }
     // Default to localhost in development
     return 'http://localhost:3000';
