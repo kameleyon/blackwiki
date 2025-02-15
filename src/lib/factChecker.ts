@@ -8,18 +8,18 @@ interface OpenRouterResponse {
 
 export async function checkArticleFacts(title: string, content: string) {
   try {
-    const prompt = `As a fact-checker for BlackWiki, an encyclopedia focused on Black history and culture, please analyze the following article for accuracy. Use your web access capabilities to verify claims against reliable sources.
+    const prompt = `As a fact-checker for BlackWiki, an encyclopedia focused on Black history and culture, please verify the accuracy of the following article. Focus only on identifying and correcting any inaccurate statements.
 
 Title: ${title}
 
 Content:
 ${content}
 
-Please provide:
-1. A list of factual claims that need verification (with web sources where possible)
-2. Suggestions for additional sources or citations
-3. Overall accuracy assessment (High, Medium, Low)
-4. Specific recommendations for improvement`;
+Please analyze each factual claim and:
+1. If all facts are accurate, respond with "All facts in this article are verified as accurate."
+2. If any facts are inaccurate, list only the incorrect statements and provide the correct information written in green, you will write under it in italic font with reliable sources. Only mentionned the innacurate statement and their corrected statement. 
+
+Format your response in markdown for better readability.`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -29,7 +29,7 @@ Please provide:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'perplexity/llama-3.1-sonar-large-128k-online',
+        model: 'perplexity/llama-3.1-sonar-small-128k-online',
         messages: [
           {
             role: "system",

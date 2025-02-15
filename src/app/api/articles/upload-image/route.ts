@@ -1,87 +1,69 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { mkdir } from "fs/promises";
+import { writeFile } from "fs/promises";
+import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
 import sharp from "sharp";
-import path from "path";
 
 export async function POST(request: Request) {
   try {
     const session = await getServerSession();
     
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
     if (!file) {
-      return NextResponse.json(
-        { error: "No file uploaded" },
-        { status: 400 }
-      );
+      return new NextResponse("No file uploaded", { status: 400 });
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      return new NextResponse("File size must be less than 5MB", { status: 400 });
     }
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      return NextResponse.json(
-        { error: "File must be an image" },
-        { status: 400 }
-      );
+      return new NextResponse("File must be an image", { status: 400 });
     }
 
-    // Create articles uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), "public/uploads/articles");
-    try {
-      await mkdir(uploadsDir, { recursive: true });
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
-        throw error;
-      }
-    }
-
-    // Generate unique filename
-    const fileName = `${uuidv4()}${path.extname(file.name)}`;
-    const filePath = path.join(uploadsDir, fileName);
-
-    // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Process and optimize image
+    // Process image with sharp
     const image = sharp(buffer);
     const metadata = await image.metadata();
-    
-    // Resize if width is greater than 800px while maintaining aspect ratio
-    if (metadata.width && metadata.width > 800) {
-      await image
-        .resize(800, undefined, {
-          fit: "inside",
-          withoutEnlargement: true,
-        })
-        .toFile(filePath);
-    } else {
-      await image.toFile(filePath);
+
+    // Resize if larger than 800x800
+    if ((metadata.width && metadata.width > 800) || (metadata.height && metadata.height > 800)) {
+      await image.resize(800, 800, {
+        fit: "inside",
+        withoutEnlargement: true,
+      });
     }
 
-    // Get final image dimensions
-    const finalMetadata = await sharp(filePath).metadata();
+    // Generate unique filename
+    const filename = `${uuidv4()}.${file.name.split(".").pop()}`;
+    const uploadDir = join(process.cwd(), "public/uploads");
+    const filepath = join(uploadDir, filename);
 
-    return NextResponse.json({
+    // Save processed image
+    await image.toFile(filepath);
+
+    // Get final dimensions
+    const finalMetadata = await sharp(filepath).metadata();
+
+    return NextResponse.json({ 
       message: "Image uploaded successfully",
-      image: `/uploads/articles/${fileName}`,
+      imageUrl: `/uploads/${filename}`,
       width: finalMetadata.width,
       height: finalMetadata.height,
     });
   } catch (error) {
-    console.error("Article image upload error:", error);
-    return NextResponse.json(
-      { error: "Failed to upload image" },
-      { status: 500 }
-    );
+    console.error("Image upload error:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

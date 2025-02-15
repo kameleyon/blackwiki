@@ -1,58 +1,70 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
-import { getCurrentUser } from "@/lib/auth";
+import slugify from "slugify";
 
 export async function POST(request: Request) {
   try {
-    // Ensure the user is authenticated
-    const user = await getCurrentUser();
+    const session = await getServerSession();
+    
+    if (!session?.user?.email) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return new NextResponse("User not found", { status: 404 });
     }
 
-    // Parse the request body as JSON
-    const body = await request.json();
-    const { title, content, categories, tags, imageUrl: image } = body;
+    const data = await request.json();
+    const { title, content, summary, categories, tags, image, imageAlt } = data;
 
-    // Validate required fields
-    if (!title || !content) {
-      return NextResponse.json({ error: "Title and content are required." }, { status: 400 });
+    // Create slug from title
+    const baseSlug = slugify(title, { lower: true, strict: true });
+    let slug = baseSlug;
+    let counter = 1;
+
+    // Ensure unique slug
+    while (await prisma.article.findUnique({ where: { slug } })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
     }
 
-    // Generate a summary and slug for the article
-    const summary = content.slice(0, 150); // first 150 characters as summary
-    const slug =
-      title
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-") +
-      "-" +
-      Date.now();
-
-    // Create a new article in the database, ensuring categories and tags have default values if not provided.
-    // Use null for the image field if no imageUrl is provided.
-    try {
-      const article = await prisma.article.create({
-        data: {
-          title,
-          content,
-          categories: categories || "",
-          tags: tags || "",
-          image,
-          authorId: user.id,
-          status: "pending", // Set default article status as pending
-          summary,
-          slug,
+    // Create article
+    const article = await prisma.article.create({
+      data: {
+        title,
+        content,
+        summary,
+        slug,
+        image,
+        imageAlt,
+        authorId: user.id,
+        status: "draft",
+        // Connect existing categories
+        categories: {
+          connect: categories.map((id: string) => ({ id })),
         },
-      });
-      return NextResponse.json(article, { status: 201 });
-    } catch (dbError: any) {
-      console.error("Database error creating article:", dbError);
-      return NextResponse.json({ error: `Database error: ${dbError.message}` }, { status: 500 });
-    }
+        // Create new tags if they don't exist
+        tags: {
+          connectOrCreate: tags.map((tag: string) => ({
+            where: { name: tag.trim() },
+            create: { name: tag.trim() },
+          })),
+        },
+      },
+    });
+
+    return NextResponse.json({
+      message: "Article created successfully",
+      articleId: article.id,
+    });
   } catch (error) {
-    console.error("Error creating article:", error);
-    return NextResponse.json({ error: "Failed to create article." }, { status: 500 });
+    console.error("Article creation error:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
