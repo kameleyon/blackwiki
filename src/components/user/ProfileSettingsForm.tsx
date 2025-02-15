@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { FiSave, FiUpload, FiImage } from "react-icons/fi";
+import Image from "next/image";
 
 type ProfileSettingsFormProps = {
   user: {
@@ -69,7 +70,7 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
       const data = await response.json();
       setPreviewImage(data.imageUrl);
       setMessage({ type: "success", text: "Profile image updated successfully!" });
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "Failed to upload image. Please try again." });
     }
   };
@@ -93,7 +94,7 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
       }
 
       setMessage({ type: "success", text: "Profile updated successfully!" });
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "Failed to update profile. Please try again." });
     } finally {
       setIsLoading(false);
@@ -115,11 +116,14 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
           className="relative w-24 h-24 rounded-full bg-black/30 overflow-hidden cursor-pointer group"
         >
           {previewImage ? (
-            <img 
-              src={previewImage} 
-              alt="Profile" 
-              className="w-full h-full object-cover"
-            />
+              <div className="relative w-full h-full">
+                <Image 
+                  src={previewImage || user.image || "/default-avatar.png"}
+                  alt="Profile preview"
+                  fill
+                  className="rounded-full object-cover"
+                />
+              </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-400">
               {formData.name?.[0]?.toUpperCase() || "U"}

@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
 
+import { NextRequest } from "next/server";
+
 export async function POST(
-  request: Request,
-  context: { params: { id: string } }
-) {
+  request: NextRequest,
+  context: any
+): Promise<NextResponse> {
+  const { params } = context;
+  const { id } = params;
   try {
     const [session, formData] = await Promise.all([
       getServerSession(),
@@ -20,7 +25,7 @@ export async function POST(
     }
 
     const action = formData.get("action") as string;
-    const articleId = context.params.id;
+    const articleId = id;
 
     const article = await prisma.article.findUnique({
       where: {

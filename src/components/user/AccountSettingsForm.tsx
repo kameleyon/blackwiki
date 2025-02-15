@@ -46,7 +46,7 @@ export function AccountSettingsForm({ user }: AccountSettingsFormProps) {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "Failed to update password. Please try again." });
     } finally {
       setIsLoading(false);

@@ -1,18 +1,27 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
 import slugify from "slugify";
 
-export async function POST(
-  request: Request,
-  context: { params: { id: string } }
-) {
+/**
+ * Update an existing article without relying on Next's
+ * RouteContext param type in the handler signature.
+ * We parse the article ID directly from the request URL to avoid
+ * the conflicting Next.js type definition for dynamic routes.
+ */
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // Extract article ID from URL path
+    const url = new URL(request.url);
+    // Typically the dynamic param "[id]" is the last segment
+    const segments = url.pathname.split("/");
+    const articleId = segments[segments.length - 1];
+
     const [session, data] = await Promise.all([
       getServerSession(),
       request.json(),
     ]);
-    
+
     if (!session?.user?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -27,7 +36,6 @@ export async function POST(
     }
 
     const { title, content, summary, categories, tags, image, imageAlt } = data;
-    const articleId = context.params.id;
 
     // Verify article ownership
     const article = await prisma.article.findUnique({
@@ -49,12 +57,14 @@ export async function POST(
       let counter = 1;
 
       // Ensure unique slug
-      while (await prisma.article.findFirst({ 
-        where: { 
-          slug,
-          id: { not: articleId } // Exclude current article
-        } 
-      })) {
+      while (
+        await prisma.article.findFirst({
+          where: {
+            slug,
+            id: { not: articleId }, // Exclude current article
+          },
+        })
+      ) {
         slug = `${baseSlug}-${counter}`;
         counter++;
       }

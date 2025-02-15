@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import UserNav from "@/components/user/UserNav";
-import { NewArticleForm } from "@/components/articles/NewArticleForm";
+import { NewArticleForm } from "../../../components/articles/NewArticleForm";
 
 export default async function NewArticlePage() {
   const session = await getServerSession();
@@ -13,17 +13,6 @@ export default async function NewArticlePage() {
 
   // Fetch categories for the dropdown
   const categories = await prisma.category.findMany({
-    select: {
-      id: true,
-      name: true,
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
-
-  // Fetch tags for autocomplete
-  const tags = await prisma.tag.findMany({
     select: {
       id: true,
       name: true,
@@ -44,7 +33,6 @@ export default async function NewArticlePage() {
       <div className="max-w-8xl mx-auto">
         <NewArticleForm 
           categories={categories}
-          existingTags={tags}
         />
       </div>
     </div>

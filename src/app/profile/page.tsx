@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { FiEdit2, FiGlobe, FiTwitter } from "react-icons/fi";
 import UserNav from "@/components/user/UserNav";
 import Link from "next/link";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 
 export default async function ProfilePage() {
@@ -50,13 +51,16 @@ export default async function ProfilePage() {
       <div className="max-w-8xl mx-auto bg-white/5 rounded-xl shadow-md p-6 space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-24 h-24 rounded-full bg-black/30 overflow-hidden">
+            <div className="w-32 h-32 rounded-full bg-black/30 overflow-hidden">
               {user.image ? (
-                <img 
-                  src={user.image} 
-                  alt={user.name || "Profile"} 
-                  className="w-full h-full object-cover"
+              <div className="relative w-full h-full">
+                <Image 
+                  src={user.image || "/default-avatar.png"}
+                  alt={`${user.name}'s profile picture`}
+                  fill
+                  className="rounded-full object-cover"
                 />
+              </div>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-400">
                   {user.name?.[0]?.toUpperCase() || "U"}

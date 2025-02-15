@@ -2,14 +2,11 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { FiUpload, FiImage } from "react-icons/fi";
+import { FiImage } from "react-icons/fi";
+import Image from "next/image";
 
 type NewArticleFormProps = {
   categories: {
-    id: string;
-    name: string;
-  }[];
-  existingTags: {
     id: string;
     name: string;
   }[];
@@ -26,7 +23,7 @@ type NewArticleFormProps = {
   };
 }
 
-export function NewArticleForm({ categories, existingTags, editMode = false, article }: NewArticleFormProps) {
+export function NewArticleForm({ categories, editMode = false, article }: NewArticleFormProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +74,7 @@ export function NewArticleForm({ categories, existingTags, editMode = false, art
       const data = await response.json();
       setPreviewImage(data.imageUrl);
       setMessage({ type: "success", text: "Image uploaded successfully!" });
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "Failed to upload image. Please try again." });
     }
   };
@@ -113,7 +110,7 @@ export function NewArticleForm({ categories, existingTags, editMode = false, art
       } else {
         router.push(`/articles/new/review/${data.articleId}`);
       }
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "Failed to create article. Please try again." });
       setIsLoading(false);
     }
@@ -195,11 +192,14 @@ export function NewArticleForm({ categories, existingTags, editMode = false, art
             className="relative w-full h-64 border-2 border-dashed border-white/10 rounded-lg overflow-hidden cursor-pointer hover:border-white/20 transition-colors"
           >
             {previewImage ? (
-              <img 
-                src={previewImage} 
-                alt="Article preview" 
-                className="w-full h-full object-cover"
-              />
+              <div className="relative w-full h-full">
+                <Image 
+                  src={previewImage} 
+                  alt="Article preview" 
+                  fill
+                  className="object-cover"
+                />
+              </div>
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
                 <FiImage size={48} className="mb-2" />
