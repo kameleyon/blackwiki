@@ -1,157 +1,143 @@
-"use client";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
+import AdminNav from "@/components/admin/AdminNav";
+import { FiUsers, FiFileText, FiFlag, FiActivity } from "react-icons/fi";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
+async function getAdminStats() {
+  const [totalUsers, totalArticles, pendingArticles, totalReports] = await Promise.all([
+    prisma.user.count(),
+    prisma.article.count(),
+    prisma.article.count({
+      where: { status: "pending" }
+    }),
+    prisma.article.count({
+      where: { status: "reported" }
+    })
+  ]);
 
-interface User {
-  id: string;
-  name: string | null;
-  email: string;
-  role: string;
-  image: string | null;
-  lastActive: Date | null;
+  const recentActivity = await prisma.article.findMany({
+    take: 5,
+    orderBy: { updatedAt: "desc" },
+    include: {
+      author: {
+        select: {
+          name: true,
+          email: true
+        }
+      }
+    }
+  });
+
+  return {
+    totalUsers,
+    totalArticles,
+    pendingArticles,
+    totalReports,
+    recentActivity
+  };
 }
 
-export default function AdminDashboard() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("/api/admin/users");
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to fetch users");
-        }
-        
-        setUsers(data.users);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const handleRoleChange = async (userId: string, newRole: string) => {
-    try {
-      const response = await fetch("/api/admin/users/role", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, role: newRole }),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to update role");
-      }
-
-      setUsers(users.map(user => 
-        user.id === userId ? { ...user, role: newRole } : user
-      ));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update role");
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+export default async function AdminDashboard() {
+  const session = await getServerSession();
+  
+  if (!session?.user?.email) {
+    redirect("/auth/signin");
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-destructive/10 text-destructive p-4 rounded-lg">
-          {error}
-        </div>
-      </div>
-    );
+  // Get user role
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { role: true }
+  });
+
+  if (user?.role !== "admin") {
+    redirect("/dashboard");
   }
+
+  const stats = await getAdminStats();
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-3xl font-bold mb-8">User Management</h1>
-        
-        <div className="bg-secondary/10 rounded-xl p-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-secondary/20">
-                  <th className="text-left py-4 px-4">User</th>
-                  <th className="text-left py-4 px-4">Email</th>
-                  <th className="text-left py-4 px-4">Role</th>
-                  <th className="text-left py-4 px-4">Last Active</th>
-                  <th className="text-left py-4 px-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} className="border-b border-secondary/10">
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        {user.image && (
-              <Image
-                src={user.image || '/default-avatar.png'}
-                alt={user.name || 'User'}
-                width={40}
-                height={40}
-                className="rounded-full"
-                unoptimized
-              />
-                        )}
-                        <span>{user.name || "Unnamed User"}</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">{user.email}</td>
-                    <td className="py-4 px-4">
-                      <select
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        className="bg-secondary/5 rounded px-2 py-1"
-                      >
-                        <option value="user">User</option>
-                        <option value="editor">Editor</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </td>
-                    <td className="py-4 px-4">
-                      {user.lastActive
-                        ? new Date(user.lastActive).toLocaleDateString()
-                        : "Never"}
-                    </td>
-                    <td className="py-4 px-4">
-                      <button
-                        onClick={() => {/* TODO: View user details */}}
-                        className="text-primary hover:underline"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold pl-4">Admin Dashboard</h1>
+      </div>
+
+      <AdminNav />
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white/5 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/60 text-sm">Total Users</p>
+              <h3 className="text-2xl font-semibold mt-1">{stats.totalUsers}</h3>
+            </div>
+            <div className="bg-white/10 p-3 rounded-lg">
+              <FiUsers className="w-6 h-6 text-white/80" />
+            </div>
           </div>
         </div>
-      </motion.div>
+
+        <div className="bg-white/5 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/60 text-sm">Total Articles</p>
+              <h3 className="text-2xl font-semibold mt-1">{stats.totalArticles}</h3>
+            </div>
+            <div className="bg-white/10 p-3 rounded-lg">
+              <FiFileText className="w-6 h-6 text-white/80" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/5 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/60 text-sm">Pending Reviews</p>
+              <h3 className="text-2xl font-semibold mt-1">{stats.pendingArticles}</h3>
+            </div>
+            <div className="bg-white/10 p-3 rounded-lg">
+              <FiActivity className="w-6 h-6 text-white/80" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/5 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/60 text-sm">Reports</p>
+              <h3 className="text-2xl font-semibold mt-1">{stats.totalReports}</h3>
+            </div>
+            <div className="bg-white/10 p-3 rounded-lg">
+              <FiFlag className="w-6 h-6 text-white/80" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white/5 rounded-xl p-6">
+        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+        <div className="space-y-4">
+          {stats.recentActivity.map((activity) => (
+            <div
+              key={activity.id}
+              className="flex items-center justify-between p-4 bg-white/5 rounded-lg"
+            >
+              <div>
+                <h3 className="font-medium">{activity.title}</h3>
+                <p className="text-sm text-white/60">
+                  by {activity.author.name} ({activity.author.email})
+                </p>
+              </div>
+              <div className="text-sm text-white/60">
+                {new Date(activity.updatedAt).toLocaleDateString()}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

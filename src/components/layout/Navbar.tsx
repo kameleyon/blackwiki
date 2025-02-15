@@ -25,11 +25,10 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           {session ? (
             <div className="flex items-center gap-4">
-              <Link href="/dashboard">
-              <span className="text-xs sm:text-sm text-white/70 hover:text-white/90 transition-colors">{session.user.name}</span>
+              <Link href={session.user.role === 'admin' ? '/admin' : '/dashboard'}>
+                <span className="text-xs sm:text-sm text-white/70 hover:text-white/90 transition-colors">{session.user.name}</span>
               </Link>
-              <Link href="/dashboard">
-                
+              <Link href={session.user.role === 'admin' ? '/admin' : '/dashboard'}>
                 <CircleUserRound className="w-6 h-6 text-white/70 hover:text-white/90 transition-colors" />
               </Link>
             </div>
