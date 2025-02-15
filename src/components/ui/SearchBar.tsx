@@ -27,14 +27,14 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          className="search-input text-sm"
-          placeholder="Search Black history, culture, and knowledge..."
+          className="search-input p-6 text-sm"
+          placeholder="Search Black culture, and knowledge..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         <button
           type="submit"
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
         >
           <svg
             className="w-6 h-6 text-primary"

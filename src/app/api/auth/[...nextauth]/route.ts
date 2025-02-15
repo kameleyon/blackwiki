@@ -119,10 +119,17 @@ const handler = NextAuth({
       }
       return session;
     },
-    async redirect({ url }) {
-      // Always use relative URLs
-      if (url.startsWith("/")) return url
-      return '/dashboard'
+    async redirect({ url, baseUrl }) {
+      // Handle error pages
+      if (url.includes('/auth/error')) {
+        return `${baseUrl}/auth/error`
+      }
+      // Handle successful sign-in
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`
+      }
+      // Default to dashboard
+      return `${baseUrl}/dashboard`
     }
   },
   pages: {

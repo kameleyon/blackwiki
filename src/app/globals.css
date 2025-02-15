@@ -95,7 +95,7 @@
 }
 
 .search-input {
-  @apply w-full h-14 px-6 text-sm bg-white/5 border border-white/10 shadow-md shadow-black rounded-full 
+  @apply w-full h-8 px-6 text-xs sm:text-sm bg-white/5 border border-white/10 shadow-sm md:shadow-lg shadow-black rounded-full 
          focus:outline-none focus:border-white/30 transition-all duration-300;
 }
 
@@ -119,4 +119,14 @@
 .animate-gradient {
   background-size: 200% auto;
   animation: gradient 4s linear infinite;
+}
+
+/* Responsive utilities */
+@layer utilities {
+  .web-only {
+    @apply mobile:hidden block;
+  }
+  .mobile-only {
+    @apply hidden mobile:block;
+  }
 }

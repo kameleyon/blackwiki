@@ -14,6 +14,9 @@ function ErrorContent() {
     configuration: "There is a problem with the server configuration.",
     accessdenied: "You do not have permission to sign in.",
     verification: "The verification link is invalid or has expired.",
+    credentials: "Invalid email or password. Please try again.",
+    invalidcredentials: "Invalid email or password. Please try again.",
+    missingcredentials: "Please provide both email and password.",
   };
 
   const message = error ? errorMessages[error] || errorMessages.default : errorMessages.default;
@@ -30,12 +33,20 @@ function ErrorContent() {
         <p className="text-destructive/80">{message}</p>
       </div>
 
-      <Link
-        href="/"
-        className="block text-center text-primary hover:text-primary/80 transition-colors"
-      >
-        ← Return to Home
-      </Link>
+      <div className="flex flex-col gap-4 items-center">
+        <Link
+          href="/auth/signin"
+          className="block text-center text-primary hover:text-primary/80 transition-colors"
+        >
+          ← Return to Sign In
+        </Link>
+        <Link
+          href="/"
+          className="block text-center text-primary/60 hover:text-primary/80 transition-colors text-sm"
+        >
+          Go to Home
+        </Link>
+      </div>
     </motion.div>
   );
 }

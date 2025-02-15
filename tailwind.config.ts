@@ -15,6 +15,9 @@ const config: Config = {
       },
     },
     extend: {
+      screens: {
+        'mobile': {'max': '768px'},
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
