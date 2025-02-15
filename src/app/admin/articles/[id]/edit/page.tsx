@@ -22,11 +22,15 @@ async function getArticle(id: string) {
   });
 }
 
-export default async function AdminArticleEditPage({
-  params
-}: {
-  params: { id: string }
-}) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+export default async function AdminArticleEditPage(props: any) {
+  const { params } = props;
+
+  if (!params?.id) {
+    redirect("/admin/articles");
+    return null;
+  }
   const session = await getServerSession();
   
   if (!session?.user?.email) {
