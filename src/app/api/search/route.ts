@@ -32,19 +32,40 @@ export async function GET(request: Request) {
       summary: article.summary,
       source: 'blackwiki' as const,
       url: `/articles/${article.slug}`,
-      categories: article.categories.map((c: { name: string }) => c.name),
-      tags: article.tags.map((t: { name: string }) => t.name),
+      categories: article.categories,
+      tags: article.tags,
+      author: article.author,
+      views: article.views,
+      updatedAt: article.updatedAt,
     }));
 
-    // Combine and sort results
-    // Local results appear first, followed by Wikipedia results
+    // Transform Wikipedia results to match the format
+    const formattedWikiResults = wikiResults.map((result) => ({
+      ...result,
+      source: 'wikipedia' as const,
+      categories: undefined,
+      tags: undefined,
+      author: undefined,
+      views: undefined,
+      updatedAt: undefined,
+    }));
+
+    // Combine results, with local results first
     const combinedResults = {
       query,
-      results: [...formattedLocalResults, ...wikiResults],
-      totalResults: formattedLocalResults.length + wikiResults.length,
+      results: [
+        ...formattedLocalResults.sort((a, b) => {
+          if (a.views === b.views) {
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          }
+          return (b.views || 0) - (a.views || 0);
+        }),
+        ...formattedWikiResults
+      ],
+      totalResults: formattedLocalResults.length + formattedWikiResults.length,
       sources: {
         blackwiki: formattedLocalResults.length,
-        wikipedia: wikiResults.length,
+        wikipedia: formattedWikiResults.length,
       },
     };
 

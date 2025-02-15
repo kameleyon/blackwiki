@@ -5,9 +5,19 @@ import { motion } from "framer-motion";
 import { useState, useEffect, Suspense } from "react";
 
 interface SearchResult {
+  id: string;
   title: string;
-  snippet: string;
+  summary: string;
   url: string;
+  source: 'blackwiki' | 'wikipedia';
+  categories?: { id: string; name: string }[];
+  tags?: { id: string; name: string }[];
+  author?: {
+    name: string;
+    email: string;
+  };
+  views?: number;
+  updatedAt?: Date;
 }
 
 function SearchContent() {
@@ -57,14 +67,55 @@ function SearchContent() {
             transition={{ duration: 0.3, delay: index * 0.1 }}
             className="bg-secondary/10 rounded-xl p-6"
           >
-            <h2 className="text-xl font-semibold mb-2">{result.title}</h2>
-            <p className="text-muted-foreground mb-4">{result.snippet}</p>
-            <div className="flex items-center gap-4">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-xl font-semibold mb-2">{result.title}</h2>
+                <p className="text-muted-foreground">{result.summary}</p>
+              </div>
+              <span className={`px-2 py-1 rounded-full text-xs ${
+                result.source === 'blackwiki' 
+                  ? 'bg-white/20 text-white' 
+                  : 'bg-blue-500/20 text-blue-200'
+              }`}>
+                {result.source}
+              </span>
+            </div>
+            
+            {result.source === 'blackwiki' && (
+              <div className="space-y-4">
+                {/* Categories and Tags */}
+                <div className="flex flex-wrap gap-2">
+                  {result.categories?.map(category => (
+                    <span key={category.id} className="px-2 py-1 bg-white/10 rounded-full text-xs">
+                      {category.name}
+                    </span>
+                  ))}
+                  {result.tags?.map(tag => (
+                    <span key={tag.id} className="px-2 py-1 bg-white/5 rounded-full text-xs">
+                      #{tag.name}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Metadata */}
+                <div className="flex items-center gap-4 text-sm text-white/60">
+                  {result.author && (
+                    <span>By {result.author.name}</span>
+                  )}
+                  {result.views !== undefined && (
+                    <span>{result.views} views</span>
+                  )}
+                  {result.updatedAt && (
+                    <span>Updated {new Date(result.updatedAt).toLocaleDateString()}</span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-4 mt-4">
               <a
                 href={result.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-primary hover:underline flex items-center gap-2"
               >
                 Read more →
               </a>

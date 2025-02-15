@@ -9,20 +9,37 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export async function searchArticles(query: string) {
+  const searchTerms = query.split(' ').filter(term => term.length > 0);
+  
   return prisma.article.findMany({
     where: {
-      OR: [
-        { title: { contains: query } },
-        { content: { contains: query } },
-        { summary: { contains: query } },
-      ],
+      AND: searchTerms.map(term => ({
+        OR: [
+          { title: { contains: term, mode: 'insensitive' } },
+          { content: { contains: term, mode: 'insensitive' } },
+          { summary: { contains: term, mode: 'insensitive' } },
+          { categories: { some: { name: { contains: term, mode: 'insensitive' } } } },
+          { tags: { some: { name: { contains: term, mode: 'insensitive' } } } },
+        ],
+      })),
       isPublished: true,
+      status: 'approved',
     },
     include: {
+      author: {
+        select: {
+          name: true,
+          email: true
+        }
+      },
       categories: true,
       tags: true,
     },
-    take: 10,
+    orderBy: [
+      { views: 'desc' },
+      { updatedAt: 'desc' }
+    ],
+    take: 20,
   });
 }
 

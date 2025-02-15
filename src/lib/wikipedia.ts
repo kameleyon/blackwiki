@@ -1,3 +1,5 @@
+import { SearchResult } from '@/types/index';
+
 interface WikiSearchResult {
   title: string;
   snippet: string;
@@ -9,6 +11,8 @@ interface WikiResponse {
     search?: WikiSearchResult[];
   };
 }
+
+type WikipediaSearchResult = Omit<SearchResult, 'categories' | 'tags' | 'author' | 'views' | 'updatedAt'>;
 
 export async function searchWikipedia(query: string) {
   const searchUrl = new URL('https://en.wikipedia.org/w/api.php');
@@ -26,13 +30,15 @@ export async function searchWikipedia(query: string) {
     const response = await fetch(searchUrl.toString());
     const data: WikiResponse = await response.json();
     
-    return data.query?.search?.map(result => ({
+    const results: WikipediaSearchResult[] = data.query?.search?.map(result => ({
       id: result.pageid.toString(),
       title: result.title,
       summary: result.snippet.replace(/<\/?[^>]+(>|$)/g, ''), // Remove HTML tags
-      source: 'wikipedia',
+      source: 'wikipedia' as const,
       url: `https://en.wikipedia.org/wiki/${encodeURIComponent(result.title.replace(/ /g, '_'))}`,
     })) || [];
+
+    return results;
   } catch (error) {
     console.error('Wikipedia API error:', error);
     return [];
