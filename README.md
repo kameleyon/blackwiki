@@ -85,11 +85,17 @@ See our [Progress Tracker](PROGRESS.md) for detailed development status.
    ```
    Required environment variables:
    ```env
+   # Database
    DATABASE_URL="file:./dev.db"
+
+   # Authentication
    NEXTAUTH_SECRET="your-secret-key"
-   NEXTAUTH_URL="http://localhost:3000"
    GITHUB_ID="your-github-oauth-id"
    GITHUB_SECRET="your-github-oauth-secret"
+
+   # Deployment (required in production)
+   NEXT_PUBLIC_BASE_URL="http://localhost:3000"  # In development
+   # NEXT_PUBLIC_BASE_URL="https://your-domain.com"  # In production
    ```
 
 4. Initialize the database:
@@ -109,24 +115,63 @@ The application will be available at `http://localhost:3000`.
 
 ```
 blackwiki/
-├── prisma/               # Database schema and migrations
-├── public/              # Static assets
+├── prisma/                # Database schema and migrations
+├── public/               # Static assets
+│   └── uploads/         # User-uploaded content
 ├── src/
-│   ├── app/            # Next.js 14 app directory
-│   │   ├── api/       # API routes
-│   │   ├── articles/  # Article pages
-│   │   ├── auth/      # Authentication pages
-│   │   └── profile/   # User profile pages
-│   ├── components/    # Reusable React components
-│   │   ├── layout/   # Layout components
-│   │   └── ui/       # UI components
-│   └── lib/          # Utility functions and configurations
-└── types/            # TypeScript type definitions
+│   ├── app/             # Next.js 14 app directory
+│   │   ├── api/        # API routes
+│   │   │   ├── admin/ # Admin-specific endpoints
+│   │   │   ├── auth/  # Authentication endpoints
+│   │   │   └── articles/ # Article management
+│   │   ├── articles/   # Article pages
+│   │   ├── auth/       # Authentication pages
+│   │   ├── dashboard/  # User dashboard
+│   │   ├── profile/    # User profile pages
+│   │   └── settings/   # User settings
+│   ├── components/     # Reusable React components
+│   │   ├── articles/  # Article-related components
+│   │   ├── dashboard/ # Dashboard components
+│   │   ├── layout/    # Layout components
+│   │   ├── ui/        # UI components
+│   │   └── user/      # User-related components
+│   └── lib/           # Utility functions and configurations
+│       ├── auth.ts    # Authentication utilities
+│       ├── config.ts  # Environment configuration
+│       ├── db.ts      # Database client
+│       └── factChecker.ts # AI fact-checking system
+└── types/             # TypeScript type definitions
 ```
+
+## Deployment
+
+### Environment Setup
+
+1. Configure your deployment platform (Render, DigitalOcean, etc.) with the required environment variables.
+2. Set `NEXT_PUBLIC_BASE_URL` to your production domain (e.g., https://your-domain.com).
+3. Ensure your database connection string is properly configured for production.
+
+### Platform-Specific Notes
+
+- The application uses dynamic base URL configuration for authentication redirects
+- All authentication callbacks and redirects will use the `NEXT_PUBLIC_BASE_URL` value
+- In development, it defaults to http://localhost:3000 if not set
+- File uploads are stored in the `public/uploads` directory
 
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, and contribute to the project.
+
+### Development Workflow
+
+1. Fork and clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables (see above)
+4. Run database migrations: `npx prisma migrate dev`
+5. Start the development server: `npm run dev`
+6. Make your changes
+7. Run tests and linting: `npm run lint`
+8. Submit a pull request
 
 ### Development Guidelines
 
