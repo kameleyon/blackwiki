@@ -21,12 +21,22 @@ export default function SignIn() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: true,
-        callbackUrl: 'https://jellyfish-app-2-7ub8x.ondigitalocean.app/dashboard'
+        redirect: false, // Set redirect to false to handle it manually
       });
 
       if (result?.error) {
         setErrorMessage("Invalid email or password");
+      } else {
+        // Assume user role is stored in result.user.role
+        const userRole = result.user?.role;
+
+        let redirectUrl = `${process.env.BASE_URL}/dashboard`; // Default to dashboard
+        if (userRole === 'admin') {
+          redirectUrl = `${process.env.BASE_URL}/admin`;
+        }
+
+        // Manually redirect
+        window.location.href = redirectUrl;
       }
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "An error occurred. Please try again.");
@@ -124,7 +134,7 @@ export default function SignIn() {
 
         <button
           onClick={async () => {
-            signIn("github", { callbackUrl: 'https://jellyfish-app-2-7ub8x.ondigitalocean.app/dashboard' });
+            signIn("github", { callbackUrl: `${process.env.BASE_URL}/dashboard` });
           }}
           className="w-full flex items-center justify-center gap-3 bg-gray-500 hover:bg-secondary/80 
                      text-foreground px-6 py-3 rounded-lg transition-colors"
