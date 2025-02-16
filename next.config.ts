@@ -5,10 +5,10 @@ const config: NextConfig = {
   images: {
     domains: ['localhost'],
     unoptimized: true,
-    BASE_URL: process.env.BASE_URL,
   },
   env: {
     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
+    BASE_URL: process.env.BASE_URL,
   },
   experimental: {
     serverActions: {
