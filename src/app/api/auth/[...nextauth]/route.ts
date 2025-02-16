@@ -68,16 +68,16 @@ const handler = NextAuth({
           const dbUser = await prisma.user.findUnique({
             where: { email: token.email || "" },
             select: {
-            id: true,
-            role: true,
-            bio: true,
-            location: true,
-            website: true,
-            wecherp: true,
-            expertise: true,
-            interests: true,
-            joinedAt: true,
-            lastActive: true,
+              id: true,
+              role: true,
+              bio: true,
+              location: true,
+              website: true,
+              wecherp: true,
+              expertise: true,
+              interests: true,
+              joinedAt: true,
+              lastActive: true,
             },
           });
 
@@ -93,16 +93,16 @@ const handler = NextAuth({
                 role: "user", // Default role
               },
               select: {
-            id: true,
-            role: true,
-            bio: true,
-            location: true,
-            website: true,
-            wecherp: true,
-            expertise: true,
-            interests: true,
-            joinedAt: true,
-            lastActive: true,
+                id: true,
+                role: true,
+                bio: true,
+                location: true,
+                website: true,
+                wecherp: true,
+                expertise: true,
+                interests: true,
+                joinedAt: true,
+                lastActive: true,
               },
             });
             Object.assign(token, newUser);
@@ -120,19 +120,25 @@ const handler = NextAuth({
       return session;
     },
     async redirect({ url }) {
-      const { getBaseUrl } = await import('@/lib/config').then(m => m.config);
-      const baseUrl = getBaseUrl();
-      
-      // Handle error pages
-      if (url.includes('/auth/error')) {
-        return `${baseUrl}/auth/error`
+      try {
+        const { config } = await import('@/lib/config');
+        const { getBaseUrl } = config;
+        const baseUrl = getBaseUrl();
+        
+        // Handle error pages
+        if (url?.includes('/auth/error')) {
+          return `${baseUrl}/auth/error`;
+        }
+        // Handle successful sign-in
+        if (url?.startsWith('/')) {
+          return `${baseUrl}${url}`;
+        }
+        // Default to dashboard
+        return `${baseUrl}/dashboard`;
+      } catch (error) {
+        console.error("Error importing config:", error);
+        return "/auth/error";
       }
-      // Handle successful sign-in
-      if (url.startsWith('/')) {
-        return `${baseUrl}${url}`
-      }
-      // Default to dashboard
-      return `${baseUrl}/dashboard`
     }
   },
   pages: {
