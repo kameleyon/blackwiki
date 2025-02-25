@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
 import slugify from "slugify";
+import { processArticleContent } from "@/lib/markdownCleaner";
 
 export async function POST(request: Request) {
   try {
@@ -34,12 +35,16 @@ export async function POST(request: Request) {
       counter++;
     }
 
+    // Clean and process the content before saving
+    const cleanedContent = processArticleContent(content);
+    const cleanedSummary = processArticleContent(summary);
+
     // Create article
     const article = await prisma.article.create({
       data: {
         title,
-        content,
-        summary,
+        content: cleanedContent,
+        summary: cleanedSummary,
         slug,
         image,
         imageAlt,

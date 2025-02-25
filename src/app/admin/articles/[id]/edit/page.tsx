@@ -2,9 +2,10 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import AdminNav from "@/components/admin/AdminNav";
+import CleanMarkdownButton from "@/components/admin/CleanMarkdownButton";
 import { FiUser, FiCalendar, FiEye } from "react-icons/fi";
 import Image from "next/image";
-import ReactMarkdown from "react-markdown";
+import { processArticleContent, markdownToHtml } from "@/lib/markdownCleaner";
 
 async function getArticle(id: string) {
   return await prisma.article.findUnique({
@@ -80,10 +81,18 @@ export default async function AdminArticleEditPage(props: any) {
 
             <h3 className="text-xl font-bold mb-4">{article.title}</h3>
             
+            <div className="bg-white/5 p-4 rounded-lg mb-6">
+              <div 
+                className="text-sm italic article-content"
+                dangerouslySetInnerHTML={{ __html: markdownToHtml(processArticleContent(article.summary)) }}
+              />
+            </div>
+            
             <div className="prose prose-invert prose-sm max-w-none">
-              <ReactMarkdown>
-                {article.content}
-              </ReactMarkdown>
+              <div 
+                dangerouslySetInnerHTML={{ __html: markdownToHtml(processArticleContent(article.content)) }}
+                className="article-content"
+              />
             </div>
 
             <div className="mt-6 pt-6 border-t border-white/10">
@@ -144,6 +153,15 @@ export default async function AdminArticleEditPage(props: any) {
             </div>
           </div>
 
+          <div className="bg-white/5 rounded-xl p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Markdown Tools</h2>
+            <CleanMarkdownButton articleId={article.id} />
+            <p className="mt-4 text-sm text-white/60">
+              Use this tool to clean and normalize the markdown formatting in this article.
+              This will fix inconsistent formatting, headings, emphasis, and other markdown elements.
+            </p>
+          </div>
+          
           <form 
             action="/api/admin/articles/update" 
             method="POST"

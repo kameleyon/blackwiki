@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { searchArticles } from '@/lib/db';
 import { searchWikipedia } from '@/lib/wikipedia';
+import { prisma } from '@/lib/db';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -15,6 +16,37 @@ export async function GET(request: Request) {
 
   try {
     console.log('Search query:', query); // Debug log
+
+    // Debug: Check if there are ANY articles in the database at all
+    const allArticles = await prisma.article.findMany({
+      take: 5, // Just get a few to check
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        isPublished: true,
+        status: true,
+      },
+    });
+    console.log('Debug - Sample of all articles in database:', allArticles);
+
+    // Debug: Try a direct query for the specific term
+    const directQuery = await prisma.article.findMany({
+      where: {
+        OR: [
+          { title: { contains: query.toLowerCase() } },
+          { content: { contains: query.toLowerCase() } },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        isPublished: true,
+        status: true,
+      },
+    });
+    console.log(`Debug - Direct query for "${query}":`, directQuery);
 
     // Search both sources in parallel
     const [localResults, wikiResults] = await Promise.all([

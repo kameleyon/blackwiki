@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
 import slugify from "slugify";
+import { processArticleContent } from "@/lib/markdownCleaner";
 
 /**
  * Update an existing article without relying on Next's
@@ -70,13 +71,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     }
 
+    // Clean and process the content before saving
+    const cleanedContent = processArticleContent(content);
+    const cleanedSummary = processArticleContent(summary);
+
     // Update article
     const updatedArticle = await prisma.article.update({
       where: { id: articleId },
       data: {
         title,
-        content,
-        summary,
+        content: cleanedContent,
+        summary: cleanedSummary,
         slug,
         image,
         imageAlt,

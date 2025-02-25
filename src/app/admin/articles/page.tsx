@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import AdminNav from "@/components/admin/AdminNav";
+import CleanMarkdownButton from "@/components/admin/CleanMarkdownButton";
 import { FiEdit, FiEye, FiClock, FiUser } from "react-icons/fi";
 import Link from "next/link";
 
@@ -49,6 +50,9 @@ export default async function AdminArticlesPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold pl-4">Article Management</h1>
+        <div>
+          <CleanMarkdownButton />
+        </div>
       </div>
 
       <AdminNav />
