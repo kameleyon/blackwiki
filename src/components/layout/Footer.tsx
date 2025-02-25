@@ -6,7 +6,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
           <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} BlackWiki. All rights reserved.
+            © {new Date().getFullYear()} AfroWiki. All rights reserved.
           </div>
           <div className="flex space-x-6">
             <Link 

@@ -12,7 +12,7 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16 min-h-screen flex flex-col items-center">
+    <div className="container mx-auto px-4 py-4 flex flex-col items-center">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -20,7 +20,7 @@ export default function Home() {
         className="text-center"
       >
         <h1 className="logo-text">
-          BlackWiki
+          AfroWiki
         </h1>
         <motion.p
           initial={{ opacity: 0 }}

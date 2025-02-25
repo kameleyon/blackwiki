@@ -1,8 +1,8 @@
-# BlackWiki
+# AfroWiki
 
 <div align="center">
 
-![BlackWiki Logo](public/bwikilogo.png)
+![AfroWiki Logo](public/bwikilogo.png)
 
 An AI-driven encyclopedia focused on Black and African culture, knowledge, and history.
 
@@ -16,7 +16,7 @@ An AI-driven encyclopedia focused on Black and African culture, knowledge, and h
 
 ## Overview
 
-BlackWiki is a modern, AI-enhanced knowledge platform dedicated to documenting and preserving Black history, culture, and achievements worldwide. Our platform combines community-contributed content with AI-driven insights to provide a comprehensive and focused resource for exploring Black heritage and contemporary culture.
+AfroWiki is a modern, AI-enhanced knowledge platform dedicated to documenting and preserving Black history, culture, and achievements worldwide. Our platform combines community-contributed content with AI-driven insights to provide a comprehensive and focused resource for exploring Black heritage and contemporary culture.
 
 ## Features
 
@@ -70,8 +70,8 @@ See our [Progress Tracker](PROGRESS.md) for detailed development status.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/blackwiki.git
-   cd blackwiki
+   git clone https://github.com/yourusername/AfroWiki.git
+   cd AfroWiki
    ```
 
 2. Install dependencies:
@@ -114,7 +114,7 @@ The application will be available at `http://localhost:3000`.
 ## Project Structure
 
 ```
-blackwiki/
+AfroWiki/
 ├── prisma/                # Database schema and migrations
 ├── public/               # Static assets
 │   └── uploads/         # User-uploaded content
@@ -190,7 +190,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - The open-source community for various tools and libraries
-- All contributors who help make BlackWiki better
+- All contributors who help make AfroWiki better
 - The Black community for inspiring this project
 
 ## Contact

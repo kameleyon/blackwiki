@@ -1,6 +1,6 @@
-# Contributing to BlackWiki
+# Contributing to AfroWiki
 
-First off, thank you for considering contributing to BlackWiki! It's people like you that make BlackWiki such a great tool for preserving and sharing Black culture and history.
+First off, thank you for considering contributing to AfroWiki! It's people like you that make AfroWiki such a great tool for preserving and sharing Black culture and history.
 
 ## Code of Conduct
 
@@ -33,7 +33,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 * Provide a step-by-step description of the suggested enhancement
 * Provide specific examples to demonstrate the steps
 * Describe the current behavior and explain which behavior you expected to see instead
-* Explain why this enhancement would be useful to most BlackWiki users
+* Explain why this enhancement would be useful to most AfroWiki users
 
 ### Pull Requests
 
@@ -48,7 +48,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/kameleyon/blackwiki.git
+   git clone https://github.com/kameleyon/AfroWiki.git
    ```
 
 2. Create a branch

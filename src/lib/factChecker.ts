@@ -8,7 +8,7 @@ interface OpenRouterResponse {
 
 export async function checkArticleFacts(title: string, content: string) {
   try {
-    const prompt = `As a fact-checker for BlackWiki, an encyclopedia focused on Black history and culture, please verify the accuracy of the following article. Focus only on identifying and correcting any inaccurate statements.
+    const prompt = `As a fact-checker for AfroWiki, an encyclopedia focused on Black history and culture, please verify the accuracy of the following article. Focus only on identifying and correcting any inaccurate statements.
 
 Title: ${title}
 
@@ -25,7 +25,7 @@ Format your response in markdown for better readability.`;
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://blackwiki.com',
+        'HTTP-Referer': 'https://AfroWiki.com',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BlackWiki - African Knowledge & Culture",
+  title: "AfroWiki - African Knowledge & Culture",
   description: "AI-driven encyclopedia focused on Black and African culture, knowledge, and history.",
 };
 

@@ -14,12 +14,12 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-4">
           <Image 
             src="/bwlogo.png"
-            alt="BlackWiki Logo"
+            alt="AfroWiki Logo"
             width={60}
             height={40}
             className=" h-auto mb-1"
           />
-        <span className="text-xl font-bold web-only">BlackWiki</span>
+        <span className="text-xl font-bold web-only">AfroWiki</span>
         </Link>
 
         <div className="flex items-center gap-4">

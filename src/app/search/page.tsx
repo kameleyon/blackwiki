@@ -9,7 +9,7 @@ interface SearchResult {
   title: string;
   summary: string;
   url: string;
-  source: 'blackwiki' | 'wikipedia';
+  source: 'AfroWiki' | 'wikipedia';
   categories?: { id: string; name: string }[];
   tags?: { id: string; name: string }[];
   author?: {
@@ -73,7 +73,7 @@ function SearchContent() {
                 <p className="text-muted-foreground">{result.summary}</p>
               </div>
               <span className={`px-2 py-1 rounded-full text-xs ${
-                result.source === 'blackwiki' 
+                result.source === 'AfroWiki' 
                   ? 'bg-white/20 text-white' 
                   : 'bg-blue-500/20 text-blue-200'
               }`}>
@@ -81,7 +81,7 @@ function SearchContent() {
               </span>
             </div>
             
-            {result.source === 'blackwiki' && (
+            {result.source === 'AfroWiki' && (
               <div className="space-y-4">
                 {/* Categories and Tags */}
                 <div className="flex flex-wrap gap-2">

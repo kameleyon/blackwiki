@@ -5,7 +5,7 @@ export interface SearchResult {
   title: string;
   summary: string;
   url: string;
-  source: 'blackwiki' | 'wikipedia';
+  source: 'AfroWiki' | 'wikipedia';
   categories?: { id: string; name: string }[];
   tags?: { id: string; name: string }[];
   author?: {

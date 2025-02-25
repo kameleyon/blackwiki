@@ -70,7 +70,7 @@ export default function Register() {
       >
         <h1 className="text-4xl font-bold text-center mb-8">Create Account</h1>
         <p className="text-muted-foreground text-center mb-8">
-          Join BlackWiki to contribute to the knowledge base
+          Join AfroWiki to contribute to the knowledge base
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

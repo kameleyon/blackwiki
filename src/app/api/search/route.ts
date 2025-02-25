@@ -30,7 +30,7 @@ export async function GET(request: Request) {
       id: article.id,
       title: article.title,
       summary: article.summary,
-      source: 'blackwiki' as const,
+      source: 'AfroWiki' as const,
       url: `/articles/${article.slug}`,
       categories: article.categories,
       tags: article.tags,
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
       ],
       totalResults: formattedLocalResults.length + formattedWikiResults.length,
       sources: {
-        blackwiki: formattedLocalResults.length,
+        AfroWiki: formattedLocalResults.length,
         wikipedia: formattedWikiResults.length,
       },
     };
