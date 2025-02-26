@@ -13,7 +13,7 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+    <div className="container mx-auto px-4 py-4 flex flex-col items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

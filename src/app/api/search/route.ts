@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { searchArticles } from '@/lib/db';
 import { searchWikipedia } from '@/lib/wikipedia';
 import { prisma } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -48,9 +49,12 @@ export async function GET(request: Request) {
     });
     console.log(`Debug - Direct query for "${query}":`, directQuery);
 
+    // Get current user
+    const currentUser = await getCurrentUser();
+
     // Search both sources in parallel
     const [localResults, wikiResults] = await Promise.all([
-      searchArticles(query),
+      searchArticles(query, currentUser?.id),
       searchWikipedia(query),
     ]);
 

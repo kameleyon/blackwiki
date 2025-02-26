@@ -8,15 +8,14 @@ if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 
-export async function searchArticles(query: string) {
+export async function searchArticles(query: string, currentUserId?: string) {
   // Log the search query for debugging
   console.log('Search query:', query);
   
-  // Based on our test script, we found that articles might be approved but not published
-  // So we need to check for either condition
   return prisma.article.findMany({
     where: {
       AND: [
+        // Search in title, content, and summary
         {
           OR: [
             { title: { contains: query.toLowerCase() } },
@@ -24,10 +23,18 @@ export async function searchArticles(query: string) {
             { summary: { contains: query.toLowerCase() } },
           ],
         },
+        // Show only public articles or user's own articles
         {
           OR: [
-            { isPublished: true },
-            { status: 'approved' },
+            // Public articles (published or approved)
+            {
+              OR: [
+                { isPublished: true },
+                { status: 'approved' },
+              ],
+            },
+            // Or articles owned by current user
+            ...(currentUserId ? [{ authorId: currentUserId }] : []),
           ],
         },
       ],
@@ -50,9 +57,22 @@ export async function searchArticles(query: string) {
   });
 }
 
-export async function getArticleBySlug(slug: string) {
-  return prisma.article.findUnique({
-    where: { slug },
+export async function getArticleBySlug(slug: string, currentUserId?: string) {
+  return prisma.article.findFirst({
+    where: {
+      slug,
+      OR: [
+        // Public articles (published or approved)
+        {
+          OR: [
+            { isPublished: true },
+            { status: 'approved' }
+          ]
+        },
+        // Or articles owned by current user
+        ...(currentUserId ? [{ authorId: currentUserId }] : [])
+      ]
+    },
     include: {
       categories: true,
       tags: true,

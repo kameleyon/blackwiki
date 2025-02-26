@@ -14,24 +14,37 @@ export default async function ArticlesPage() {
     redirect('/auth/signin');
   }
 
+  // Get only the current user's articles
   const articles = await prisma.article.findMany({
     where: {
-      authorId: user.id
+      authorId: user.id // Filter by current user's ID
     },
     orderBy: {
       createdAt: 'desc'
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
     }
   });
 
-  // Calculate statistics for the greeting header
+  console.log('Articles found:', articles.map(a => ({ id: a.id, title: a.title, authorId: a.authorId })));
+
+  // Calculate statistics for the greeting header (for current user only)
   const totalArticles = await prisma.article.count({
-    where: { authorId: user.id }
+    where: {
+      authorId: user.id
+    }
   });
   
   const publishedArticles = await prisma.article.count({
     where: { 
-      authorId: user.id,
-      isPublished: true
+      isPublished: true,
+      authorId: user.id
     }
   });
 

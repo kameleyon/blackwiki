@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { DefaultSession, DefaultUser } from "next-auth";
+import { prisma } from "./db";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -32,7 +33,14 @@ declare module "next-auth" {
 
 export async function getCurrentUser() {
   const session = await getServerSession();
-  return session?.user;
+  if (!session?.user?.email) return null;
+  
+  // Get the actual user record from database
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email }
+  });
+  
+  return user;
 }
 
 export function isEditor(user: { role: string } | undefined) {

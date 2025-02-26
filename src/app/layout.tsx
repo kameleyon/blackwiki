@@ -23,7 +23,7 @@ export default function RootLayout({
         <SessionProvider>
           <div className="min-h-screen bg-background flex flex-col">
             <Navbar />
-            <main className="flex-1 flex flex-col mt-8 pt-20">
+            <main className="flex-1 flex flex-col mt-8 pt-20 pb-8">
               {children}
             </main>
             <Footer />

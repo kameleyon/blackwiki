@@ -13,26 +13,38 @@ export default async function DraftsPage() {
     redirect('/auth/signin');
   }
 
-  // Get user's draft articles
+  // Get only the current user's draft articles
   const drafts = await prisma.article.findMany({
     where: {
-      authorId: user.id,
-      isPublished: false
+      isPublished: false,
+      authorId: user.id // Filter by current user's ID
     },
     orderBy: {
       updatedAt: 'desc'
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
     }
   });
 
-  // Calculate statistics for the greeting header
+  console.log('Drafts found:', drafts.map(d => ({ id: d.id, title: d.title, authorId: d.authorId })));
+
+  // Calculate statistics for the greeting header (for current user only)
   const totalArticles = await prisma.article.count({
-    where: { authorId: user.id }
+    where: {
+      authorId: user.id
+    }
   });
   
   const publishedArticles = await prisma.article.count({
     where: { 
-      authorId: user.id,
-      isPublished: true
+      isPublished: true,
+      authorId: user.id
     }
   });
 

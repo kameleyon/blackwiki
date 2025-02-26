@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { getCurrentUser } from '@/lib/auth';
 import ArticleEngagement from '@/components/articles/ArticleEngagement';
 import RelatedArticles from '@/components/articles/RelatedArticles';
 import { FiClock, FiEye, FiCalendar } from 'react-icons/fi';
@@ -10,7 +11,8 @@ import { processArticleContent, markdownToHtml } from '@/lib/markdownCleaner';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug);
+  const currentUser = await getCurrentUser();
+  const article = await getArticleBySlug(params.slug, currentUser?.id);
   if (!article) return { title: 'Article Not Found' };
   
   return {
@@ -25,9 +27,10 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 }
 
 export default async function ArticlePage({ params }: any) {
-  const article = await getArticleBySlug(params.slug);
+  const currentUser = await getCurrentUser();
+  const article = await getArticleBySlug(params.slug, currentUser?.id);
   
-  if (!article || (!article.isPublished && article.status !== 'approved')) {
+  if (!article) {
     notFound();
   }
   

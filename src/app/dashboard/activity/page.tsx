@@ -22,26 +22,38 @@ export default async function ActivityPage() {
     redirect('/auth/signin');
   }
 
-  // Get user's recent articles
+  // Get only the current user's recent articles
   const recentArticles = await prisma.article.findMany({
     where: {
-      authorId: user.id
+      authorId: user.id // Filter by current user's ID
     },
     orderBy: {
       updatedAt: 'desc'
     },
-    take: 5
+    take: 5,
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    }
   });
+
+  console.log('Recent articles found:', recentArticles.map(a => ({ id: a.id, title: a.title, authorId: a.authorId })));
   
-  // Calculate statistics for the greeting header
+  // Calculate statistics for the greeting header (for current user only)
   const totalArticles = await prisma.article.count({
-    where: { authorId: user.id }
+    where: {
+      authorId: user.id
+    }
   });
   
   const publishedArticles = await prisma.article.count({
     where: { 
-      authorId: user.id,
-      isPublished: true
+      isPublished: true,
+      authorId: user.id
     }
   });
 

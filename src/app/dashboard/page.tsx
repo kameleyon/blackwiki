@@ -20,108 +20,205 @@ import GreetingHeader from '@/components/dashboard/GreetingHeader';
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   
+  console.log("DEBUG user:", user);
+  
   if (!user) {
     redirect('/auth/signin');
   }
 
-  // Get user's articles
+  // Get only the current user's articles
   const articles = await prisma.article.findMany({
     where: {
-      authorId: user.id
+      authorId: user.id // Filter by current user's ID
     },
     orderBy: {
       createdAt: 'desc'
     },
-    take: 5 // Only get the 5 most recent articles for the dashboard
+    take: 5, // Only get the 5 most recent articles for the dashboard
+    include: {
+      categories: true,
+      tags: true,
+      author: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    }
   });
 
-  // Calculate statistics
+  console.log('Articles found:', articles.map(a => ({ id: a.id, title: a.title, authorId: a.authorId })));
+
+  // Get only the current user's draft articles
+  const drafts = await prisma.article.findMany({
+    where: {
+      isPublished: false,
+      authorId: user.id // Filter by current user's ID
+    },
+    orderBy: {
+      updatedAt: 'desc'
+    },
+    take: 3, // Only get the 3 most recent drafts
+    include: {
+      categories: true,
+      tags: true,
+      author: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    }
+  });
+
+  console.log('Drafts found:', drafts.map(d => ({ id: d.id, title: d.title, authorId: d.authorId })));
+
+  // Calculate statistics for the current user only
   const totalArticles = await prisma.article.count({
-    where: { authorId: user.id }
+    where: {
+      authorId: user.id
+    }
   });
   
   const publishedArticles = await prisma.article.count({
     where: { 
-      authorId: user.id,
-      isPublished: true
+      isPublished: true,
+      authorId: user.id
     }
   });
   
   const totalViews = await prisma.article.aggregate({
-    where: { authorId: user.id },
     _sum: { views: true }
   });
+
+  // Get edits for activity timeline (only for the current user's articles or edits made by the current user)
+  const edits = await prisma.edit.findMany({
+    where: {
+      OR: [
+        { userId: user.id }, // Edits made by the current user
+        { 
+          article: {
+            authorId: user.id // Edits on articles authored by the current user
+          }
+        }
+      ]
+    },
+    orderBy: {
+      createdAt: 'desc'
+    },
+    take: 5,
+    include: {
+      article: true,
+      user: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    }
+  });
+
+  console.log('Edits found:', edits.map(e => ({ id: e.id, articleId: e.articleId, userId: e.userId })));
+
+  // Get articles with status changes for activity timeline (only for the current user's articles)
+  const statusChangedArticles = await prisma.article.findMany({
+    where: {
+      status: {
+        in: ['approved', 'in review']
+      },
+      authorId: user.id // Filter by current user's ID
+    },
+    orderBy: {
+      updatedAt: 'desc'
+    },
+    take: 5,
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    }
+  });
+
+  console.log('Status changed articles found:', statusChangedArticles.map(a => ({ id: a.id, title: a.title, authorId: a.authorId, status: a.status })));
+
+  // Combine edits and status changes into activity timeline
+  const activityTimeline = [
+    ...edits.map(edit => ({
+      id: edit.id,
+      type: 'edit',
+      title: `Updated article "${edit.article.title}"`,
+      articleId: edit.articleId,
+      articleTitle: edit.article.title,
+      date: edit.createdAt
+    })),
+    ...statusChangedArticles.map(article => ({
+      id: article.id,
+      type: article.status === 'approved' ? 'review' : 'publish',
+      title: article.status === 'approved' 
+        ? `Article "${article.title}" approved` 
+        : `Published "${article.title}"`,
+      articleId: article.id,
+      articleTitle: article.title,
+      date: article.updatedAt
+    }))
+  ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 4);
+
+  // Generate notifications based on recent activities
+  const notifications = [
+    ...statusChangedArticles.map(article => ({
+      id: article.id,
+      type: 'review',
+      message: article.status === 'approved' 
+        ? `Your article "${article.title}" has been approved` 
+        : `Your article "${article.title}" is in review`,
+      articleId: article.id,
+      date: article.updatedAt
+    }))
+  ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 3);
 
   // Get user's interests for personalized recommendations
   const userInterests = user.interests?.split(',').map(i => i.trim().toLowerCase()) || [];
 
-  // Mock data for activity timeline
-  const activityTimeline = [
-    { 
-      id: 1, 
-      type: 'edit', 
-      title: 'Updated article "The Harlem Renaissance"', 
-      date: new Date(Date.now() - 1000 * 60 * 60 * 2) // 2 hours ago
-    },
-    { 
-      id: 2, 
-      type: 'comment', 
-      title: 'Received comment on "African Diaspora"', 
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24) // 1 day ago
-    },
-    { 
-      id: 3, 
-      type: 'publish', 
-      title: 'Published "History of Jazz Music"', 
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2) // 2 days ago
-    },
-    { 
-      id: 4, 
-      type: 'review', 
-      title: 'Article "Civil Rights Movement" approved', 
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3) // 3 days ago
+  // Get all categories for recommendations
+  const categories = await prisma.category.findMany({
+    include: {
+      articles: {
+        select: {
+          id: true
+        }
+      }
     }
-  ];
+  });
 
-  // Mock data for notifications
-  const notifications = [
-    { 
-      id: 1, 
-      type: 'comment', 
-      message: 'New comment on your article', 
-      date: new Date(Date.now() - 1000 * 60 * 30) // 30 minutes ago
-    },
-    { 
-      id: 2, 
-      type: 'review', 
-      message: 'Your article has been approved', 
-      date: new Date(Date.now() - 1000 * 60 * 60 * 5) // 5 hours ago
-    },
-    { 
-      id: 3, 
-      type: 'mention', 
-      message: 'You were mentioned in a discussion', 
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24) // 1 day ago
-    }
-  ];
+  // Get all tags for recommendations
+  const tags = await prisma.tag.findMany();
 
-  // All possible topic recommendations
-  const allRecommendations = [
-    { id: 1, title: 'African American Literature', category: 'Literature', tags: ['literature', 'writing', 'books'] },
-    { id: 2, title: 'Civil Rights Movement', category: 'History', tags: ['history', 'politics', 'activism'] },
-    { id: 3, title: 'Jazz and Blues', category: 'Music', tags: ['music', 'arts', 'culture'] },
-    { id: 4, title: 'African Diaspora', category: 'History', tags: ['history', 'culture', 'geography'] },
-    { id: 5, title: 'Black Cinema', category: 'Film', tags: ['film', 'arts', 'entertainment'] },
-    { id: 6, title: 'Hip Hop Evolution', category: 'Music', tags: ['music', 'culture', 'entertainment'] },
-    { id: 7, title: 'Black Scientists and Inventors', category: 'Science', tags: ['science', 'technology', 'innovation'] },
-    { id: 8, title: 'Contemporary Black Artists', category: 'Art', tags: ['art', 'culture', 'contemporary'] }
-  ];
+  // Create recommendations based on categories and user interests
+  const allRecommendations = categories.map(category => {
+    // Extract relevant tags for this category
+    const categoryTags = tags
+      .filter(tag => tag.name.toLowerCase().includes(category.name.toLowerCase()) || 
+                    category.name.toLowerCase().includes(tag.name.toLowerCase()))
+      .map(tag => tag.name.toLowerCase());
+    
+    return {
+      id: category.id,
+      title: category.name,
+      category: category.name,
+      description: category.description || `Articles about ${category.name}`,
+      articleCount: category.articles.length,
+      tags: categoryTags
+    };
+  });
   
   // Filter recommendations based on user interests if available
   let recommendations = allRecommendations;
   if (userInterests.length > 0) {
     recommendations = allRecommendations.filter(rec => 
-      rec.tags.some(tag => userInterests.includes(tag))
+      rec.tags.some(tag => userInterests.some(interest => tag.includes(interest) || interest.includes(tag)))
     );
     
     // If no matches, fall back to all recommendations
@@ -130,8 +227,15 @@ export default async function DashboardPage() {
     }
   }
   
-  // Take just 3 recommendations
-  recommendations = recommendations.slice(0, 3);
+  // Sort by article count and take just 3 recommendations
+  recommendations = recommendations
+    .sort((a, b) => b.articleCount - a.articleCount)
+    .slice(0, 3);
+
+  // Calculate contribution statistics
+  const totalEdits = await prisma.edit.count();
+  
+  const totalContributions = totalArticles + totalEdits;
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
@@ -178,9 +282,9 @@ export default async function DashboardPage() {
                 <h3 className="text-sm font-medium text-gray-400">Contributions</h3>
                 <FiBarChart2 className="text-white/60" size={18} />
               </div>
-              <p className="text-2xl font-semibold">{totalArticles + 8}</p>
+              <p className="text-2xl font-semibold">{totalContributions}</p>
               <div className="mt-2 text-xs text-gray-500">
-                Articles, edits & reviews
+                {totalArticles} articles, {totalEdits} edits
               </div>
             </div>
             
@@ -219,6 +323,9 @@ export default async function DashboardPage() {
                         <span className="flex items-center mr-3">
                           <FiEye size={12} className="mr-1" />
                           {article.views} views
+                        </span>
+                        <span className="flex items-center mr-3">
+                          By {article.author?.name || 'Unknown'}
                         </span>
                         <span className={`px-2 py-0.5 rounded-full text-xs ${
                           article.isPublished
@@ -266,7 +373,7 @@ export default async function DashboardPage() {
                       {activity.type === 'publish' && <FiFileText size={14} />}
                       {activity.type === 'review' && <FiCheckCircle size={14} />}
                     </div>
-                    {activity.id !== activityTimeline.length && (
+                    {activityTimeline.indexOf(activity) !== activityTimeline.length - 1 && (
                       <div className="absolute top-8 bottom-0 left-1/2 w-px bg-gray-700 -translate-x-1/2"></div>
                     )}
                   </div>
@@ -322,26 +429,44 @@ export default async function DashboardPage() {
           
           {/* Drafts & Quick Access */}
           <div className="bg-white/5 rounded-xl shadow-sm shadow-black">
-            <div className="p-4 border-b border-gray-700">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h2 className="text-lg font-medium">Drafts</h2>
+              <Link href="/dashboard/drafts" className="text-sm text-gray-400 hover:text-white">
+                View all
+              </Link>
             </div>
             
-            <div className="p-4 border-b border-gray-800">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">The Black Panthers</h3>
-                <span className="text-xs text-gray-400">2 days ago</span>
+            {drafts.length > 0 ? (
+              <>
+                {drafts.map((draft) => (
+                  <div key={draft.id} className="p-4 border-b border-gray-800">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium">{draft.title}</h3>
+                      <span className="text-xs text-gray-400">{formatRelativeTime(draft.updatedAt)}</span>
+                    </div>
+                    <div className="text-xs text-gray-400 mb-3">
+                      Last edited on {new Date(draft.updatedAt).toLocaleDateString()}
+                    </div>
+                    <div className="flex justify-between">
+                      <Link 
+                        href={`/articles/edit/${draft.id}`}
+                        className="text-xs text-gray-400 hover:text-white flex items-center"
+                      >
+                        <FiEdit size={12} className="mr-1" />
+                        Continue editing
+                      </Link>
+                      <span className="text-xs text-gray-500">
+                        {getCompletionPercentage(draft)}% complete
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="p-6 text-center text-gray-500">
+                No drafts yet.
               </div>
-              <div className="text-xs text-gray-400 mb-3">
-                Last edited on Feb 24, 2025
-              </div>
-              <div className="flex justify-between">
-                <button className="text-xs text-gray-400 hover:text-white flex items-center">
-                  <FiEdit size={12} className="mr-1" />
-                  Continue editing
-                </button>
-                <span className="text-xs text-gray-500">60% complete</span>
-              </div>
-            </div>
+            )}
             
             <div className="p-4">
               <Link 
@@ -384,6 +509,42 @@ export default async function DashboardPage() {
       </div>
     </div>
   );
+}
+
+// Helper function to calculate completion percentage
+function getCompletionPercentage(draft: {
+  title?: string;
+  summary?: string;
+  content?: string;
+  categories?: { id: string }[];
+  tags?: { name: string }[];
+}): number {
+  let score = 0;
+  
+  // Title exists and has reasonable length
+  if (draft.title && draft.title.length > 10) score += 20;
+  else if (draft.title) score += 10;
+  
+  // Summary exists
+  if (draft.summary && draft.summary.length > 50) score += 20;
+  else if (draft.summary) score += 10;
+  
+  // Content exists and has reasonable length
+  if (draft.content) {
+    const contentLength = draft.content.length;
+    if (contentLength > 2000) score += 40;
+    else if (contentLength > 1000) score += 30;
+    else if (contentLength > 500) score += 20;
+    else score += 10;
+  }
+  
+  // Has categories
+  if (draft.categories && draft.categories.length > 0) score += 10;
+  
+  // Has tags
+  if (draft.tags && draft.tags.length > 0) score += 10;
+  
+  return Math.min(100, score);
 }
 
 // Helper function to format relative time
