@@ -52,7 +52,7 @@ export default function AboutPage() {
         
         <h2 className="text-2xl font-semibold mt-8 mb-4">Join Our Community</h2>
         <p>
-          AfroWiki is more than just a website—it's a community of contributors, researchers, educators, 
+          AfroWiki is more than just a website—it&apos;s a community of contributors, researchers, educators, 
           and knowledge seekers. We welcome anyone who shares our commitment to documenting and celebrating 
           Black history and culture.
         </p>
@@ -69,7 +69,7 @@ export default function AboutPage() {
         
         <h2 className="text-2xl font-semibold mt-8 mb-4">Contact Us</h2>
         <p>
-          Have questions, suggestions, or feedback? We'd love to hear from you! 
+          Have questions, suggestions, or feedback? We&apos;d love to hear from you! 
           Contact us at info@afrowiki.org.
         </p>
       </div>

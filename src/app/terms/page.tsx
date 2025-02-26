@@ -42,7 +42,7 @@ export default function TermsPage() {
         <h2 className="text-2xl font-semibold mt-8 mb-4">6. Limitation of Liability</h2>
         <p>
           AfroWiki and its contributors are not responsible for any damages resulting from the use or inability to use our services.
-          The content on AfroWiki is provided "as is" without warranty of any kind.
+          The content on AfroWiki is provided &quot;as is&quot; without warranty of any kind.
         </p>
         
         <h2 className="text-2xl font-semibold mt-8 mb-4">7. Contact Information</h2>

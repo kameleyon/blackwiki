@@ -3,7 +3,7 @@ import { NextConfig } from 'next';
 const config: NextConfig = {
   output: 'standalone',
   images: {
-    domains: ['localhost', 'jellyfish-app-2-7ub8x.ondigitalocean.app', 'afrowiki.org'],
+    domains: ['localhost', 'afrowiki.onrender.com', 'afrowiki.org'],
     unoptimized: true,
   },
   env: {
@@ -13,7 +13,7 @@ const config: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:3000', 'jellyfish-app-2-7ub8x.ondigitalocean.app', 'afrowiki.org'],
+      allowedOrigins: ['localhost:3000', 'afrowiki.onrender.com', 'afrowiki.org'],
       bodySizeLimit: '2mb',
     },
   },

@@ -1,5 +1,6 @@
 // Simple script to test the database and search functionality
 import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 async function main() {

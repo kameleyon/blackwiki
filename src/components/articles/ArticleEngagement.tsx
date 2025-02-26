@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { FiThumbsUp, FiBookmark, FiShare2, FiMessageSquare } from 'react-icons/fi';
 
 interface ArticleEngagementProps {
-  articleId: string;
+  // Using _ to indicate intentionally unused prop
+  _articleId?: string;
 }
 
 export default function ArticleEngagement({}: ArticleEngagementProps) {

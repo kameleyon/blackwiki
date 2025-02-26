@@ -12,8 +12,9 @@
  */
 
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
 import { processArticleContent } from '../lib/markdownCleaner.js';
+
+const prisma = new PrismaClient();
 
 async function main() {
   const articleId = process.argv[2];

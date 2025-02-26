@@ -114,7 +114,7 @@ export default async function ArticlePage({ params }: any) {
           )}
           
           {/* Article Engagement */}
-          <ArticleEngagement articleId={article.id} />
+          <ArticleEngagement _articleId={article.id} />
           
           {/* References */}
           {article.references.length > 0 && (

@@ -6,6 +6,7 @@
  */
 
 import { linkableTerms, shouldLinkTerm, getCanonicalTerm } from '@/config/linkable-terms';
+// Note: linkingRules is imported but not used directly in this file
 
 /**
  * Clean and normalize markdown content
