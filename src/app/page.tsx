@@ -22,7 +22,7 @@ export default function Home() {
       >
         <div className="flex justify-center w-full mb-8">
           <Image 
-            src="/afroWiki.png"
+            src="/afrowiki.png"
             alt="AfroWiki Logo"
             width={200}
             height={150}
