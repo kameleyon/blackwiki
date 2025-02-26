@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { NewArticleForm } from "@/components/articles/NewArticleForm";
 import UserNav from "@/components/user/UserNav";
+import { getCurrentUser } from "@/lib/auth";
+import GreetingHeader from "@/components/dashboard/GreetingHeader";
 
 /**
  * Final workaround for the Next.js 15 type conflict:
@@ -21,10 +23,24 @@ export default async function EditArticlePage(props: any) {
   }
 
   const session = await getServerSession();
-  if (!session?.user?.email) {
+  const currentUser = await getCurrentUser();
+  
+  if (!session?.user?.email || !currentUser) {
     redirect("/auth/signin");
     return null;
   }
+  
+  // Calculate statistics for the greeting header
+  const totalArticles = await prisma.article.count({
+    where: { authorId: currentUser.id }
+  });
+  
+  const publishedArticles = await prisma.article.count({
+    where: { 
+      authorId: currentUser.id,
+      isPublished: true
+    }
+  });
 
   // Get user ID
   const user = await prisma.user.findUnique({
@@ -65,11 +81,15 @@ export default async function EditArticlePage(props: any) {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Navigation */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold pl-4 mb-4">Edit Article</h1>
-      </div>
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
+      {/* Personalized Header */}
+      <GreetingHeader 
+        user={currentUser} 
+        totalArticles={totalArticles} 
+        publishedArticles={publishedArticles} 
+        pageName="Edit Article"
+      />
+      
       <UserNav currentPath="/articles/edit" />
 
       <div className="max-w-4xl mx-auto">

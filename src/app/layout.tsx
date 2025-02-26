@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <SessionProvider>
-          <div className="min-h-screen bg-background flex flex-col relative">
+          <div className="min-h-screen bg-background flex flex-col">
             <Navbar />
             <main className="flex-1 flex flex-col mt-8 pt-20">
               {children}
