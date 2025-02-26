@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { 
   FiEye, 
   FiBookmark, 
-  FiCalendar, 
   FiClock,
   FiSearch,
   FiFilter,
@@ -94,7 +93,7 @@ export default async function SavedArticlesPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
       {/* Personalized Header */}
       <GreetingHeader 
         user={user} 

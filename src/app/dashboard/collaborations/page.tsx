@@ -3,14 +3,12 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import { 
-  FiUsers, 
   FiEdit, 
   FiEye, 
   FiMessageSquare, 
   FiClock,
   FiCalendar,
   FiCheckCircle,
-  FiAlertCircle,
   FiPlus
 } from 'react-icons/fi';
 import DashboardNav from '@/components/dashboard/DashboardNav';
@@ -105,7 +103,7 @@ export default async function CollaborationsPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
       {/* Personalized Header */}
       <GreetingHeader 
         user={user} 
@@ -210,7 +208,7 @@ export default async function CollaborationsPage() {
                   
                   <div className="flex items-center">
                     <div className="flex -space-x-2 mr-3">
-                      {collab.collaborators.slice(0, 3).map((collaborator, index) => (
+                      {collab.collaborators.slice(0, 3).map((collaborator) => (
                         <div 
                           key={collaborator.id}
                           className="w-8 h-8 rounded-full bg-white/20 border-2 border-black flex items-center justify-center text-xs"

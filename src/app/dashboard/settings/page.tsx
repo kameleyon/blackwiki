@@ -1,16 +1,11 @@
 import { getCurrentUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
-import Link from 'next/link';
 import { 
-  FiLayout, 
   FiGrid, 
   FiList, 
   FiColumns, 
-  FiEye, 
-  FiEyeOff, 
-  FiCheck,
-  FiArrowLeft
+  FiCheck
 } from 'react-icons/fi';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import GreetingHeader from '@/components/dashboard/GreetingHeader';
@@ -46,7 +41,7 @@ export default async function DashboardSettingsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
       {/* Personalized Header */}
       <GreetingHeader 
         user={user} 

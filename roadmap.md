@@ -23,32 +23,53 @@ AfroWiki is an AI-enhanced encyclopedia platform focused on Black history, cultu
 ## Development Roadmap
 
 ### 1. User Dashboard Enhancement
-Current State: Basic dashboard with article management
+Current State: Enhanced dashboard with personalized greeting, statistics, and consistent layout
 Needed Improvements:
-- [ ] Interactive statistics dashboard
-  * Contribution metrics visualization
+- [x] Layout and footer visibility
+  * Fixed layout issues across all pages
+  * Ensured footer is visible at the bottom of the screen
+  * Added consistent min-height to containers
+- [x] Personalized greeting header
+  * Time-based greeting (morning/afternoon/evening)
+  * User statistics display
+  * Page context awareness
+- [x] Basic interactive statistics dashboard
+  * Article count metrics
+  * View count display
+  * Contribution summary
+  * Collaborator information
+- [ ] Advanced interactive statistics
+  * Detailed contribution metrics visualization
   * Article impact statistics
   * Personal goals and achievements
-- [ ] Activity timeline
-  * Article history tracking
-  * Interaction logs
-  * Contribution calendar
-- [ ] Content Management
+- [x] Basic activity timeline
+  * Mock activity data display
+  * Different activity types (edits, comments, publications, reviews)
+  * Relative time formatting
+- [ ] Enhanced activity timeline
+  * Real data integration
+  * Detailed interaction logs
+  * Complete contribution calendar
+- [x] Basic content management
+  * Draft listing
+  * Progress tracking
+  * Quick access to recent edits
+- [ ] Advanced content management
   * Draft management system with auto-save
   * Article templates
-  * Quick access to recent edits
-- [ ] Personalization
-  * Content recommendations
+- [x] Basic personalization
+  * Content recommendations based on interests
+- [ ] Advanced personalization
   * Customizable dashboard layout
   * Reading list management
-- [ ] Collaboration Tools
+- [ ] Collaboration tools
   * Team writing features
   * Peer review requests
   * Mentorship connections
-- [ ] Notification System
-  * Article updates
-  * Interaction alerts
-  * Review requests
+- [x] Basic notification system
+  * Mock notification display
+- [ ] Enhanced notification system
+  * Real-time notifications
   * Achievement notifications
 
 ### 2. Admin Dashboard Expansion

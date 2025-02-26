@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
-import { FiEdit, FiTrash2, FiEye, FiClock, FiCalendar } from 'react-icons/fi';
+import { FiEdit, FiClock, FiCalendar } from 'react-icons/fi';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import GreetingHeader from '@/components/dashboard/GreetingHeader';
 
@@ -37,7 +37,7 @@ export default async function DraftsPage() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
       {/* Personalized Header */}
       <GreetingHeader 
         user={user} 
@@ -160,7 +160,13 @@ export default async function DraftsPage() {
 }
 
 // Helper function to calculate completion percentage
-function getCompletionPercentage(draft: any): number {
+function getCompletionPercentage(draft: {
+  title?: string;
+  summary?: string;
+  content?: string;
+  categories?: { id: string }[];
+  tags?: { name: string }[];
+}): number {
   let score = 0;
   
   // Title exists and has reasonable length

@@ -4,13 +4,11 @@ import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import { 
   FiEdit, 
-  FiTrash2, 
   FiEye, 
   FiBarChart2, 
   FiFileText, 
   FiUsers, 
   FiStar, 
-  FiClock,
   FiArrowUp,
   FiCalendar,
   FiCheckCircle,
@@ -136,7 +134,7 @@ export default async function DashboardPage() {
   recommendations = recommendations.slice(0, 3);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
       {/* Personalized Header */}
       <GreetingHeader 
         user={user} 

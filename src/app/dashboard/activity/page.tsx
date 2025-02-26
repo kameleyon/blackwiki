@@ -9,7 +9,6 @@ import {
   FiStar, 
   FiMessageSquare, 
   FiCheckCircle,
-  FiAlertCircle,
   FiCalendar,
   FiClock
 } from 'react-icons/fi';
@@ -136,7 +135,7 @@ export default async function ActivityPage() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
       {/* Personalized Header */}
       <GreetingHeader 
         user={user} 
@@ -188,7 +187,7 @@ export default async function ActivityPage() {
                           
                           {activity.type === 'comment' && (
                             <div className="bg-white/5 rounded p-3 text-sm text-gray-400 mb-2">
-                              "{activity.comment}"
+                              &ldquo;{activity.comment}&rdquo;
                               <div className="mt-1 text-xs text-gray-500">
                                 - {activity.commentAuthor}
                               </div>
