@@ -1,5 +1,5 @@
 // Script to find all articles belonging to Jo Constant
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function findJoConstantArticles() {
