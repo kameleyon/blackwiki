@@ -5,7 +5,7 @@ export default function ArticleNotFound() {
     <div className="container mx-auto px-4 py-16 text-center">
       <h1 className="text-3xl font-bold mb-6">Article Not Found</h1>
       <p className="text-white/70 mb-8 max-w-md mx-auto">
-        The article you're looking for doesn't exist or may not be published yet.
+        The article you&apos;re looking for doesn&apos;t exist or may not be published yet.
       </p>
       <div className="flex justify-center gap-4">
         <Link 

@@ -5,7 +5,7 @@
  * across all articles in the AfroWiki platform.
  */
 
-import { linkableTerms, linkingRules, shouldLinkTerm, getCanonicalTerm } from '@/config/linkable-terms';
+import { linkableTerms, shouldLinkTerm, getCanonicalTerm } from '@/config/linkable-terms';
 
 /**
  * Clean and normalize markdown content

@@ -11,9 +11,9 @@
  * If no articleId is provided, all articles will be processed.
  */
 
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
-const { processArticleContent } = require('../lib/markdownCleaner');
+import { processArticleContent } from '../lib/markdownCleaner.js';
 
 async function main() {
   const articleId = process.argv[2];

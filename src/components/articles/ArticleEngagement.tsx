@@ -7,7 +7,7 @@ interface ArticleEngagementProps {
   articleId: string;
 }
 
-export default function ArticleEngagement({ articleId }: ArticleEngagementProps) {
+export default function ArticleEngagement({}: ArticleEngagementProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);

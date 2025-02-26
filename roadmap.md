@@ -1,8 +1,10 @@
-AfroWiki Project Assessment & Roadmap
-Based on my analysis of the codebase, AfroWiki is an AI-enhanced encyclopedia platform focused on Black history, culture, and knowledge. The project uses Next.js, TypeScript, Prisma, and Tailwind CSS, with features for user authentication, content management, and AI-powered fact-checking.
+# AfroWiki Project Assessment & Roadmap
 
-Current State Assessment
-Core Functionality
+AfroWiki is an AI-enhanced encyclopedia platform focused on Black history, culture, and knowledge. The project uses Next.js, TypeScript, Prisma, and Tailwind CSS, with features for user authentication, content management, and AI-powered fact-checking.
+
+## Current State Assessment
+
+### Core Functionality
 ✅ Authentication system with multiple sign-in options
 ✅ User roles (User, Admin)
 ✅ Basic article management (create, view, edit)
@@ -10,260 +12,233 @@ Core Functionality
 ✅ AI fact-checking using OpenRouter API
 ✅ Admin dashboard for content and user management
 ✅ User dashboard for managing personal articles
-Technical Implementation
+
+### Technical Implementation
 ✅ Next.js 14 App Router structure
 ✅ Prisma ORM with SQLite database
 ✅ Responsive UI with Tailwind CSS
 ✅ Dark mode design
 ✅ Environment configuration for development/production
-Development Roadmap
-1. UI/UX Improvements
-[ ] Fix layout issues (completed the footer visibility fix)
-[ ] Improve mobile responsiveness across all pages
-[ ] Add loading states and better error handling
-[ ] Implement consistent styling across components
-[ ] Add animations for better user experience
-2. Content Management Enhancements
-[ ] Implement rich text editor for article creation/editing
-[ ] Add support for image uploads within articles
-[ ] Create article versioning system
-[ ] Implement article review workflow
-[ ] Add article rating/feedback system
-3. User Experience Features
-[ ] Implement user notifications
-[ ] Add user activity tracking
-[ ] Create user profile pages with contribution history
-[ ] Implement social sharing features
-[ ] Add bookmarking/favorites functionality
-4. Search & Discovery Improvements
-[ ] Enhance search with filters (categories, tags, date)
-[ ] Implement advanced search options
-[ ] Create category and tag browsing pages
-[ ] Add related articles suggestions
-[ ] Implement content recommendation system
-5. AI Integration Expansion
-[ ] Enhance fact-checking capabilities
-[ ] Add AI-assisted content creation tools
-[ ] Implement automated content summarization
-[ ] Create AI-powered content recommendations
-[ ] Add sentiment analysis for user comments
-6. Admin & Moderation Tools
-[ ] Complete reports management system
-[ ] Add content moderation queue
-[ ] Implement user management tools (ban, suspend)
-[ ] Create analytics dashboard
-[ ] Add system settings management
-7. Performance Optimization
-[ ] Implement caching strategies
-[ ] Optimize image loading and processing
-[ ] Add server-side pagination for large datasets
-[ ] Implement code splitting for faster page loads
-[ ] Set up performance monitoring
-8. Deployment & Infrastructure
-[x] Fix redirect issues with authentication
-[x] Add support for multiple domains (jellyfish-app-2-7ub8x.ondigitalocean.app, afrowiki.org)
-[ ] Set up CI/CD pipeline
-[ ] Implement database backups
-[ ] Configure proper logging and monitoring
-[ ] Prepare for scaling (database, storage)
-9. Testing & Quality Assurance
-[ ] Implement unit tests for core functionality
-[ ] Add integration tests for critical user flows
-[ ] Set up end-to-end testing
-[ ] Implement accessibility testing
-[ ] Create security audit process
-10. Documentation & Community
-[ ] Create comprehensive API documentation
-[ ] Add inline code documentation
-[ ] Create user guides and tutorials
-[ ] Set up community contribution guidelines
-[ ] Implement feedback collection system
-This roadmap provides a structured approach to continue developing AfroWiki, focusing on enhancing existing features while adding new capabilities to create a comprehensive platform for Black history and culture.
 
-======================================
+## Development Roadmap
 
-Search & Discovery Enhancement Plan for AfroWiki
-Current State
-Basic search functionality exists with integration to Wikipedia API
-Search results display both AfroWiki articles and Wikipedia results
-Search results show basic information (title, summary, source)
-No dedicated article display page implementation found
-Detailed Enhancement Plan for Search & Article Display
-1. Search Results Display Improvements
-1.1 Enhanced Search Results UI
-Layout Refinement:
+### 1. User Dashboard Enhancement
+Current State: Basic dashboard with article management
+Needed Improvements:
+- [ ] Interactive statistics dashboard
+  * Contribution metrics visualization
+  * Article impact statistics
+  * Personal goals and achievements
+- [ ] Activity timeline
+  * Article history tracking
+  * Interaction logs
+  * Contribution calendar
+- [ ] Content Management
+  * Draft management system with auto-save
+  * Article templates
+  * Quick access to recent edits
+- [ ] Personalization
+  * Content recommendations
+  * Customizable dashboard layout
+  * Reading list management
+- [ ] Collaboration Tools
+  * Team writing features
+  * Peer review requests
+  * Mentorship connections
+- [ ] Notification System
+  * Article updates
+  * Interaction alerts
+  * Review requests
+  * Achievement notifications
 
-Implement a grid/list toggle view for search results
-Add thumbnail images to search results cards
-Create distinct visual styling for AfroWiki vs Wikipedia results
-Implement skeleton loading states during search
-Result Card Enhancements:
+### 2. Admin Dashboard Expansion
+Current State: Basic user and article management
+Needed Improvements:
+- [ ] Analytics Dashboard
+  * User engagement metrics
+  * Content quality metrics
+  * Growth statistics
+  * SEO performance tracking
+- [ ] Content Moderation
+  * Advanced moderation queue
+  * AI-assisted content review
+  * Batch operations
+  * Review workflow management
+- [ ] User Management
+  * Activity monitoring
+  * Role management interface
+  * Ban/warning system
+  * User support tools
+- [ ] System Management
+  * Health monitoring
+  * Performance metrics
+  * Error tracking
+  * Configuration management
+- [ ] Quality Control
+  * Content assessment tools
+  * Fact-checking integration
+  * Version comparison
+  * Citation verification
 
-Add article preview on hover/focus
-Display publication date and reading time
-Show author information with profile image
-Include view count and engagement metrics
-Display category and tag badges with color coding
-Filtering & Sorting:
+### 3. Article Management System
+Current State: Basic creation and editing
+Needed Improvements:
+- [ ] Rich Text Editor
+  * Advanced formatting options
+  * Real-time preview
+  * Markdown support
+  * Shortcut support
+- [ ] Collaboration Features
+  * Real-time collaborative editing
+  * Comment system
+  * Change tracking
+  * Review workflow
+- [ ] Media Management
+  * Image gallery with editing tools
+  * Video embedding
+  * Document attachments
+  * Media organization
+- [ ] Content Organization
+  * Category management
+  * Tag system
+  * Related content linking
+  * Article relationships
+- [ ] Quality Tools
+  * Citation management
+  * Fact-checking integration
+  * Plagiarism detection
+  * Quality scoring
+- [ ] Version Control
+  * Detailed revision history
+  * Diff viewer
+  * Rollback capabilities
+  * Branch management
 
-Add filter sidebar with:
-Date range selector
-Category and tag filters
-Source filter (AfroWiki/Wikipedia)
-Content type filters (articles, profiles, events)
-Implement sorting options:
-Relevance (default)
-Most recent
-Most viewed
-Highest rated
-1.2 Search Experience Improvements
-Search Input Enhancements:
+### 4. Search & Discovery
+Current State: Basic search with Wikipedia integration
+Needed Improvements:
+- [ ] Advanced Search
+  * Filters (date, category, type)
+  * Sort options
+  * Search suggestions
+  * Search history
+- [ ] Content Discovery
+  * Topic exploration
+  * Related content
+  * Popular articles
+  * Featured content
+- [ ] Navigation
+  * Category browsing
+  * Topic clusters
+  * Content relationships
+  * Breadcrumbs
+- [ ] Personalization
+  * Search preferences
+  * Saved searches
+  * Reading history
+  * Recommendations
 
-Add autocomplete suggestions as user types
-Implement search history for logged-in users
-Add voice search capability
-Provide search tips and examples
-Results Navigation:
+### 5. User Experience & Interface
+Current State: Basic responsive design
+Needed Improvements:
+- [ ] Design System
+  * Typography hierarchy
+  * Color system
+  * Component library
+  * Animation guidelines
+- [ ] Interaction Design
+  * Page transitions
+  * Loading states
+  * Error handling
+  * Success feedback
+- [ ] Accessibility
+  * WCAG compliance
+  * Screen reader support
+  * Keyboard navigation
+  * High contrast mode
+- [ ] Mobile Experience
+  * Touch optimization
+  * Gesture support
+  * Responsive images
+  * Mobile navigation
+- [ ] Performance
+  * Load time optimization
+  * Smooth scrolling
+  * Lazy loading
+  * Progressive enhancement
 
-Implement pagination with configurable results per page
-Add infinite scroll option as alternative to pagination
-Create keyboard navigation between search results
-Implement "Back to results" from article view
-2. Article Display Implementation
-2.1 Article Page Layout
-Header Section:
+### 6. Community Features
+Current State: Basic user profiles
+Needed Improvements:
+- [ ] Enhanced Profiles
+  * Contribution history
+  * Expertise areas
+  * Badges/achievements
+  * Portfolio
+- [ ] Community Interaction
+  * Discussion pages
+  * Article feedback
+  * User messaging
+  * Collaboration tools
+- [ ] Knowledge Sharing
+  * User guides
+  * Help center
+  * FAQs
+  * Tutorial system
+- [ ] Moderation Tools
+  * Community guidelines
+  * Report system
+  * Content flagging
+  * Dispute resolution
+- [ ] Internationalization
+  * Translation support
+  * Cultural sensitivity
+  * Regional content
 
-Large featured image with caption
-Title with typography emphasis
-Author information with link to profile
-Publication date and last updated date
-Reading time estimate
-Category and tag badges
-Content Section:
+### 7. Technical Infrastructure
+Current State: Basic Next.js setup
+Needed Improvements:
+- [ ] Performance
+  * Image optimization
+  * Code splitting
+  * Caching strategy
+  * CDN integration
+- [ ] Security
+  * Content validation
+  * XSS protection
+  * CSRF protection
+  * Rate limiting
+- [ ] API
+  * Documentation
+  * Version control
+  * Error handling
+  * Rate limiting
+- [ ] Monitoring
+  * Error tracking
+  * Performance monitoring
+  * User analytics
+  * Health checks
+- [ ] DevOps
+  * CI/CD pipeline
+  * Automated testing
+  * Backup system
+  * Deployment automation
 
-Clean, readable typography with proper spacing
-Section headings with anchor links
-Rich media support (images, videos, embeds)
-Footnotes and citations with hover previews
-Pull quotes and highlighted sections
-Table of contents sidebar (sticky on desktop)
-Engagement Section:
+## Implementation Priority
 
-Social sharing buttons
-Bookmark/save functionality
-Rating/feedback mechanism
-View counter
-Related articles carousel
-2.2 Technical Implementation
-// src/app/articles/[slug]/page.tsx
-import { getArticleBySlug, incrementArticleViews } from '@/lib/db';
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import { formatDate } from '@/lib/utils';
-import ArticleContent from '@/components/articles/ArticleContent';
-import ArticleHeader from '@/components/articles/ArticleHeader';
-import RelatedArticles from '@/components/articles/RelatedArticles';
-import ArticleEngagement from '@/components/articles/ArticleEngagement';
-import TableOfContents from '@/components/articles/TableOfContents';
+1. User Experience & Interface
+   - Establish consistent design system
+   - Implement smooth transitions
+   - Improve mobile experience
 
-export async function generateMetadata({ params }) {
-  const article = await getArticleBySlug(params.slug);
-  if (!article) return { title: 'Article Not Found' };
-  
-  return {
-    title: `${article.title} | AfroWiki`,
-    description: article.summary,
-    openGraph: {
-      title: article.title,
-      description: article.summary,
-      images: article.image ? [article.image] : [],
-    }
-  };
-}
+2. Article Management System
+   - Enhance editor capabilities
+   - Implement collaboration features
+   - Add media management
 
-export default async function ArticlePage({ params }) {
-  const article = await getArticleBySlug(params.slug);
-  
-  if (!article || !article.isPublished || article.status !== 'approved') {
-    notFound();
-  }
-  
-  // Increment view count
-  await incrementArticleViews(article.id);
-  
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <ArticleHeader 
-          title={article.title}
-          image={article.image}
-          imageAlt={article.imageAlt}
-          categories={article.categories}
-          tags={article.tags}
-          publishDate={article.createdAt}
-          updateDate={article.updatedAt}
-          author={article.author}
-          views={article.views}
-        />
-        
-        <div className="flex flex-col md:flex-row gap-8 mt-8">
-          <div className="md:w-3/4">
-            <ArticleContent content={article.content} />
-            <ArticleEngagement articleId={article.id} />
-          </div>
-          
-          <aside className="md:w-1/4">
-            <TableOfContents content={article.content} />
-            <div className="sticky top-24">
-              <RelatedArticles 
-                categories={article.categories} 
-                tags={article.tags}
-                currentArticleId={article.id}
-              />
-            </div>
-          </aside>
-        </div>
-      </div>
-    </div>
-  );
-}
-2.3 Article Components
-ArticleHeader: Displays title, image, metadata, and author info
-ArticleContent: Renders markdown/rich text with proper styling
-TableOfContents: Extracts and displays headings with jump links
-ArticleEngagement: Handles user interactions (comments, ratings)
-RelatedArticles: Shows similar content based on categories/tags
-3. Integration Between Search and Article Display
-3.1 Seamless Transitions
-Implement smooth transitions between search results and article pages
-Add breadcrumb navigation to easily return to search results
-Preserve search state when navigating back from article
-Highlight search terms within the article content
-3.2 Cross-Promotion
-Show "People also searched for" section at bottom of article
-Add "Explore related topics" based on article categories/tags
-Implement "Continue reading" suggestions based on user history
-Create a "Discover more" section with trending articles
-4. Mobile Experience Optimization
-4.1 Responsive Design
-Optimize search results layout for mobile devices
-Create mobile-friendly article reading experience
-Implement bottom navigation for mobile article pages
-Add swipe gestures for navigating between articles
-4.2 Performance Considerations
-Implement lazy loading for images and embedded content
-Use responsive images with appropriate sizes for devices
-Optimize font loading and rendering
-Implement service worker for offline reading capability
-5. Analytics & Insights
-5.1 User Behavior Tracking
-Track search queries and result interactions
-Analyze article engagement metrics (time spent, scroll depth)
-Monitor content popularity and trending topics
-Identify user reading patterns and preferences
-5.2 Content Improvement
-Use analytics to identify content gaps
-Highlight underperforming content for improvement
-Track search queries with no results to create new content
-Analyze user feedback to improve article quality
-This comprehensive plan provides a detailed roadmap for enhancing the search experience and implementing article display functionality in AfroWiki, creating a seamless and engaging user experience for exploring Black history, culture, and knowledge.
+3. Search & Discovery
+   - Improve search functionality
+   - Add content discovery features
+   - Implement personalization
+
+This roadmap provides a structured approach to developing AfroWiki into a cutting-edge, professional platform for Black history and culture, with a focus on user experience, functionality, and community engagement.

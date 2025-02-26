@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import Image from "next/image";
+
 import { CircleUserRound } from "lucide-react";
 
 export function Navbar() {
@@ -12,14 +12,8 @@ export function Navbar() {
     <nav className="bg-[#1a1a1a] h-16 fixed top-0 left-0 right-0 z-50 shadow-md shadow-black">
       <div className="container mx-auto px-6 h-full flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4">
-          <Image 
-            src="/bwlogo.png"
-            alt="AfroWiki Logo"
-            width={60}
-            height={40}
-            className=" h-auto mb-1"
-          />
-        <span className="text-xl font-bold web-only">AfroWiki</span>
+          
+        <h1 className="text-3xl mt-2">AfroWiki</h1>
         </Link>
 
         <div className="flex items-center gap-4">

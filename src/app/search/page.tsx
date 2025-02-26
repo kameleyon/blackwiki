@@ -130,7 +130,7 @@ function SearchContent() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/5 p-4 rounded-lg">
           <div>
             <p className="text-white/70">
-              Found {searchData.totalResults} results for "{query}"
+              Found {searchData.totalResults} results for &quot;{query}&quot;
             </p>
             <div className="flex gap-2 text-xs mt-1">
               <span className="text-white/50">{searchData.sources.AfroWiki} from AfroWiki</span>
@@ -348,7 +348,7 @@ function SearchContent() {
         <div className="text-center py-12 bg-white/5 rounded-xl">
           <h2 className="text-xl font-semibold mb-2">No results found</h2>
           <p className="text-white/70 mb-6">
-            We couldn't find any matches for &quot;{query}&quot;
+            We couldn&apos;t find any matches for &quot;{query}&quot;
           </p>
           <div className="flex justify-center gap-4">
             <button 

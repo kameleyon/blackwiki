@@ -8,13 +8,8 @@ import RelatedArticles from '@/components/articles/RelatedArticles';
 import { FiClock, FiEye, FiCalendar } from 'react-icons/fi';
 import { processArticleContent, markdownToHtml } from '@/lib/markdownCleaner';
 
-interface ArticlePageProps {
-  params: {
-    slug: string;
-  };
-}
-
-export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug);
   if (!article) return { title: 'Article Not Found' };
   
@@ -29,7 +24,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   };
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage({ params }: any) {
   const article = await getArticleBySlug(params.slug);
   
   if (!article || (!article.isPublished && article.status !== 'approved')) {
