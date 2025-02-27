@@ -8,16 +8,24 @@ interface OpenRouterResponse {
 
 export async function checkArticleFacts(title: string, content: string) {
   try {
-    const prompt = `As a fact-checker for AfroWiki, an encyclopedia focused on Black history and culture, please verify the accuracy of the following article. Focus only on identifying and correcting any inaccurate statements.
+    const prompt = `As a fact-checker for AfroWiki, an encyclopedia focused on Black history and culture, please verify the accuracy of the following article and determine if it's relevant to our focus.
 
 Title: ${title}
 
 Content:
 ${content}
 
-Please analyze each factual claim and:
-1. If all facts are accurate, respond with "All facts in this article are verified as accurate."
-2. If any facts are inaccurate, list only the incorrect statements and provide the correct information written in green, you will write under it in italic font with reliable sources. Only mentionned the innacurate statement and their corrected statement. 
+Please analyze this article and provide:
+
+1. A determination of whether this article is relevant to Black history, culture, or contemporary issues. If it's not relevant, respond with "NOT_RELEVANT" at the beginning of your analysis.
+
+2. A fact check assessment:
+   - If all facts are accurate, respond with "PASS" at the beginning of your analysis.
+   - If any facts are inaccurate, respond with "FAIL" at the beginning of your analysis.
+
+3. A brief analysis explaining your determination (2-3 paragraphs maximum).
+
+4. If there are factual errors, list only the specific incorrect statements and provide corrections.
 
 Format your response in markdown for better readability.`;
 
@@ -50,15 +58,32 @@ Format your response in markdown for better readability.`;
     }
 
     const data = await response.json() as OpenRouterResponse;
+    const analysisText = data.choices[0].message.content;
+    
+    // Determine fact check status
+    let status: 'pass' | 'fail' | 'not-relevant' = 'pass'; // Default to pass
+    
+    if (analysisText.startsWith('NOT_RELEVANT')) {
+      status = 'not-relevant';
+    } else if (analysisText.startsWith('FAIL')) {
+      status = 'fail';
+    }
+    
+    // Remove the status prefix from the analysis
+    const cleanedAnalysis = analysisText
+      .replace(/^(PASS|FAIL|NOT_RELEVANT)\s*/, '')
+      .trim();
 
     return {
-      analysis: data.choices[0].message.content,
+      analysis: cleanedAnalysis,
+      status,
       success: true,
     };
   } catch (error) {
     console.error('Fact checking error:', error);
     return {
       analysis: "Error performing fact check. Please try again.",
+      status: 'pass', // Default to pass on error to not block submission
       success: false,
     };
   }

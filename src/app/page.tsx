@@ -13,7 +13,7 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4 flex flex-col items-center justify-center">
+    <div className="container mx-auto px-4 py-4 flex flex-col items-center justify-center min-h-[calc(100vh-4rem-4rem)]">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -48,7 +48,7 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.5 }}
-        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center max-w-4xl mx-auto"
+        className="mt-12 mb-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center max-w-4xl mx-auto"
       >
         <div className="p-4">
           <h2 className="text-xl font-semibold text-white/80 mb-2">History & Heritage</h2>

@@ -16,6 +16,8 @@ import {
 } from 'react-icons/fi';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import GreetingHeader from '@/components/dashboard/GreetingHeader';
+import AdvancedStatistics from '@/components/dashboard/AdvancedStatistics';
+import GoalsAndAchievements from '@/components/dashboard/GoalsAndAchievements';
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -236,6 +238,129 @@ export default async function DashboardPage() {
   const totalEdits = await prisma.edit.count();
   
   const totalContributions = totalArticles + totalEdits;
+  
+  // Mock data for advanced statistics
+  const advancedStatisticsData = {
+    contributionData: {
+      articles: totalArticles,
+      edits: totalEdits,
+      comments: Math.floor(Math.random() * 20), // Mock data
+      reviews: Math.floor(Math.random() * 10)   // Mock data
+    },
+    articleImpactData: {
+      views: [120, 230, 310, 290, 400, 450],
+      likes: [20, 40, 50, 45, 60, 70],
+      shares: [5, 10, 15, 12, 20, 25],
+      comments: [10, 20, 30, 25, 35, 40],
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+    },
+    categoryDistribution: {
+      labels: categories.slice(0, 6).map(c => c.name),
+      data: categories.slice(0, 6).map(c => c.articles.length)
+    },
+    expertiseRadar: {
+      labels: ['History', 'Culture', 'Art', 'Music', 'Literature', 'Politics'],
+      current: [7, 5, 8, 6, 4, 3],
+      target: [9, 8, 10, 8, 7, 6]
+    },
+    achievementsData: {
+      completed: 5,
+      inProgress: 3,
+      locked: 7
+    }
+  };
+  
+  // Mock data for goals and achievements
+  const goalsAndAchievementsData = {
+    achievements: [
+      {
+        id: '1',
+        title: 'Prolific Writer',
+        description: 'Published 5 or more articles',
+        icon: 'award',
+        status: 'completed' as const,
+        completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30) // 30 days ago
+      },
+      {
+        id: '2',
+        title: 'Rising Star',
+        description: 'Received 100+ views on a single article',
+        icon: 'award',
+        status: 'completed' as const,
+        completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15) // 15 days ago
+      },
+      {
+        id: '3',
+        title: 'Collaboration Champion',
+        description: 'Collaborated on 3 or more articles',
+        icon: 'award',
+        status: 'in-progress' as const,
+        progress: 66 // 2 out of 3
+      },
+      {
+        id: '4',
+        title: 'Category Expert',
+        description: 'Published 3 articles in the same category',
+        icon: 'award',
+        status: 'in-progress' as const,
+        progress: 33 // 1 out of 3
+      },
+      {
+        id: '5',
+        title: 'Fact Checker',
+        description: 'Verified facts in 10 articles',
+        icon: 'check',
+        status: 'locked' as const
+      },
+      {
+        id: '6',
+        title: 'Community Pillar',
+        description: 'Contribute to AfroWiki for 1 year',
+        icon: 'award',
+        status: 'locked' as const
+      }
+    ],
+    goals: [
+      {
+        id: '1',
+        title: 'Complete History Series',
+        description: 'Finish the series on African Kingdoms',
+        target: 5,
+        current: 2,
+        unit: 'articles',
+        deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days from now
+        category: 'Content Creation'
+      },
+      {
+        id: '2',
+        title: 'Improve Expertise',
+        description: 'Increase expertise in Music category',
+        target: 8,
+        current: 6,
+        unit: 'level',
+        category: 'Skill Development'
+      },
+      {
+        id: '3',
+        title: 'Collaboration',
+        description: 'Collaborate with other authors',
+        target: 3,
+        current: 1,
+        unit: 'collaborations',
+        deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // 60 days from now
+        category: 'Community'
+      },
+      {
+        id: '4',
+        title: 'Article Views',
+        description: 'Reach 1000 total views on all articles',
+        target: 1000,
+        current: 450,
+        unit: 'views',
+        category: 'Impact'
+      }
+    ]
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
@@ -387,6 +512,15 @@ export default async function DashboardPage() {
               ))}
             </div>
           </div>
+          
+          {/* Advanced Statistics */}
+          <AdvancedStatistics {...advancedStatisticsData} />
+          
+          {/* Goals and Achievements */}
+          <GoalsAndAchievements 
+            achievements={goalsAndAchievementsData.achievements}
+            goals={goalsAndAchievementsData.goals}
+          />
         </div>
         
         {/* Sidebar - 1/3 width on large screens */}

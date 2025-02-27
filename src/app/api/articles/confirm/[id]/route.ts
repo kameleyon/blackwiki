@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
 
-import { NextRequest } from "next/server";
+interface RouteSegment {
+  id: string;
+}
 
-export async function POST(
-  request: NextRequest,
-  context: any
-): Promise<NextResponse> {
-  const { params } = context;
-  const { id } = params;
+export async function POST(request: Request, context: { params: Promise<RouteSegment> }) {
+  const resolvedParams = await context.params;
   try {
+    const articleId = resolvedParams.id;
+    
     const [session, formData] = await Promise.all([
       getServerSession(),
       request.formData(),
@@ -24,13 +23,33 @@ export async function POST(
       );
     }
 
-    const action = formData.get("action") as string;
-    const articleId = id;
+    const action = formData.get("action");
+    console.log("Received action:", action);
+    
+    if (!action || (action !== "confirm" && action !== "cancel")) {
+      return NextResponse.json(
+        { error: `Invalid action: ${action}` },
+        { status: 400 }
+      );
+    }
+
+    // Get user ID
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
 
     const article = await prisma.article.findUnique({
       where: {
         id: articleId,
-        authorId: session.user.id,
+        authorId: user.id,
       },
     });
 

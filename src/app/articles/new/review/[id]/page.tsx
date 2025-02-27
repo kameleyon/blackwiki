@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { checkArticleFacts } from "@/lib/factChecker";
 import UserNav from "@/components/user/UserNav";
-import { FiLoader } from "react-icons/fi";
+import { FiLoader, FiBookOpen, FiLink } from "react-icons/fi";
 import Image from "next/image";
 import { EditButton } from "@/components/articles/EditButton";
 import { ArticleActions } from "@/components/articles/ArticleActions";
@@ -27,6 +27,11 @@ type Article = {
     id: string;
     name: string;
   }>;
+  references?: Array<string>;
+  metadata?: {
+    keywords?: string[];
+    description?: string;
+  };
 };
 
 /**
@@ -77,6 +82,7 @@ export default async function ReviewArticlePage(props: any) {
 
   // Get fact check results
   const factCheck = await checkArticleFacts(article.title, article.content);
+  const factCheckStatus = factCheck.status as 'pass' | 'fail' | 'not-relevant';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -143,6 +149,35 @@ export default async function ReviewArticlePage(props: any) {
               </ReactMarkdown>
             </div>
 
+            {/* References Section */}
+            {article.references && article.references.length > 0 && article.references[0] !== "" && (
+              <div className="mt-8 pt-6 border-t border-white/10">
+                <h3 className="flex items-center text-lg font-medium mb-3">
+                  <FiBookOpen className="mr-2" />
+                  References
+                </h3>
+                <ul className="space-y-2">
+                  {article.references.map((reference, index) => (
+                    <li key={index} className="text-white/70 text-sm">
+                      {reference.startsWith('http') ? (
+                        <a 
+                          href={reference} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center hover:text-white"
+                        >
+                          <FiLink size={12} className="mr-1" />
+                          {reference}
+                        </a>
+                      ) : (
+                        reference
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="mt-6 pt-6 border-t border-white/10">
               <div className="flex flex-wrap gap-2 mb-4">
                 {article.categories.map((category: { id: string; name: string }) => (
@@ -174,10 +209,12 @@ export default async function ReviewArticlePage(props: any) {
           <div className="bg-white/5 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-white/80">Fact Check Results</h2>
-              <div className="flex items-center gap-2 text-white/70 text-sm">
-                <FiLoader className="animate-spin" />
-                Analyzing...
-              </div>
+              {!factCheck.success && (
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <FiLoader className="animate-spin" />
+                  Analyzing...
+                </div>
+              )}
             </div>
 
             <div className="prose prose-invert prose-sm max-w-none leading-loose">
@@ -203,8 +240,39 @@ export default async function ReviewArticlePage(props: any) {
           <div className="bg-white/5 rounded-xl p-6">
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Actions</h2>
             
-            <ArticleActions articleId={article.id} />
+            <ArticleActions 
+              articleId={article.id} 
+              factCheckStatus={factCheckStatus}
+            />
           </div>
+
+          {/* SEO Preview */}
+          {article.metadata && (
+            <div className="bg-white/5 rounded-xl p-6">
+              <h2 className="text-xl font-semibold text-gray-100 mb-4">SEO Preview</h2>
+              
+              <div className="bg-white/5 rounded-md p-4 mb-4">
+                <h3 className="text-lg font-medium text-white/90 mb-1 line-clamp-1">{article.title}</h3>
+                <div className="text-green-400 text-xs mb-1">afrowiki.com › articles › {article.title.toLowerCase().replace(/\s+/g, '-')}</div>
+                <p className="text-sm text-white/70 line-clamp-2">
+                  {article.metadata.description || article.summary}
+                </p>
+              </div>
+              
+              {article.metadata.keywords && article.metadata.keywords.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-white/80 mb-2">Keywords</h3>
+                  <div className="flex flex-wrap gap-1">
+                    {article.metadata.keywords.map((keyword, index) => (
+                      <span key={index} className="px-2 py-0.5 bg-white/5 text-white/60 rounded text-xs">
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

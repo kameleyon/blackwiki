@@ -7,7 +7,7 @@ import { getCurrentUser } from '@/lib/auth';
  * API endpoint to clean markdown in articles
  * 
  * POST /api/articles/clean-markdown
- * - Requires authentication with admin or editor role
+ * - Requires authentication
  * - Body: { articleId?: string } (if articleId is provided, only that article will be processed)
  * - Returns: { success: boolean, message: string, processed: number }
  */
@@ -23,29 +23,32 @@ export async function POST(request: Request) {
       );
     }
     
-    // Check authorization (only admins and editors can clean markdown)
-    if (user.role !== 'admin' && user.role !== 'editor') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 403 }
-      );
-    }
-    
     // Get request body
     const body = await request.json();
     const { articleId } = body;
     
-    // Process articles
+    // If articleId is provided, check if the user is the author or has admin/editor role
     if (articleId) {
-      // Process a single article
       const article = await prisma.article.findUnique({
         where: { id: articleId },
+        select: { authorId: true, title: true, content: true }
       });
       
       if (!article) {
         return NextResponse.json(
           { error: 'Article not found' },
           { status: 404 }
+        );
+      }
+      
+      // Allow if user is the author or has admin/editor role
+      const isAuthor = article.authorId === user.id;
+      const hasRole = user.role === 'admin' || user.role === 'editor';
+      
+      if (!isAuthor && !hasRole) {
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 403 }
         );
       }
       
@@ -64,6 +67,14 @@ export async function POST(request: Request) {
         processed: 1,
       });
     } else {
+      // For bulk operations, only admins and editors are allowed
+      if (user.role !== 'admin' && user.role !== 'editor') {
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 403 }
+        );
+      }
+      
       // Process all articles
       const articles = await prisma.article.findMany();
       
