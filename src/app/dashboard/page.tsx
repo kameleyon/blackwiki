@@ -43,7 +43,7 @@ export default async function DashboardPage() {
             There was an error retrieving your user profile. Please try signing out and signing in again.
           </p>
           <div className="mt-4">
-            <Link href="/api/auth/signout" className="px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20">
+            <Link href="/auth/signout" className="px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20">
               Sign Out
             </Link>
           </div>
@@ -62,7 +62,7 @@ export default async function DashboardPage() {
             There was an error retrieving your user profile. Please try signing out and signing in again.
           </p>
           <div className="mt-4">
-            <Link href="/api/auth/signout" className="px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20">
+            <Link href="/auth/signout" className="px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20">
               Sign Out
             </Link>
           </div>
