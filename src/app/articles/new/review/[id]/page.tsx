@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { checkArticleFacts } from "@/lib/factChecker";
@@ -112,50 +112,27 @@ export default async function ReviewArticlePage({ params }: PageProps) {
   }
 
   // Get article with user check
-  const article = await prisma.article.findUnique({
+  const dbArticle = await prisma.article.findUnique({
     where: { 
       id: resolvedParams.id,
       authorId: user.id,
     },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      summary: true,
-      image: true,
-      imageAlt: true,
-      authorId: true,
-      references: {
-        select: {
-          id: true,
-          url: true,
-          title: true,
-          description: true,
-          createdAt: true,
-          articleId: true,
-        }
-      },
-      metadata: true,
-      categories: {
-        select: {
-          id: true,
-          name: true,
-        }
-      },
-      tags: {
-        select: {
-          id: true,
-          name: true,
-        }
-      },
+    include: {
+      references: true,
+      categories: true,
+      tags: true,
     }
-  }).then(data => {
-    if (!data) return null;
-    return {
-      ...data,
-      metadata: data.metadata as ArticleMetadata | null,
-    } as ArticleFromDB;
   });
+
+  // Parse metadata from the database result
+  const article: ArticleFromDB | null = dbArticle ? {
+    ...dbArticle,
+    metadata: dbArticle.metadata ? 
+      (typeof dbArticle.metadata === 'string' ? 
+        JSON.parse(dbArticle.metadata) as ArticleMetadata : 
+        dbArticle.metadata as ArticleMetadata
+      ) : null
+  } : null;
 
   if (!article) {
     redirect("/dashboard");
