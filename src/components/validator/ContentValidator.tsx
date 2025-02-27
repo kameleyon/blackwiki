@@ -91,96 +91,8 @@ const ContentValidator: React.FC<ContentValidatorProps> = ({
   const [activeTab, setActiveTab] = useState<'readability' | 'grammar' | 'links' | 'citations' | 'duplicates' | 'quality'>('readability');
   const [error, setError] = useState<string | null>(null);
 
-  const validateContent = React.useCallback(async () => {
-    if (!content) return;
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Call the validation API
-      const response = await fetch('/api/articles/validate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content,
-          title,
-          references
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to validate content');
-      }
-      
-      const result: ValidationResult = await response.json();
-      setValidation(result);
-      
-      if (onValidationComplete) {
-        onValidationComplete(result);
-      }
-    } catch (err) {
-      console.error('Validation error:', err);
-      setError('Failed to validate content. Please try again.');
-      
-      // Use mock data for demonstration if API fails
-      setValidation(getMockValidationData());
-    } finally {
-      setIsLoading(false);
-    }
-  }, [content, title, references, onValidationComplete]);
-
-  useEffect(() => {
-    if (!initialValidation) {
-      validateContent();
-    }
-  }, [initialValidation, validateContent]);
-
-  // Get readability level description
-  const getReadabilityLevel = (score: number): string => {
-    if (score >= 90) return 'Very Easy';
-    if (score >= 80) return 'Easy';
-    if (score >= 70) return 'Fairly Easy';
-    if (score >= 60) return 'Standard';
-    if (score >= 50) return 'Fairly Difficult';
-    if (score >= 30) return 'Difficult';
-    return 'Very Difficult';
-  };
-
-  // Get readability color class
-  const getReadabilityColorClass = (score: number): string => {
-    if (score >= 80) return 'validator-progress-fill-excellent';
-    if (score >= 60) return 'validator-progress-fill-good';
-    if (score >= 40) return 'validator-progress-fill-fair';
-    return 'validator-progress-fill-poor';
-  };
-
-  // Get quality level color class
-  const getQualityColorClass = (level: string): string => {
-    switch (level) {
-      case 'excellent': return 'validator-progress-fill-excellent';
-      case 'good': return 'validator-progress-fill-good';
-      case 'fair': return 'validator-progress-fill-fair';
-      case 'poor': return 'validator-progress-fill-poor';
-      default: return 'validator-progress-fill-fair';
-    }
-  };
-
-  // Get issue icon based on type
-  const getIssueIcon = (type: string) => {
-    switch (type) {
-      case 'error': return <FiAlertCircle size={16} color="rgba(248, 113, 113, 0.8)" />;
-      case 'warning': return <FiAlertCircle size={16} color="rgba(251, 146, 60, 0.8)" />;
-      case 'info': return <FiInfo size={16} color="rgba(96, 165, 250, 0.8)" />;
-      case 'success': return <FiCheckCircle size={16} color="rgba(74, 222, 128, 0.8)" />;
-      default: return <FiInfo size={16} color="rgba(255, 255, 255, 0.8)" />;
-    }
-  };
-
   // Mock validation data for demonstration
-  const getMockValidationData = (): ValidationResult => {
+  const getMockValidationData = React.useCallback((): ValidationResult => {
     return {
       readability: {
         fleschKincaid: 65.3,
@@ -261,6 +173,94 @@ const ContentValidator: React.FC<ContentValidatorProps> = ({
       },
       overallScore: Math.floor(Math.random() * 30) + 70
     };
+  }, [content, references]);
+
+  const validateContent = React.useCallback(async () => {
+    if (!content) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Call the validation API
+      const response = await fetch('/api/articles/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content,
+          title,
+          references
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to validate content');
+      }
+      
+      const result: ValidationResult = await response.json();
+      setValidation(result);
+      
+      if (onValidationComplete) {
+        onValidationComplete(result);
+      }
+    } catch (err) {
+      console.error('Validation error:', err);
+      setError('Failed to validate content. Please try again.');
+      
+      // Use mock data for demonstration if API fails
+      setValidation(getMockValidationData());
+    } finally {
+      setIsLoading(false);
+    }
+  }, [content, title, references, onValidationComplete, getMockValidationData]);
+
+  useEffect(() => {
+    if (!initialValidation) {
+      validateContent();
+    }
+  }, [initialValidation, validateContent]);
+
+  // Get readability level description
+  const getReadabilityLevel = (score: number): string => {
+    if (score >= 90) return 'Very Easy';
+    if (score >= 80) return 'Easy';
+    if (score >= 70) return 'Fairly Easy';
+    if (score >= 60) return 'Standard';
+    if (score >= 50) return 'Fairly Difficult';
+    if (score >= 30) return 'Difficult';
+    return 'Very Difficult';
+  };
+
+  // Get readability color class
+  const getReadabilityColorClass = (score: number): string => {
+    if (score >= 80) return 'validator-progress-fill-excellent';
+    if (score >= 60) return 'validator-progress-fill-good';
+    if (score >= 40) return 'validator-progress-fill-fair';
+    return 'validator-progress-fill-poor';
+  };
+
+  // Get quality level color class
+  const getQualityColorClass = (level: string): string => {
+    switch (level) {
+      case 'excellent': return 'validator-progress-fill-excellent';
+      case 'good': return 'validator-progress-fill-good';
+      case 'fair': return 'validator-progress-fill-fair';
+      case 'poor': return 'validator-progress-fill-poor';
+      default: return 'validator-progress-fill-fair';
+    }
+  };
+
+  // Get issue icon based on type
+  const getIssueIcon = (type: string) => {
+    switch (type) {
+      case 'error': return <FiAlertCircle size={16} color="rgba(248, 113, 113, 0.8)" />;
+      case 'warning': return <FiAlertCircle size={16} color="rgba(251, 146, 60, 0.8)" />;
+      case 'info': return <FiInfo size={16} color="rgba(96, 165, 250, 0.8)" />;
+      case 'success': return <FiCheckCircle size={16} color="rgba(74, 222, 128, 0.8)" />;
+      default: return <FiInfo size={16} color="rgba(255, 255, 255, 0.8)" />;
+    }
   };
 
   if (isLoading) {
