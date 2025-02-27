@@ -1,6 +1,5 @@
-import { NextConfig } from 'next';
-
-const config: NextConfig = {
+/** @type {import('next').NextConfig} */
+const config = {
   output: 'standalone',
   images: {
     domains: ['localhost', 'afrowiki.onrender.com', 'afrowiki.org'],

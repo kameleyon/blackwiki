@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { checkArticleFacts } from "@/lib/factChecker";
@@ -11,39 +11,7 @@ import ContentValidator from "@/components/validator/ContentValidator";
 import ReactMarkdown from "react-markdown";
 import { Metadata } from 'next';
 
-interface ArticleMetadata {
-  keywords?: string[];
-  description?: string;
-}
-
-interface ArticleFromDB {
-  id: string;
-  title: string;
-  content: string;
-  summary: string;
-  image: string | null;
-  imageAlt: string | null;
-  authorId: string;
-  references: Array<{
-    id: string;
-    url: string;
-    title: string;
-    description: string | null;
-    createdAt: Date;
-    articleId: string;
-  }>;
-  metadata: ArticleMetadata | null;
-  categories: Array<{
-    id: string;
-    name: string;
-  }>;
-  tags: Array<{
-    id: string;
-    name: string;
-  }>;
-}
-
-interface Article {
+type Article = {
   id: string;
   title: string;
   content: string;
@@ -60,8 +28,11 @@ interface Article {
     name: string;
   }>;
   references?: Array<string>;
-  metadata?: ArticleMetadata;
-}
+  metadata?: {
+    keywords?: string[];
+    description?: string;
+  };
+};
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -111,28 +82,63 @@ export default async function ReviewArticlePage({ params }: PageProps) {
     redirect("/auth/signin");
   }
 
+  type ArticleFromDB = {
+    id: string;
+    title: string;
+    content: string;
+    summary: string;
+    image: string | null;
+    imageAlt: string | null;
+    authorId: string;
+    references: Array<{
+      articleId: string;
+      title: string;
+      description: string | null;
+      id: string;
+      createdAt: Date;
+      url: string;
+    }>;
+    metadata: string | null;
+    categories: Array<{
+      id: string;
+      name: string;
+    }>;
+    tags: Array<{
+      id: string;
+      name: string;
+    }>;
+  };
+
   // Get article with user check
-  const dbArticle = await prisma.article.findUnique({
+  const article = await prisma.article.findUnique({
     where: { 
       id: resolvedParams.id,
       authorId: user.id,
     },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      summary: true,
+      image: true,
+      imageAlt: true,
+      authorId: true,
       references: true,
-      categories: true,
-      tags: true,
+      metadata: true,
+      categories: {
+        select: {
+          id: true,
+          name: true,
+        }
+      },
+      tags: {
+        select: {
+          id: true,
+          name: true,
+        }
+      },
     }
-  });
-
-  // Parse metadata from the database result
-  const article: ArticleFromDB | null = dbArticle ? {
-    ...dbArticle,
-    metadata: dbArticle.metadata ? 
-      (typeof dbArticle.metadata === 'string' ? 
-        JSON.parse(dbArticle.metadata) as ArticleMetadata : 
-        dbArticle.metadata as ArticleMetadata
-      ) : null
-  } : null;
+  }) as ArticleFromDB | null;
 
   if (!article) {
     redirect("/dashboard");
@@ -150,7 +156,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
     categories: article.categories,
     tags: article.tags,
     references: article.references.map(ref => ref.url),
-    metadata: article.metadata || undefined,
+    metadata: article.metadata ? JSON.parse(article.metadata) : undefined,
   };
 
   // Get fact check results
