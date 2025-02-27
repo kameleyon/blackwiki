@@ -2,14 +2,11 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
 
-interface RouteSegment {
-  id: string;
-}
-
-export async function POST(request: Request, context: { params: Promise<RouteSegment> }) {
-  const resolvedParams = await context.params;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export async function POST(request: Request, context: any) {
+  const { params } = context;
   try {
-    const articleId = resolvedParams.id;
+    const articleId = params.id;
     
     const session = await getServerSession();
     

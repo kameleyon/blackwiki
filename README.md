@@ -30,7 +30,20 @@ AfroWiki is a modern, AI-enhanced knowledge platform dedicated to documenting an
 
 - **Content Management**
   - Article submission and review workflow
-  - Rich text editing with markdown support
+  - Advanced rich text editor with:
+    - WYSIWYG editing interface
+    - Live markdown preview
+    - Split-screen editing mode
+    - Code block syntax highlighting
+    - Fullscreen editing mode
+    - Keyboard shortcuts
+  - Enhanced media management:
+    - Drag and drop file uploads
+    - Multiple file uploads
+    - Image cropping and resizing
+    - Automatic image optimization
+    - File organization system
+    - Media library with search and filtering
   - Version control for content tracking
   - Category and tag organization
   - AI-powered content verification

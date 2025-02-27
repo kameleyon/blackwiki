@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FiImage, FiUpload, FiPlus, FiMinus } from "react-icons/fi";
 import Image from "next/image";
+import RichTextEditor from "@/components/editor/RichTextEditor";
 
 type NewArticleFormProps = {
   categories: {
@@ -318,17 +319,11 @@ export function NewArticleForm({ categories, editMode = false, article }: NewArt
               Upload File
             </button>
           </div>
-          <textarea
-            id="content"
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-            required
-            rows={12}
-            className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-white/20"
+          <RichTextEditor 
+            content={formData.content}
+            onChange={(newContent) => setFormData(prev => ({ ...prev, content: newContent }))}
             placeholder="Write your article content here..."
           />
-          <p className="mt-1 text-sm text-gray-400">Markdown formatting is supported.</p>
           <input
             ref={articleFileInputRef}
             type="file"
