@@ -3,9 +3,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
-import { FiFolder, FiImage, FiFile, FiUpload, FiX, FiCheck, FiTrash2, FiCrop } from 'react-icons/fi';
+import { 
+  FiFolder, FiImage, FiFile, FiUpload, FiX, FiCheck, FiTrash2, 
+  FiCrop
+} from 'react-icons/fi';
 import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import './media.css';
 
 type MediaItem = {
   id: string;

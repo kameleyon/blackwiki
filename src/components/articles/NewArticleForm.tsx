@@ -2,9 +2,11 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { FiImage, FiUpload, FiPlus, FiMinus } from "react-icons/fi";
+import { FiImage, FiUpload, FiBookOpen } from "react-icons/fi";
 import Image from "next/image";
 import RichTextEditor from "@/components/editor/RichTextEditor";
+import ReferenceManager from "@/components/references/ReferenceManager";
+import { ReferenceData } from "@/components/references/ReferenceForm";
 
 type NewArticleFormProps = {
   categories: {
@@ -219,27 +221,6 @@ export function NewArticleForm({ categories, editMode = false, article }: NewArt
     }));
   };
 
-  const handleReferenceChange = (index: number, value: string) => {
-    const updatedReferences = [...formData.references];
-    updatedReferences[index] = value;
-    setFormData(prev => ({ ...prev, references: updatedReferences }));
-  };
-
-  const addReference = () => {
-    setFormData(prev => ({ 
-      ...prev, 
-      references: [...prev.references, ""] 
-    }));
-  };
-
-  const removeReference = (index: number) => {
-    if (formData.references.length > 1) {
-      const updatedReferences = [...formData.references];
-      updatedReferences.splice(index, 1);
-      setFormData(prev => ({ ...prev, references: updatedReferences }));
-    }
-  };
-
   // Extract keywords from content and tags
   const extractKeywords = (content: string, tags: string[]): string[] => {
     // Start with the tags as keywords
@@ -420,38 +401,51 @@ export function NewArticleForm({ categories, editMode = false, article }: NewArt
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-200 mb-1">
-            References
-          </label>
-          <div className="space-y-2">
-            {formData.references.map((reference, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={reference}
-                  onChange={(e) => handleReferenceChange(index, e.target.value)}
-                  className="flex-1 px-3 py-2 bg-black/30 border border-white/10 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-white/20"
-                  placeholder="Book, article, website URL, etc."
-                />
-                <button
-                  type="button"
-                  onClick={() => removeReference(index)}
-                  className="p-2 text-gray-400 hover:text-white"
-                  disabled={formData.references.length <= 1}
-                >
-                  <FiMinus size={16} />
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addReference}
-              className="flex items-center text-sm text-gray-400 hover:text-white"
-            >
-              <FiPlus size={14} className="mr-1" />
-              Add Reference
-            </button>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-gray-200">
+              <span className="flex items-center">
+                <FiBookOpen className="mr-2" />
+                References
+              </span>
+            </label>
           </div>
+          <ReferenceManager 
+            initialReferences={
+              article?.references 
+                ? article.references.map((ref, index) => ({
+                    id: `existing-${index}`,
+                    type: 'other',
+                    title: ref,
+                    authors: [''],
+                  }))
+                : []
+            }
+            onChange={(references: ReferenceData[]) => {
+              // Convert ReferenceData objects to formatted citation strings
+              const formattedReferences = references.map(ref => {
+                // Create a simple formatted string for backward compatibility
+                let citation = '';
+                if (ref.authors && ref.authors.length > 0) {
+                  citation += ref.authors.join(', ') + '. ';
+                }
+                if (ref.title) {
+                  citation += ref.title + '. ';
+                }
+                if (ref.year) {
+                  citation += '(' + ref.year + '). ';
+                }
+                if (ref.publisher) {
+                  citation += ref.publisher + '. ';
+                }
+                if (ref.url) {
+                  citation += ref.url;
+                }
+                return citation.trim();
+              });
+              
+              setFormData(prev => ({ ...prev, references: formattedReferences }));
+            }}
+          />
         </div>
 
         <div className="pt-4 border-t border-white/10">

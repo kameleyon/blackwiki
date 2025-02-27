@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 import { getCurrentUser } from '@/lib/auth';
 import ArticleEngagement from '@/components/articles/ArticleEngagement';
 import RelatedArticles from '@/components/articles/RelatedArticles';
+import CommentSystem from '@/components/collaboration/CommentSystem';
 import { FiClock, FiEye, FiCalendar } from 'react-icons/fi';
 import { processArticleContent, markdownToHtml } from '@/lib/markdownCleaner';
 
@@ -142,6 +143,11 @@ export default async function ArticlePage({ params }: any) {
               </ul>
             </div>
           )}
+          
+          {/* Comments */}
+          <div className="mt-12 border-t border-white/10 pt-6">
+            <CommentSystem articleId={article.id} />
+          </div>
           
           {/* Navigation */}
           <div className="mt-12 flex justify-between">

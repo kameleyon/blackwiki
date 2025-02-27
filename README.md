@@ -44,6 +44,20 @@ AfroWiki is a modern, AI-enhanced knowledge platform dedicated to documenting an
     - Automatic image optimization
     - File organization system
     - Media library with search and filtering
+  - Advanced content validation:
+    - Word count and readability metrics
+    - Grammar and style checking
+    - Broken link detection
+    - Citation format validation
+    - Duplicate content detection
+    - Content quality scoring
+  - Reference Management:
+    - Citation style selection (APA, MLA, Chicago, Harvard, IEEE)
+    - Automatic citation formatting
+    - Reference validation
+    - DOI/ISBN lookup
+    - Bibliography generation
+    - Citation preview
   - Version control for content tracking
   - Category and tag organization
   - AI-powered content verification

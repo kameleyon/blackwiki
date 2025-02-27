@@ -7,6 +7,7 @@ import { FiLoader, FiBookOpen, FiLink } from "react-icons/fi";
 import Image from "next/image";
 import { EditButton } from "@/components/articles/EditButton";
 import { ArticleActions } from "@/components/articles/ArticleActions";
+import ContentValidator from "@/components/validator/ContentValidator";
 import ReactMarkdown from "react-markdown";
 import { Metadata } from 'next';
 
@@ -33,8 +34,12 @@ type Article = {
   };
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export async function generateMetadata({ params }: any): Promise<Metadata> {
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const resolvedParams = await params;
   const session = await getServerSession();
   if (!session?.user?.email) {
     return {
@@ -49,7 +54,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 
   const article = await prisma.article.findUnique({
     where: { 
-      id: params.id,
+      id: resolvedParams.id,
       authorId: user?.id,
     },
   });
@@ -59,8 +64,8 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
   };
 }
 
-export default async function ReviewArticlePage({ params }: any) {
-  const articleId = params.id;
+export default async function ReviewArticlePage({ params }: PageProps) {
+  const resolvedParams = await params;
   const session = await getServerSession();
 
   if (!session?.user?.email) {
@@ -77,28 +82,91 @@ export default async function ReviewArticlePage({ params }: any) {
     redirect("/auth/signin");
   }
 
+  type ArticleFromDB = {
+    id: string;
+    title: string;
+    content: string;
+    summary: string;
+    image: string | null;
+    imageAlt: string | null;
+    authorId: string;
+    references: Array<{
+      articleId: string;
+      title: string;
+      description: string | null;
+      id: string;
+      createdAt: Date;
+      url: string;
+    }>;
+    metadata: string | null;
+    categories: Array<{
+      id: string;
+      name: string;
+    }>;
+    tags: Array<{
+      id: string;
+      name: string;
+    }>;
+  };
+
   // Get article with user check
   const article = await prisma.article.findUnique({
     where: { 
-      id: articleId,
+      id: resolvedParams.id,
       authorId: user.id,
     },
-    include: {
-      categories: true,
-      tags: true,
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      summary: true,
+      image: true,
+      imageAlt: true,
+      authorId: true,
+      references: true,
+      metadata: true,
+      categories: {
+        select: {
+          id: true,
+          name: true,
+        }
+      },
+      tags: {
+        select: {
+          id: true,
+          name: true,
+        }
+      },
     }
-  });
+  }) as ArticleFromDB | null;
 
   if (!article) {
     redirect("/dashboard");
   }
 
-  // Assert article is not null after check
-  const validArticle = article as Article;
+  // Convert DB article to Article type
+  const validArticle: Article = {
+    id: article.id,
+    title: article.title,
+    content: article.content,
+    summary: article.summary,
+    image: article.image,
+    imageAlt: article.imageAlt,
+    authorId: article.authorId,
+    categories: article.categories,
+    tags: article.tags,
+    references: article.references.map(ref => ref.url),
+    metadata: article.metadata ? JSON.parse(article.metadata) : undefined,
+  };
 
   // Get fact check results
   const factCheck = await checkArticleFacts(validArticle.title, validArticle.content);
   const factCheckStatus = factCheck.status as 'pass' | 'fail' | 'not-relevant';
+
+  // Type annotations for map callbacks
+  type CategoryType = { id: string; name: string };
+  type TagType = { id: string; name: string };
+  type KeywordType = string;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -173,7 +241,7 @@ export default async function ReviewArticlePage({ params }: any) {
                   References
                 </h3>
                 <ul className="space-y-2">
-                  {validArticle.references.map((reference, index) => (
+                {validArticle.references.map((reference: string, index: number) => (
                     <li key={index} className="text-white/70 text-sm">
                       {reference.startsWith('http') ? (
                         <a 
@@ -196,7 +264,7 @@ export default async function ReviewArticlePage({ params }: any) {
 
             <div className="mt-6 pt-6 border-t border-white/10">
               <div className="flex flex-wrap gap-2 mb-4">
-                {validArticle.categories.map((category) => (
+                {validArticle.categories.map((category: CategoryType) => (
                   <span 
                     key={category.id}
                     className="px-3 py-1 bg-white/5 text-gray-300 rounded-full text-sm"
@@ -207,7 +275,7 @@ export default async function ReviewArticlePage({ params }: any) {
               </div>
               
               <div className="flex flex-wrap gap-2">
-                {validArticle.tags.map((tag) => (
+                {validArticle.tags.map((tag: TagType) => (
                   <span 
                     key={tag.id}
                     className="px-3 py-1 bg-white/5 text-gray-300 rounded-full text-sm"
@@ -222,6 +290,14 @@ export default async function ReviewArticlePage({ params }: any) {
 
         {/* Right Column - Fact Check Results & Actions */}
         <div className="space-y-6">
+          {/* Content Validation */}
+          <ContentValidator 
+            content={validArticle.content}
+            title={validArticle.title}
+            references={validArticle.references || []}
+          />
+
+          {/* Fact Check Results */}
           <div className="bg-white/5 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-white/80">Fact Check Results</h2>
@@ -279,7 +355,7 @@ export default async function ReviewArticlePage({ params }: any) {
                 <div>
                   <h3 className="text-sm font-medium text-white/80 mb-2">Keywords</h3>
                   <div className="flex flex-wrap gap-1">
-                    {validArticle.metadata.keywords.map((keyword, index) => (
+                    {validArticle.metadata.keywords.map((keyword: KeywordType, index: number) => (
                       <span key={index} className="px-2 py-0.5 bg-white/5 text-white/60 rounded text-xs">
                         {keyword}
                       </span>

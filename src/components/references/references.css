@@ -1,0 +1,470 @@
+/* Reference Management Styles */
+.reference-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reference-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.reference-heading {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.reference-heading svg {
+  margin-right: 0.5rem;
+}
+
+.reference-container {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reference-type-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reference-type-button {
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.reference-type-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.reference-type-button.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.reference-form-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .reference-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.reference-form-field {
+  margin-bottom: 1rem;
+}
+
+.reference-form-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.25rem;
+}
+
+.reference-form-field input,
+.reference-form-field select,
+.reference-form-field textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+}
+
+.reference-form-field input:focus,
+.reference-form-field select:focus,
+.reference-form-field textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.reference-form-field input::placeholder,
+.reference-form-field select::placeholder,
+.reference-form-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.reference-form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.reference-form-field.required label::after {
+  content: "*";
+  color: rgba(248, 113, 113, 0.8);
+  margin-left: 0.25rem;
+}
+
+.reference-form-field-hint {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+}
+
+.reference-form-field-error {
+  font-size: 0.75rem;
+  color: rgba(248, 113, 113, 0.8);
+  margin-top: 0.25rem;
+}
+
+.reference-preview {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.reference-preview-heading {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.reference-preview-content {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  font-style: normal;
+}
+
+.reference-style-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reference-style-button {
+  padding: 0.375rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.reference-style-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.reference-style-button.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.reference-list {
+  margin-top: 1rem;
+}
+
+.reference-list-item {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.reference-list-item.valid {
+  border-left-color: rgba(74, 222, 128, 0.6);
+}
+
+.reference-list-item.invalid {
+  border-left-color: rgba(248, 113, 113, 0.6);
+}
+
+.reference-list-item.warning {
+  border-left-color: rgba(251, 146, 60, 0.6);
+}
+
+.reference-list-item-content {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  padding-right: 2.5rem;
+}
+
+.reference-list-item-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.reference-list-item-action {
+  padding: 0.25rem;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.reference-list-item-action:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.reference-list-item-issues {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(248, 113, 113, 0.8);
+}
+
+.reference-list-item-suggestion {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.reference-lookup-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.reference-lookup-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.reference-lookup-button svg {
+  font-size: 1rem;
+}
+
+.reference-lookup-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reference-lookup-input input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+}
+
+.reference-lookup-input button {
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.reference-lookup-input button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.reference-lookup-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reference-bibliography {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reference-bibliography-heading {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.reference-bibliography-heading svg {
+  margin-right: 0.5rem;
+}
+
+.reference-bibliography-content {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.375rem;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.reference-bibliography-item {
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  text-indent: -1.5rem;
+}
+
+.reference-bibliography-item:last-child {
+  margin-bottom: 0;
+}
+
+.reference-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.reference-action-button {
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reference-action-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.reference-action-button.primary {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.reference-action-button.primary:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.reference-action-button svg {
+  font-size: 1rem;
+}
+
+.reference-import-export {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reference-import-export-heading {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.75rem;
+}
+
+.reference-import-export-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.reference-import-export-button {
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reference-import-export-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.reference-import-export-button svg {
+  font-size: 1rem;
+}
+
+.reference-validation-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.reference-validation-status.valid {
+  color: rgba(74, 222, 128, 0.8);
+}
+
+.reference-validation-status.invalid {
+  color: rgba(248, 113, 113, 0.8);
+}
+
+.reference-validation-status.warning {
+  color: rgba(251, 146, 60, 0.8);
+}
+
+.reference-validation-status svg {
+  font-size: 1rem;
+}
+
+.reference-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.reference-loading-spinner {
+  margin-right: 0.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

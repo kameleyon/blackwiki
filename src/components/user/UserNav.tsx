@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { FiList, FiFilePlus, FiUser, FiSettings, FiLogOut } from 'react-icons/fi'
+import { FiList, FiFilePlus, FiUser, FiSettings, FiLogOut, FiImage, FiTag } from 'react-icons/fi'
 
 type UserNavProps = {
   currentPath: string;
@@ -22,6 +22,30 @@ export default function UserNav({ currentPath }: UserNavProps) {
       >
         <FiList size={20} />
         <span className="hidden sm:inline">Articles</span>
+      </Link>
+      <Link 
+        href="/media" 
+        className={`flex items-center gap-2 ${
+          currentPath === '/media' 
+            ? 'text-gray-200 font-medium' 
+            : 'text-gray-600 hover:text-gray-200'
+        }`}
+        title="Media"
+      >
+        <FiImage size={20} />
+        <span className="hidden sm:inline">Media</span>
+      </Link>
+      <Link 
+        href="/organization" 
+        className={`flex items-center gap-2 ${
+          currentPath === '/organization' 
+            ? 'text-gray-200 font-medium' 
+            : 'text-gray-600 hover:text-gray-200'
+        }`}
+        title="Organization"
+      >
+        <FiTag size={20} />
+        <span className="hidden sm:inline">Organization</span>
       </Link>
       <Link 
         href="/articles/new" 

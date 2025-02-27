@@ -1,0 +1,299 @@
+/* Content Validator Styles */
+.validator-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.validator-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.validator-heading {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.validator-heading svg {
+  margin-right: 0.5rem;
+}
+
+.validator-metric {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.validator-metric-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.validator-metric-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.validator-progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.validator-progress-fill {
+  height: 100%;
+  border-radius: 0.25rem;
+  transition: width 0.3s ease;
+}
+
+.validator-progress-fill-excellent {
+  background-color: rgba(74, 222, 128, 0.6);
+}
+
+.validator-progress-fill-good {
+  background-color: rgba(250, 204, 21, 0.6);
+}
+
+.validator-progress-fill-fair {
+  background-color: rgba(251, 146, 60, 0.6);
+}
+
+.validator-progress-fill-poor {
+  background-color: rgba(248, 113, 113, 0.6);
+}
+
+.validator-issue {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.validator-issue-error {
+  border-left-color: rgba(248, 113, 113, 0.8);
+}
+
+.validator-issue-warning {
+  border-left-color: rgba(251, 146, 60, 0.8);
+}
+
+.validator-issue-info {
+  border-left-color: rgba(96, 165, 250, 0.8);
+}
+
+.validator-issue-success {
+  border-left-color: rgba(74, 222, 128, 0.8);
+}
+
+.validator-issue-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.validator-issue-icon {
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.validator-issue-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.validator-issue-description {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 1.5rem;
+}
+
+.validator-issue-location {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+  margin-left: 1.5rem;
+  font-family: monospace;
+}
+
+.validator-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+.validator-summary-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3);
+  margin-right: 1rem;
+}
+
+.validator-summary-score-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.validator-summary-score-label {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.validator-summary-details {
+  flex: 1;
+}
+
+.validator-summary-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.validator-summary-description {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.validator-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.validator-tag svg {
+  margin-right: 0.25rem;
+}
+
+.validator-tag-error {
+  background-color: rgba(248, 113, 113, 0.2);
+}
+
+.validator-tag-warning {
+  background-color: rgba(251, 146, 60, 0.2);
+}
+
+.validator-tag-info {
+  background-color: rgba(96, 165, 250, 0.2);
+}
+
+.validator-tag-success {
+  background-color: rgba(74, 222, 128, 0.2);
+}
+
+.validator-link-list {
+  margin-top: 0.5rem;
+  max-height: 12rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.validator-link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.25rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
+}
+
+.validator-link:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.validator-link-status {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.validator-link-status-valid {
+  background-color: rgba(74, 222, 128, 0.8);
+}
+
+.validator-link-status-invalid {
+  background-color: rgba(248, 113, 113, 0.8);
+}
+
+.validator-link-status-unknown {
+  background-color: rgba(251, 146, 60, 0.8);
+}
+
+.validator-link-url {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.validator-citation {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.25rem;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.validator-citation-status {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.validator-citation-content {
+  flex: 1;
+}
+
+.validator-citation-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.validator-citation-issue {
+  font-size: 0.6875rem;
+  color: rgba(248, 113, 113, 0.8);
+  margin-top: 0.25rem;
+}
+
+.validator-suggestion {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  margin-top: 0.25rem;
+}
