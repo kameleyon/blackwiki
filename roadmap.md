@@ -128,13 +128,51 @@ Completed Features:
   * Role-based collaboration (Editor, Contributor, Reviewer)
   * Invitation system for collaborators
   * Collaboration progress tracking
+- [x] Basic Article Creation
+  * Markdown support
+  * File upload support (.txt, .md, .doc, .docx)
+  * Image upload with preview
+  * References management
+  * Categories and tags
+  * SEO metadata management
+  * AI enhancement option
 
 Needed Improvements:
 - [ ] Rich Text Editor
-  * Advanced formatting options
-  * Real-time preview
-  * Markdown support
-  * Shortcut support
+  * Advanced formatting options with toolbar
+  * Real-time preview with split screen
+  * Live markdown preview
+  * Keyboard shortcuts
+  * Custom formatting templates
+  * Code block syntax highlighting
+- [ ] Enhanced File Management
+  * Drag and drop file upload
+  * Multiple file upload
+  * Image cropping and resizing
+  * Automatic image optimization
+  * File organization system
+  * Media library
+- [ ] Advanced Content Validation
+  * Word count and readability metrics
+  * Grammar and style checking
+  * Broken link detection
+  * Citation format validation
+  * Duplicate content detection
+  * Content quality score
+- [ ] AI Assistance Features
+  * Smart content suggestions
+  * Automated fact verification
+  * SEO optimization recommendations
+  * Title and summary suggestions
+  * Related articles recommendations
+  * Category suggestions
+- [ ] Reference Management
+  * Citation style selection
+  * Automatic citation formatting
+  * Reference validation
+  * DOI/ISBN lookup
+  * Bibliography generation
+  * Citation preview
 - [ ] Advanced Collaboration Features
   * Real-time collaborative editing
   * Comment system

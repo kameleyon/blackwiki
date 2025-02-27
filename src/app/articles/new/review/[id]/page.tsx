@@ -8,8 +8,7 @@ import Image from "next/image";
 import { EditButton } from "@/components/articles/EditButton";
 import { ArticleActions } from "@/components/articles/ArticleActions";
 import ReactMarkdown from "react-markdown";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Metadata } from 'next';
 
 type Article = {
   id: string;
@@ -34,18 +33,33 @@ type Article = {
   };
 };
 
-/**
- * Final workaround for the Next.js 15 type conflict:
- * We disable the no-explicit-any rule in this file to sidestep
- * Next.js's usage of Promise<any> in dynamic route param checks.
- */
-type Props = {
-  params: {
-    id: string;
-  };
-};
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return {
+      title: 'Review Article - AfroWiki',
+    };
+  }
 
-export default async function ReviewArticlePage({ params }: Props) {
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+
+  const article = await prisma.article.findUnique({
+    where: { 
+      id: params.id,
+      authorId: user?.id,
+    },
+  });
+
+  return {
+    title: article ? `Review: ${article.title} - AfroWiki` : 'Review Article - AfroWiki',
+  };
+}
+
+export default async function ReviewArticlePage({ params }: any) {
   const articleId = params.id;
   const session = await getServerSession();
 
@@ -73,14 +87,17 @@ export default async function ReviewArticlePage({ params }: Props) {
       categories: true,
       tags: true,
     }
-  }) as Article | null;
+  });
 
   if (!article) {
     redirect("/dashboard");
   }
 
+  // Assert article is not null after check
+  const validArticle = article as Article;
+
   // Get fact check results
-  const factCheck = await checkArticleFacts(article.title, article.content);
+  const factCheck = await checkArticleFacts(validArticle.title, validArticle.content);
   const factCheckStatus = factCheck.status as 'pass' | 'fail' | 'not-relevant';
 
   return (
@@ -97,21 +114,21 @@ export default async function ReviewArticlePage({ params }: Props) {
           <div className="bg-white/5 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-100">Article Preview</h2>
-              <EditButton articleId={article.id} />
+              <EditButton articleId={validArticle.id} />
             </div>
             
-            {article.image && (
+            {validArticle.image && (
               <div className="mb-6 relative w-full h-64">
                 <Image 
-                  src={article.image}
-                  alt={article.imageAlt || article.title}
+                  src={validArticle.image}
+                  alt={validArticle.imageAlt || validArticle.title}
                   fill
                   className="object-cover rounded-lg"
                 />
               </div>
             )}
 
-            <h1 className="text-2xl font-bold text-gray-100 mb-4">{article.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-100 mb-4">{validArticle.title}</h1>
             
             <div className="prose prose-invert prose-sm max-w-none leading-loose mb-6">
               <ReactMarkdown 
@@ -119,7 +136,7 @@ export default async function ReviewArticlePage({ params }: Props) {
                   p: ({...props}) => <p className="text-white/70 font-light leading-loose" {...props} />,
                 }}
               >
-                {article.summary}
+                {validArticle.summary}
               </ReactMarkdown>
             </div>
             
@@ -144,19 +161,19 @@ export default async function ReviewArticlePage({ params }: Props) {
                   ),
                 }}
               >
-                {article.content}
+                {validArticle.content}
               </ReactMarkdown>
             </div>
 
             {/* References Section */}
-            {article.references && article.references.length > 0 && article.references[0] !== "" && (
+            {validArticle.references && validArticle.references.length > 0 && validArticle.references[0] !== "" && (
               <div className="mt-8 pt-6 border-t border-white/10">
                 <h3 className="flex items-center text-lg font-medium mb-3">
                   <FiBookOpen className="mr-2" />
                   References
                 </h3>
                 <ul className="space-y-2">
-                  {article.references.map((reference, index) => (
+                  {validArticle.references.map((reference, index) => (
                     <li key={index} className="text-white/70 text-sm">
                       {reference.startsWith('http') ? (
                         <a 
@@ -179,7 +196,7 @@ export default async function ReviewArticlePage({ params }: Props) {
 
             <div className="mt-6 pt-6 border-t border-white/10">
               <div className="flex flex-wrap gap-2 mb-4">
-                {article.categories.map((category: { id: string; name: string }) => (
+                {validArticle.categories.map((category) => (
                   <span 
                     key={category.id}
                     className="px-3 py-1 bg-white/5 text-gray-300 rounded-full text-sm"
@@ -190,7 +207,7 @@ export default async function ReviewArticlePage({ params }: Props) {
               </div>
               
               <div className="flex flex-wrap gap-2">
-                {article.tags.map((tag: { id: string; name: string }) => (
+                {validArticle.tags.map((tag) => (
                   <span 
                     key={tag.id}
                     className="px-3 py-1 bg-white/5 text-gray-300 rounded-full text-sm"
@@ -240,29 +257,29 @@ export default async function ReviewArticlePage({ params }: Props) {
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Actions</h2>
             
             <ArticleActions 
-              articleId={article.id} 
+              articleId={validArticle.id} 
               factCheckStatus={factCheckStatus}
             />
           </div>
 
           {/* SEO Preview */}
-          {article.metadata && (
+          {validArticle.metadata && (
             <div className="bg-white/5 rounded-xl p-6">
               <h2 className="text-xl font-semibold text-gray-100 mb-4">SEO Preview</h2>
               
               <div className="bg-white/5 rounded-md p-4 mb-4">
-                <h3 className="text-lg font-medium text-white/90 mb-1 line-clamp-1">{article.title}</h3>
-                <div className="text-green-400 text-xs mb-1">afrowiki.com › articles › {article.title.toLowerCase().replace(/\s+/g, '-')}</div>
+                <h3 className="text-lg font-medium text-white/90 mb-1 line-clamp-1">{validArticle.title}</h3>
+                <div className="text-green-400 text-xs mb-1">afrowiki.com › articles › {validArticle.title.toLowerCase().replace(/\s+/g, '-')}</div>
                 <p className="text-sm text-white/70 line-clamp-2">
-                  {article.metadata.description || article.summary}
+                  {validArticle.metadata.description || validArticle.summary}
                 </p>
               </div>
               
-              {article.metadata.keywords && article.metadata.keywords.length > 0 && (
+              {validArticle.metadata.keywords && validArticle.metadata.keywords.length > 0 && (
                 <div>
                   <h3 className="text-sm font-medium text-white/80 mb-2">Keywords</h3>
                   <div className="flex flex-wrap gap-1">
-                    {article.metadata.keywords.map((keyword, index) => (
+                    {validArticle.metadata.keywords.map((keyword, index) => (
                       <span key={index} className="px-2 py-0.5 bg-white/5 text-white/60 rounded text-xs">
                         {keyword}
                       </span>
