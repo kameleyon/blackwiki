@@ -115,16 +115,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
       id: resolvedParams.id,
       authorId: user.id,
     },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      summary: true,
-      image: true,
-      imageAlt: true,
-      authorId: true,
-      references: true,
-      metadata: true,
+    include: {
       categories: {
         select: {
           id: true,
@@ -137,6 +128,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
           name: true,
         }
       },
+      references: true,
     }
   }) as ArticleFromDB | null;
 
