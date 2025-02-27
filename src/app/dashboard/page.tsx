@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@/lib/auth';
+import { getServerSession } from "next-auth";
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
@@ -20,18 +21,60 @@ import AdvancedStatistics from '@/components/dashboard/AdvancedStatistics';
 import GoalsAndAchievements from '@/components/dashboard/GoalsAndAchievements';
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser();
+  const session = await getServerSession();
   
+  // First check if session exists to avoid redirect loop
+  if (!session?.user?.email) {
+    redirect('/auth/signin');
+  }
+  
+  const user = await getCurrentUser();
   console.log("DEBUG user:", user);
   
+  // Only redirect if we have a session but no user in the database
+  if (!user && session?.user?.email) {
+    console.error("Session exists but user not found in database:", session.user.email);
+    // Instead of redirecting, we'll show an error message
+    return (
+      <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
+        <div className="bg-white/5 rounded-xl p-6 shadow-sm shadow-black">
+          <h2 className="text-xl font-semibold text-gray-100 mb-4">Authentication Error</h2>
+          <p className="text-white/70">
+            There was an error retrieving your user profile. Please try signing out and signing in again.
+          </p>
+          <div className="mt-4">
+            <Link href="/api/auth/signout" className="px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20">
+              Sign Out
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure user is not null before proceeding
   if (!user) {
-    redirect('/auth/signin');
+    return (
+      <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
+        <div className="bg-white/5 rounded-xl p-6 shadow-sm shadow-black">
+          <h2 className="text-xl font-semibold text-gray-100 mb-4">Authentication Error</h2>
+          <p className="text-white/70">
+            There was an error retrieving your user profile. Please try signing out and signing in again.
+          </p>
+          <div className="mt-4">
+            <Link href="/api/auth/signout" className="px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20">
+              Sign Out
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Get only the current user's articles
   const articles = await prisma.article.findMany({
     where: {
-      authorId: user.id // Filter by current user's ID
+      authorId: user.id // Now we know user is not null
     },
     orderBy: {
       createdAt: 'desc'
@@ -480,6 +523,7 @@ export default async function DashboardPage() {
           </div>
           
           {/* Activity Timeline */}
+
           <div className="bg-white/5 rounded-xl shadow-sm shadow-black">
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h2 className="text-lg font-medium">Recent Activity</h2>
