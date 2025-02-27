@@ -11,7 +11,39 @@ import ContentValidator from "@/components/validator/ContentValidator";
 import ReactMarkdown from "react-markdown";
 import { Metadata } from 'next';
 
-type Article = {
+interface ArticleMetadata {
+  keywords?: string[];
+  description?: string;
+}
+
+interface ArticleFromDB {
+  id: string;
+  title: string;
+  content: string;
+  summary: string;
+  image: string | null;
+  imageAlt: string | null;
+  authorId: string;
+  references: Array<{
+    id: string;
+    url: string;
+    title: string;
+    description: string | null;
+    createdAt: Date;
+    articleId: string;
+  }>;
+  metadata: ArticleMetadata | null;
+  categories: Array<{
+    id: string;
+    name: string;
+  }>;
+  tags: Array<{
+    id: string;
+    name: string;
+  }>;
+}
+
+interface Article {
   id: string;
   title: string;
   content: string;
@@ -28,11 +60,8 @@ type Article = {
     name: string;
   }>;
   references?: Array<string>;
-  metadata?: {
-    keywords?: string[];
-    description?: string;
-  };
-};
+  metadata?: ArticleMetadata;
+}
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -82,33 +111,6 @@ export default async function ReviewArticlePage({ params }: PageProps) {
     redirect("/auth/signin");
   }
 
-  type ArticleFromDB = {
-    id: string;
-    title: string;
-    content: string;
-    summary: string;
-    image: string | null;
-    imageAlt: string | null;
-    authorId: string;
-    references: Array<{
-      articleId: string;
-      title: string;
-      description: string | null;
-      id: string;
-      createdAt: Date;
-      url: string;
-    }>;
-    metadata: string | null;
-    categories: Array<{
-      id: string;
-      name: string;
-    }>;
-    tags: Array<{
-      id: string;
-      name: string;
-    }>;
-  };
-
   // Get article with user check
   const article = await prisma.article.findUnique({
     where: { 
@@ -123,7 +125,16 @@ export default async function ReviewArticlePage({ params }: PageProps) {
       image: true,
       imageAlt: true,
       authorId: true,
-      references: true,
+      references: {
+        select: {
+          id: true,
+          url: true,
+          title: true,
+          description: true,
+          createdAt: true,
+          articleId: true,
+        }
+      },
       metadata: true,
       categories: {
         select: {
@@ -138,7 +149,13 @@ export default async function ReviewArticlePage({ params }: PageProps) {
         }
       },
     }
-  }) as ArticleFromDB | null;
+  }).then(data => {
+    if (!data) return null;
+    return {
+      ...data,
+      metadata: data.metadata as ArticleMetadata | null,
+    } as ArticleFromDB;
+  });
 
   if (!article) {
     redirect("/dashboard");
@@ -156,7 +173,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
     categories: article.categories,
     tags: article.tags,
     references: article.references.map(ref => ref.url),
-    metadata: article.metadata ? JSON.parse(article.metadata) : undefined,
+    metadata: article.metadata || undefined,
   };
 
   // Get fact check results
