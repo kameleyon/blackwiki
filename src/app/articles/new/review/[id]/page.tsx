@@ -39,14 +39,13 @@ type Article = {
  * We disable the no-explicit-any rule in this file to sidestep
  * Next.js's usage of Promise<any> in dynamic route param checks.
  */
-export default async function ReviewArticlePage(props: any) {
-  const { params } = props;
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
-  if (!params?.id) {
-    redirect("/dashboard");
-    return null;
-  }
-
+export default async function ReviewArticlePage({ params }: Props) {
   const articleId = params.id;
   const session = await getServerSession();
 

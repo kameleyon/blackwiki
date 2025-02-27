@@ -16,15 +16,12 @@ export function ArticleActions({ articleId, factCheckStatus }: ArticleActionsPro
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleAction = async (action: 'confirm' | 'cancel') => {
     setIsLoading(true);
-    const form = event.currentTarget;
-    const formData = new FormData(form);
 
     try {
       // Clean markdown before submission
-      if (formData.get('action') === 'confirm') {
+      if (action === 'confirm') {
         try {
           await fetch(`/api/articles/clean-markdown`, {
             method: "POST",
@@ -40,12 +37,14 @@ export function ArticleActions({ articleId, factCheckStatus }: ArticleActionsPro
       }
 
       // Submit the article
-      const action = formData.get('action');
       console.log("Submitting with action:", action);
-      
+
       const response = await fetch(`/api/articles/confirm/${articleId}`, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
       });
 
       let data;
@@ -122,11 +121,9 @@ export function ArticleActions({ articleId, factCheckStatus }: ArticleActionsPro
 
       {getFactCheckStatusDisplay()}
 
-      <form onSubmit={handleSubmit} className="flex flex-1 gap-4">
+      <div className="flex flex-1 gap-4">
         <button
-          type="submit"
-          name="action"
-          value="confirm"
+          onClick={() => handleAction('confirm')}
           disabled={isLoading || factCheckStatus === 'fail'}
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md
             ${factCheckStatus === 'fail' 
@@ -138,16 +135,14 @@ export function ArticleActions({ articleId, factCheckStatus }: ArticleActionsPro
         </button>
 
         <button
-          type="submit"
-          name="action"
-          value="cancel"
+          onClick={() => handleAction('cancel')}
           disabled={isLoading}
           className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20"
         >
           <FiX size={20} />
           Cancel
         </button>
-      </form>
+      </div>
     </>
   );
 }

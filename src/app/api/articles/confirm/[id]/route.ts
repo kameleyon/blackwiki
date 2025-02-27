@@ -11,10 +11,7 @@ export async function POST(request: Request, context: { params: Promise<RouteSeg
   try {
     const articleId = resolvedParams.id;
     
-    const [session, formData] = await Promise.all([
-      getServerSession(),
-      request.formData(),
-    ]);
+    const session = await getServerSession();
     
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -23,7 +20,8 @@ export async function POST(request: Request, context: { params: Promise<RouteSeg
       );
     }
 
-    const action = formData.get("action");
+    const data = await request.json();
+    const action = data.action;
     console.log("Received action:", action);
     
     if (!action || (action !== "confirm" && action !== "cancel")) {
