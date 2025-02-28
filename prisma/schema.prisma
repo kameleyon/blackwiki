@@ -55,6 +55,9 @@ model User {
   edits         Edit[]
   sessions      Session[]
   commentLikes  CommentLike[]
+  reviews       Review[]      @relation("ReviewedBy")
+  reviewTasks   Review[]      @relation("AssignedTo")
+  branches      Branch[]      @relation("UserBranches")
 }
 
 model VerificationToken {
@@ -88,6 +91,49 @@ model Article {
   references  Reference[]
   categories  Category[]  @relation("ArticleToCategory")
   tags        Tag[]       @relation("ArticleToTag")
+  versions    Version[]
+  reviews     Review[]
+  reviewState ReviewState?
+  branches    Branch[]    @relation("ArticleBranches")
+}
+
+model ReviewState {
+  id            String   @id @default(cuid())
+  articleId     String   @unique
+  article       Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  currentStage  String   // draft, technical_review, editorial_review, final_review
+  startedAt     DateTime @default(now())
+  lastUpdatedAt DateTime @updatedAt
+  dueDate       DateTime?
+  priority      String   @default("normal") // low, normal, high, urgent
+  isBlocked     Boolean  @default(false)
+  blockReason   String?
+}
+
+model Review {
+  id          String    @id @default(cuid())
+  articleId   String
+  reviewerId  String
+  assigneeId  String
+  type        String    // technical, editorial, final
+  status      String    // pending, in_progress, completed, rejected
+  feedback    String?
+  score       Int?      // 1-100
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+  article     Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  reviewer    User      @relation("ReviewedBy", fields: [reviewerId], references: [id])
+  assignee    User      @relation("AssignedTo", fields: [assigneeId], references: [id])
+  checklist   String?   // Stored as JSON array of completed items
+  metadata    String?   // Additional review metadata as JSON string
+
+  @@unique([articleId, type])
+  @@index([articleId])
+  @@index([reviewerId])
+  @@index([assigneeId])
+  @@index([type])
+  @@index([status])
 }
 
 model Category {
@@ -121,11 +167,86 @@ model Edit {
   id        String   @id @default(cuid())
   content   String
   summary   String?
+  type      String   @default("content") // content, metadata, style, etc.
+  metadata  String?  // JSON string for additional edit metadata
   createdAt DateTime @default(now())
   articleId String
   userId    String
+  versionId String?  @unique // Make versionId unique for one-to-one relation
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  version   Version? @relation("EditVersion", fields: [versionId], references: [id], onDelete: SetNull)
+}
+
+model Version {
+  id             String          @id @default(cuid())
+  number         Int
+  content        String
+  createdAt      DateTime        @default(now())
+  articleId      String
+  editId         String?         @unique // Make editId unique for one-to-one relation
+  branchId       String?
+  article        Article         @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  branch         Branch?         @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  edit           Edit?           @relation("EditVersion")
+  fromDiffs      Diff[]          @relation("FromVersion")
+  toDiffs        Diff[]          @relation("ToVersion")
+  branchVersions BranchVersion[]
+
+  @@unique([articleId, number])
+  @@index([articleId])
+  @@index([number, articleId])
+  @@index([branchId])
+}
+
+model Branch {
+  id             String          @id @default(cuid())
+  name           String
+  description    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  articleId      String
+  userId         String
+  isDefault      Boolean         @default(false)
+  isMerged       Boolean         @default(false)
+  mergedAt       DateTime?
+  mergedToId     String?
+  article        Article         @relation("ArticleBranches", fields: [articleId], references: [id], onDelete: Cascade)
+  user           User            @relation("UserBranches", fields: [userId], references: [id], onDelete: Cascade)
+  mergedTo       Branch?         @relation("BranchMerges", fields: [mergedToId], references: [id], onDelete: SetNull)
+  mergedFrom     Branch[]        @relation("BranchMerges")
+  versions       Version[]
+  branchVersions BranchVersion[]
+
+  @@unique([articleId, name])
+  @@index([articleId])
+  @@index([userId])
+  @@index([mergedToId])
+}
+
+model BranchVersion {
+  id        String  @id @default(cuid())
+  branchId  String
+  versionId String
+  branch    Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, versionId])
+  @@index([branchId])
+  @@index([versionId])
+}
+
+model Diff {
+  id           String   @id @default(cuid())
+  changes      String   // JSON string containing diff information
+  createdAt    DateTime @default(now())
+  fromVersionId String
+  toVersionId   String
+  fromVersion   Version  @relation("FromVersion", fields: [fromVersionId], references: [id], onDelete: Cascade)
+  toVersion     Version  @relation("ToVersion", fields: [toVersionId], references: [id], onDelete: Cascade)
+
+  @@index([fromVersionId])
+  @@index([toVersionId])
 }
 
 model Comment {

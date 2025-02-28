@@ -5,9 +5,8 @@ import { prisma } from '@/lib/db';
 // POST /api/articles/:id/comments/:commentId/like - Like a comment
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; commentId: string }> }
+  { params }: { params: { id: string; commentId: string } }
 ) {
-  const resolvedParams = await params;
   const session = await getServerSession();
   
   if (!session?.user?.email) {
@@ -17,7 +16,7 @@ export async function POST(
     );
   }
 
-  const { commentId } = resolvedParams;
+  const { commentId } = params;
 
   try {
     // Get user ID

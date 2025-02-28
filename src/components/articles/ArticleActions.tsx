@@ -1,148 +1,180 @@
+
 "use client";
 
-import { useRouter } from "next/navigation";
-import { FiCheck, FiX, FiEdit } from "react-icons/fi";
-import { useState } from "react";
-import { SuccessModal } from "@/components/ui/SuccessModal";
+import { useState } from 'react';
+import Link from 'next/link';
+import { FiEdit, FiClock, FiEye } from 'react-icons/fi';
+import ChangeTracker from '../collaboration/ChangeTracker';
 
-type ArticleActionsProps = {
+interface Version {
+  id: string;
+  number: number;
+  content: string;
+  createdAt: Date;
+  editId: string | null;
+  edit?: {
+    type: string;
+    summary: string | null;
+    user: {
+      name: string | null;
+    };
+  };
+}
+
+interface ArticleActionsProps {
   articleId: string;
+  authorId?: string;
+  currentUserId?: string;
+  isAdmin?: boolean;
+  isPublished?: boolean;
   factCheckStatus?: 'pass' | 'fail' | 'not-relevant';
-};
+}
 
-export function ArticleActions({ articleId, factCheckStatus }: ArticleActionsProps) {
-  const router = useRouter();
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleAction = async (action: 'confirm' | 'cancel') => {
-    setIsLoading(true);
-
-    try {
-      // Clean markdown before submission
-      if (action === 'confirm') {
-        try {
-          await fetch(`/api/articles/clean-markdown`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ articleId }),
-          });
-        } catch (error) {
-          console.error("Error cleaning markdown:", error);
-          // Continue with submission even if cleaning fails
-        }
-      }
-
-      // Submit the article
-      console.log("Submitting with action:", action);
-
-      const response = await fetch(`/api/articles/confirm/${articleId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ action }),
-      });
-
-      let data;
-      try {
-        data = await response.json();
-      } catch (error) {
-        console.error("Error parsing response:", error);
-        throw new Error("Failed to parse server response");
-      }
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to submit article");
-      }
-      setSuccessMessage(data.message);
-      setShowSuccess(true);
-
-      // Router will be called by SuccessModal onClose
-      if (data.redirect) {
-        setTimeout(() => {
-          router.push(data.redirect);
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("Error submitting article:", error);
-      setSuccessMessage(error instanceof Error ? error.message : "Failed to submit article");
-      setShowSuccess(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleModalClose = () => {
-    setShowSuccess(false);
-  };
-
-  const getFactCheckStatusDisplay = () => {
-    if (!factCheckStatus) return null;
-
+export default function ArticleActions({
+  articleId,
+  authorId,
+  currentUserId,
+  isAdmin,
+  isPublished,
+  factCheckStatus = 'not-relevant',
+}: ArticleActionsProps) {
+  // Display fact check status badge
+  const getFactCheckBadge = () => {
     switch (factCheckStatus) {
       case 'pass':
-        return (
-          <div className="mb-4 p-3 bg-white/10 border border-white/20 rounded-md flex items-center">
-            <FiCheck size={20} className="text-white/70 mr-2" />
-            <span className="text-white/70">This article has passed fact checking</span>
-          </div>
-        );
+        return <div className="text-sm text-green-400 bg-green-400/10 px-3 py-1 rounded-full">Fact Check: Passed</div>;
       case 'fail':
-        return (
-          <div className="mb-4 p-3 bg-white/10 border border-white/20 rounded-md flex items-center">
-            <FiX size={20} className="text-white/70 mr-2" />
-            <span className="text-white/70">This article contains factual errors that need correction</span>
-          </div>
-        );
-      case 'not-relevant':
-        return (
-          <div className="mb-4 p-3 bg-white/10 border border-white/20 rounded-md flex items-center">
-            <FiEdit size={20} className="text-white/70 mr-2" />
-            <span className="text-white/70">This article may not align with AfroWiki&apos;s focus on Black history and culture</span>
-          </div>
-        );
+        return <div className="text-sm text-red-400 bg-red-400/10 px-3 py-1 rounded-full">Fact Check: Failed</div>;
       default:
         return null;
     }
   };
 
+  const [showVersions, setShowVersions] = useState(false);
+  const [versions, setVersions] = useState<Version[]>([]);
+  const [currentVersionId, setCurrentVersionId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const canEdit = currentUserId === authorId || isAdmin;
+
+  const loadVersions = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/articles/${articleId}/versions`);
+      if (!response.ok) throw new Error('Failed to load versions');
+      // Convert string dates to Date objects
+      const data = await response.json();
+      interface APIVersion {
+        id: string;
+        number: number;
+        content: string;
+        createdAt: string;
+        editId: string | null;
+        edit?: {
+          type?: string;
+          summary: string | null;
+          user: {
+            name: string | null;
+          };
+        };
+      }
+      
+      const versionsWithDates = data.map((v: APIVersion) => ({
+        ...v,
+        createdAt: new Date(v.createdAt),
+        edit: v.edit ? {
+          ...v.edit,
+          type: v.edit.type || 'update', // Provide default type if missing
+        } : undefined
+      }));
+      setVersions(versionsWithDates);
+      if (data.length > 0) {
+        setCurrentVersionId(data[0].id); // Set most recent version as current
+      }
+    } catch (error) {
+      console.error('Error loading versions:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVersionRestore = async (versionId: string) => {
+    try {
+      const response = await fetch(
+        `/api/articles/${articleId}/versions/${versionId}/restore`,
+        {
+          method: 'POST',
+        }
+      );
+      if (!response.ok) throw new Error('Failed to restore version');
+      
+      // Reload versions after restore
+      await loadVersions();
+    } catch (error) {
+      console.error('Error restoring version:', error);
+    }
+  };
+
   return (
-    <>
-      {showSuccess && (
-        <SuccessModal 
-          message={successMessage} 
-          onClose={handleModalClose} 
-        />
-      )}
-
-      {getFactCheckStatusDisplay()}
-
-      <div className="flex flex-1 gap-4">
-        <button
-          onClick={() => handleAction('confirm')}
-          disabled={isLoading || factCheckStatus === 'fail'}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md
-            ${factCheckStatus === 'fail' 
-              ? 'bg-white/10 text-white/50 cursor-not-allowed' 
-              : 'bg-white/20 text-white hover:bg-white/30'}`}
-        >
-          <FiCheck size={20} />
-          {isLoading ? "Processing..." : "Confirm Submission"}
-        </button>
-
-        <button
-          onClick={() => handleAction('cancel')}
-          disabled={isLoading}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white/10 text-white/80 rounded-md hover:bg-white/20"
-        >
-          <FiX size={20} />
-          Cancel
-        </button>
+    <div className="space-y-4">
+      <div className="flex items-center gap-4 flex-wrap">
+        {canEdit && (
+          <>
+            <Link
+              href={`/articles/edit/${articleId}`}
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white/80 transition-colors"
+            >
+              <FiEdit size={16} />
+              Edit Article
+            </Link>
+            <button
+              onClick={() => {
+                setShowVersions(true);
+                loadVersions();
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white/80 transition-colors"
+            >
+              <FiClock size={16} />
+              Version History
+            </button>
+          </>
+        )}
+        {!isPublished && canEdit && (
+          <div className="text-sm text-white/60 bg-white/5 px-3 py-1 rounded-full">
+            <FiEye className="inline mr-1" size={14} />
+            Draft
+          </div>
+        )}
+        {factCheckStatus !== 'not-relevant' && getFactCheckBadge()}
       </div>
-    </>
+
+      {showVersions && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-black/90 rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-medium text-white/90">Version History</h2>
+              <button
+                onClick={() => setShowVersions(false)}
+                className="text-white/60 hover:text-white/80"
+              >
+                Close
+              </button>
+            </div>
+
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white/80"></div>
+              </div>
+            ) : (
+              <ChangeTracker
+                versions={versions}
+                currentVersionId={currentVersionId || versions[0]?.id}
+                onVersionRestore={handleVersionRestore}
+              />
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

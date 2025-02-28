@@ -1,20 +1,23 @@
-import { getArticleBySlug, incrementArticleViews } from '@/lib/db';
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Metadata } from 'next';
-import { getCurrentUser } from '@/lib/auth';
-import ArticleEngagement from '@/components/articles/ArticleEngagement';
-import RelatedArticles from '@/components/articles/RelatedArticles';
-import CommentSystem from '@/components/collaboration/CommentSystem';
-import { FiClock, FiEye, FiCalendar } from 'react-icons/fi';
-import { processArticleContent, markdownToHtml } from '@/lib/markdownCleaner';
+import { getArticleBySlug, incrementArticleViews } from '@/lib/db'
+import { notFound } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Metadata } from 'next'
+import ArticleEngagement from '@/components/articles/ArticleEngagement'
+import RelatedArticles from '@/components/articles/RelatedArticles'
+import CommentSystem from '@/components/collaboration/CommentSystem'
+import { FiClock, FiEye, FiCalendar } from 'react-icons/fi'
+import { processArticleContent, markdownToHtml } from '@/lib/markdownCleaner'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const currentUser = await getCurrentUser();
-  const article = await getArticleBySlug(params.slug, currentUser?.id);
-  if (!article) return { title: 'Article Not Found' };
+interface PageProps {
+  params: {
+    slug: string
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const article = await getArticleBySlug(params.slug)
+  if (!article) return { title: 'Article Not Found' }
   
   return {
     title: `${article.title} | AfroWiki`,
@@ -24,24 +27,23 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       description: article.summary,
       images: article.image ? [article.image] : [],
     }
-  };
+  }
 }
 
-export default async function ArticlePage({ params }: any) {
-  const currentUser = await getCurrentUser();
-  const article = await getArticleBySlug(params.slug, currentUser?.id);
+export default async function ArticlePage({ params }: PageProps) {
+  const article = await getArticleBySlug(params.slug)
   
   if (!article) {
-    notFound();
+    notFound()
   }
   
   // Increment view count
-  await incrementArticleViews(article.id);
+  await incrementArticleViews(article.id)
   
   // Calculate reading time (rough estimate)
-  const wordsPerMinute = 200;
-  const wordCount = article.content.split(/\s+/).length;
-  const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+  const wordsPerMinute = 200
+  const wordCount = article.content.split(/\s+/).length
+  const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
   
   return (
     <div className="container mx-auto px-4 py-8">
@@ -180,5 +182,5 @@ export default async function ArticlePage({ params }: any) {
         </div>
       </div>
     </div>
-  );
+  )
 }

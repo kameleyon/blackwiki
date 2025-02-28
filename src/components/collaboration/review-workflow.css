@@ -1,0 +1,174 @@
+/* Review workflow styles */
+.review-workflow {
+  @apply space-y-6;
+}
+
+.review-stage {
+  @apply bg-white/5 rounded-lg p-4 border border-white/10;
+}
+
+.review-stage-header {
+  @apply flex items-center justify-between mb-4;
+}
+
+.review-stage-title {
+  @apply text-lg font-medium text-white/90;
+}
+
+.review-stage-status {
+  @apply px-3 py-1 rounded-full text-sm;
+}
+
+.review-stage-status-pending {
+  @apply bg-white/10 text-white/80;
+}
+
+.review-stage-status-in-progress {
+  @apply bg-emerald-500/10 text-emerald-200;
+}
+
+.review-stage-status-completed {
+  @apply bg-white/20 text-white/90;
+}
+
+.review-stage-status-blocked {
+  @apply bg-rose-500/10 text-rose-200;
+}
+
+.review-checklist {
+  @apply space-y-2 mt-4;
+}
+
+.review-checklist-item {
+  @apply flex items-center gap-3 p-3 bg-white/5 rounded-lg;
+}
+
+.review-checklist-checkbox {
+  @apply h-5 w-5 rounded bg-white/10 border-white/20 text-white/80;
+}
+
+.review-checklist-label {
+  @apply text-sm text-white/80;
+}
+
+.review-feedback {
+  @apply mt-4 p-4 bg-white/5 rounded-lg;
+}
+
+.review-feedback-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.review-feedback-title {
+  @apply text-sm font-medium text-white/80;
+}
+
+.review-feedback-content {
+  @apply text-sm text-white/70;
+}
+
+.review-score {
+  @apply flex items-center gap-2 mt-4;
+}
+
+.review-score-label {
+  @apply text-sm text-white/60;
+}
+
+.review-score-value {
+  @apply text-lg font-medium text-white/90;
+}
+
+.review-actions {
+  @apply flex items-center justify-end gap-3 mt-6;
+}
+
+.review-action-button {
+  @apply px-4 py-2 rounded-lg text-sm transition-colors;
+}
+
+.review-action-button-primary {
+  @apply bg-white/10 hover:bg-white/20 text-white/80;
+}
+
+.review-action-button-secondary {
+  @apply bg-white/5 hover:bg-white/10 text-white/60;
+}
+
+.review-timeline {
+  @apply mt-6 space-y-4;
+}
+
+.review-timeline-item {
+  @apply flex gap-4;
+}
+
+.review-timeline-icon {
+  @apply w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/60;
+}
+
+.review-timeline-content {
+  @apply flex-1;
+}
+
+.review-timeline-header {
+  @apply flex items-center justify-between mb-1;
+}
+
+.review-timeline-title {
+  @apply text-sm font-medium text-white/80;
+}
+
+.review-timeline-date {
+  @apply text-xs text-white/60;
+}
+
+.review-timeline-description {
+  @apply text-sm text-white/70;
+}
+
+.review-assignment {
+  @apply mt-4;
+}
+
+.review-assignment-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.review-assignment-title {
+  @apply text-sm font-medium text-white/80;
+}
+
+.review-assignment-user {
+  @apply flex items-center gap-2 p-2 bg-white/5 rounded-lg;
+}
+
+.review-assignment-avatar {
+  @apply w-8 h-8 rounded-full bg-white/10;
+}
+
+.review-assignment-info {
+  @apply text-sm;
+}
+
+.review-assignment-name {
+  @apply text-white/80;
+}
+
+.review-assignment-role {
+  @apply text-white/60;
+}
+
+/* Loading states */
+.review-loading {
+  @apply animate-pulse bg-white/5 rounded-lg p-4;
+}
+
+.review-loading-line {
+  @apply h-4 bg-white/10 rounded mb-2;
+}
+
+/* Error states */
+.review-error {
+  @apply bg-rose-500/10 text-rose-200 rounded-lg p-4 text-sm;
+}

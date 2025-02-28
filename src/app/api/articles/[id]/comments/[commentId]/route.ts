@@ -5,9 +5,8 @@ import { prisma } from '@/lib/db';
 // PUT /api/articles/:id/comments/:commentId - Update a comment
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; commentId: string }> }
+  { params }: { params: { id: string; commentId: string } }
 ) {
-  const resolvedParams = await params;
   const session = await getServerSession();
   
   if (!session?.user?.email) {
@@ -17,7 +16,7 @@ export async function PUT(
     );
   }
 
-  const { commentId } = resolvedParams;
+  const { commentId } = params;
   const { content } = await request.json();
 
   if (!content || content.trim() === '') {
@@ -95,9 +94,8 @@ export async function PUT(
 // DELETE /api/articles/:id/comments/:commentId - Delete a comment
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; commentId: string }> }
+  { params }: { params: { id: string; commentId: string } }
 ) {
-  const resolvedParams = await params;
   const session = await getServerSession();
   
   if (!session?.user?.email) {
@@ -107,7 +105,7 @@ export async function DELETE(
     );
   }
 
-  const { commentId } = resolvedParams;
+  const { commentId } = params;
 
   try {
     // Get user ID and role

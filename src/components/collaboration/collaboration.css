@@ -1,81 +1,399 @@
-/* Collaboration Container */
-.collaboration-container {
-  @apply bg-gray-900 rounded-lg p-4 mt-6 border border-gray-800;
+/* Collaboration styles */
+
+/* Cursor styles for collaborative editing */
+.collaboration-cursor {
+  position: relative;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  word-break: normal;
+  transition: opacity 0.2s ease-in-out;
 }
 
-.collaboration-heading {
-  @apply text-xl font-semibold mb-4 flex items-center text-white;
+.collaboration-cursor::after {
+  content: attr(data-user-name);
+  position: absolute;
+  top: -1.4em;
+  left: -1px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: white;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px 3px 3px 0;
+  pointer-events: none;
+  user-select: none;
 }
 
-/* Comments Container */
-.comments-container {
-  @apply mt-4 space-y-4;
+/* Active users list */
+.active-users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-/* Comment Item */
-.comment-item {
-  @apply bg-gray-800 rounded-lg p-3 mb-3;
+.active-user {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
 }
 
-.comment-header {
-  @apply flex justify-between items-center mb-2;
+.active-user-avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  margin-right: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
 }
 
-.comment-author {
-  @apply flex items-center;
+/* Connection status indicator */
+.connection-status {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.comment-author-avatar {
-  @apply w-6 h-6 rounded-full overflow-hidden mr-2 bg-gray-700 flex items-center justify-center;
+.connection-indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  margin-right: 0.25rem;
 }
 
-.comment-author-name {
-  @apply text-sm font-medium text-white;
+.connection-indicator.connected {
+  background-color: rgb(34, 197, 94);
 }
 
-.comment-timestamp {
-  @apply text-xs text-gray-400;
+.connection-indicator.disconnected {
+  background-color: rgb(239, 68, 68);
 }
 
-.comment-content {
-  @apply text-sm text-gray-200 mb-2 whitespace-pre-wrap;
+/* Collaboration toolbar */
+.collaboration-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
 }
 
-.comment-actions {
-  @apply flex flex-wrap gap-2 mt-1;
+/* User presence tooltip */
+.user-presence-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  z-index: 50;
+  width: 12rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.comment-action-button {
-  @apply flex items-center text-xs text-gray-400 hover:text-white transition-colors duration-200 gap-1;
+.user-presence-tooltip h4 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.25rem;
 }
 
-.comment-replies {
-  @apply mt-2 pl-2 border-l border-gray-700;
+.user-presence-tooltip ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* Comment Form */
-.comment-form {
-  @apply mb-4;
+.user-presence-tooltip li {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.25rem 0;
 }
 
-.comment-input {
-  @apply w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm text-white 
-    placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
-    resize-y min-h-[80px];
+/* Collaborative editor specific styles */
+.collaborative-editor .ProseMirror {
+  min-height: 300px;
 }
 
-.comment-submit {
-  @apply mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium
-    flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200;
+/* Yjs specific styles */
+.yRemoteSelection {
+  opacity: 0.5;
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  .comment-actions {
-    @apply flex-wrap;
-  }
-  
-  .comment-action-button {
-    @apply text-[10px];
-  }
+.yRemoteSelectionHead {
+  position: absolute;
+  height: 1.2em;
+  width: 2px;
+}
+
+.yRemoteSelectionHead::after {
+  position: absolute;
+  content: ' ';
+  border: 3px solid;
+  border-radius: 4px;
+  left: -4px;
+  top: -4px;
+}
+
+/* Branch Management Styles */
+.branch-manager {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.branch-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.branch-action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.branch-action-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.branch-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.branch-action-button.primary {
+  background-color: rgba(59, 130, 246, 0.5);
+  color: white;
+}
+
+.branch-action-button.primary:hover {
+  background-color: rgba(59, 130, 246, 0.6);
+}
+
+.branch-action-button.danger {
+  background-color: rgba(239, 68, 68, 0.5);
+  color: white;
+}
+
+.branch-action-button.danger:hover {
+  background-color: rgba(239, 68, 68, 0.6);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background-color: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+}
+
+.branch-form {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.branches-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.loading-indicator, .empty-state {
+  padding: 1.5rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+.branch-item {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.branch-item.selected {
+  border-color: rgba(59, 130, 246, 0.5);
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.branch-header {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.branch-header:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+.branch-icon {
+  margin-right: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.branch-info {
+  flex: 1;
+}
+
+.branch-name {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.branch-tag {
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  font-weight: normal;
+}
+
+.branch-tag.default {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: rgb(134, 239, 172);
+}
+
+.branch-tag.merged {
+  background-color: rgba(124, 58, 237, 0.2);
+  color: rgb(167, 139, 250);
+}
+
+.branch-meta {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.branch-date {
+  display: flex;
+  align-items: center;
+}
+
+.branch-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.branch-details {
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.branch-description {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.25rem;
+}
+
+.branch-merged-info {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background-color: rgba(124, 58, 237, 0.1);
+  border-radius: 0.25rem;
+}
+
+.branch-versions {
+  margin-top: 0.75rem;
+}
+
+.version-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.version-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.version-icon {
+  margin-right: 0.5rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.version-info {
+  flex: 1;
+}
+
+.version-name {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.version-summary {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+}
+
+.version-meta {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-versions {
+  padding: 0.75rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  font-style: italic;
 }

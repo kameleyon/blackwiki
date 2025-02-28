@@ -1,0 +1,131 @@
+/* Change tracking styles */
+.version-list {
+  @apply space-y-2;
+}
+
+.version-item {
+  @apply bg-white/5 rounded-lg p-4 border border-white/10 transition-colors;
+}
+
+.version-item:hover {
+  @apply bg-white/10;
+}
+
+.version-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.version-number {
+  @apply text-sm font-medium text-white/80;
+}
+
+.version-date {
+  @apply text-xs text-white/60;
+}
+
+.version-author {
+  @apply text-sm text-white/70;
+}
+
+.version-type {
+  @apply px-2 py-0.5 rounded-full text-xs bg-white/10 text-white/80;
+}
+
+.version-actions {
+  @apply flex items-center gap-2 mt-2;
+}
+
+.version-action-button {
+  @apply px-3 py-1 text-xs bg-white/10 hover:bg-white/20 rounded-md text-white/80 transition-colors;
+}
+
+/* Diff viewer styles */
+.diff-viewer {
+  @apply mt-4 rounded-lg border border-white/10 overflow-hidden;
+}
+
+.diff-header {
+  @apply bg-white/5 p-3 border-b border-white/10 flex items-center justify-between;
+}
+
+.diff-content {
+  @apply p-4 space-y-2 bg-black/20;
+}
+
+.diff-line {
+  @apply font-mono text-sm py-1 px-2 rounded;
+}
+
+.diff-line-added {
+  @apply bg-emerald-500/10 text-emerald-200;
+}
+
+.diff-line-removed {
+  @apply bg-rose-500/10 text-rose-200;
+}
+
+.diff-line-unchanged {
+  @apply text-white/80;
+}
+
+/* Change summary styles */
+.change-summary {
+  @apply mt-4 bg-white/5 rounded-lg p-4;
+}
+
+.change-summary-header {
+  @apply text-sm font-medium text-white/80 mb-2;
+}
+
+.change-summary-list {
+  @apply space-y-1;
+}
+
+.change-summary-item {
+  @apply text-sm text-white/70;
+}
+
+/* Version comparison styles */
+.version-comparison {
+  @apply grid grid-cols-2 gap-4;
+}
+
+.version-comparison-panel {
+  @apply bg-white/5 rounded-lg p-4;
+}
+
+.version-comparison-header {
+  @apply text-sm font-medium text-white/80 mb-2 pb-2 border-b border-white/10;
+}
+
+.version-comparison-content {
+  @apply text-sm text-white/70;
+}
+
+/* Version navigation */
+.version-navigation {
+  @apply flex items-center justify-between mt-4;
+}
+
+.version-nav-button {
+  @apply px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white/80 transition-colors 
+         flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.version-nav-button[disabled]:hover {
+  @apply bg-white/10;
+}
+
+/* Loading states */
+.version-loading {
+  @apply animate-pulse bg-white/5 rounded-lg p-4;
+}
+
+.version-loading-line {
+  @apply h-4 bg-white/10 rounded mb-2;
+}
+
+/* Error states */
+.version-error {
+  @apply bg-rose-500/10 text-rose-200 rounded-lg p-4 text-sm;
+}

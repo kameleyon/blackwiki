@@ -6,7 +6,7 @@ import UserNav from "@/components/user/UserNav";
 import { FiLoader, FiBookOpen, FiLink } from "react-icons/fi";
 import Image from "next/image";
 import { EditButton } from "@/components/articles/EditButton";
-import { ArticleActions } from "@/components/articles/ArticleActions";
+import ArticleActions from "@/components/articles/ArticleActions";
 import ContentValidator from "@/components/validator/ContentValidator";
 import ReactMarkdown from "react-markdown";
 import { Metadata } from 'next';
@@ -35,11 +35,10 @@ type Article = {
 };
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const resolvedParams = await params;
   const session = await getServerSession();
   if (!session?.user?.email) {
     return {
@@ -54,7 +53,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const article = await prisma.article.findUnique({
     where: { 
-      id: resolvedParams.id,
+      id: params.id,
       authorId: user?.id,
     },
   });
@@ -65,7 +64,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ReviewArticlePage({ params }: PageProps) {
-  const resolvedParams = await params;
   const session = await getServerSession();
 
   if (!session?.user?.email) {
@@ -112,7 +110,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
   // Get article with user check
   const article = await prisma.article.findUnique({
     where: { 
-      id: resolvedParams.id,
+      id: params.id,
       authorId: user.id,
     },
     include: {

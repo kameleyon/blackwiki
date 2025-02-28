@@ -8,6 +8,7 @@ import {
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import './media.css';
+import Image from "next/image";
 
 interface ImageEditorProps {
   imageUrl: string;
@@ -257,7 +258,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         {/* Editor content */}
         <div className="media-editor-content">
           {/* Hidden image for reference */}
-          <img
+          <Image
             ref={imageRef}
             src={imageUrl}
             alt="Original"
