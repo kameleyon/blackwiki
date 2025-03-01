@@ -2,11 +2,16 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/db";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export async function POST(request: Request, context: any) {
-  const { params } = context;
+interface RouteContext {
+  params: {
+    id: string;
+  };
+}
+
+export async function POST(request: Request, context: RouteContext) {
   try {
-    const articleId = params.id;
+    // Safely access the ID
+    const articleId = context.params.id;
     
     const session = await getServerSession();
     

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { 
   FiPlus, FiBookOpen, FiUpload, 
-  FiX, FiCheck 
+  FiX, FiCheck, FiList, FiFile
 } from 'react-icons/fi';
 import ReferenceForm, { ReferenceData, CitationStyle } from './ReferenceForm';
 import ReferenceList from './ReferenceList';
@@ -28,13 +28,31 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({
   const [isImporting, setIsImporting] = useState(false);
   const [importText, setImportText] = useState('');
   const [importError, setImportError] = useState('');
+  const [isBulkImporting, setIsBulkImporting] = useState(false);
+  const [bulkImportText, setBulkImportText] = useState('');
+  const [bulkImportError, setBulkImportError] = useState('');
 
+  // Use a ref to store the onChange callback to avoid infinite loops
+  const onChangeRef = React.useRef(onChange);
+  
+  // Update the ref when onChange changes
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+  
   // Update parent component when references change
   useEffect(() => {
-    if (onChange) {
-      onChange(references);
+    if (onChangeRef.current) {
+      onChangeRef.current(references);
     }
-  }, [references, onChange]);
+  }, [references]);
+  
+  // Initialize references from initialReferences only once
+  useEffect(() => {
+    if (initialReferences && initialReferences.length > 0) {
+      setReferences(initialReferences);
+    }
+  }, [initialReferences]); // Include initialReferences in the dependency array
 
   // Add a new reference
   const handleAddReference = (reference: ReferenceData) => {
@@ -76,6 +94,101 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({
     setIsImporting(true);
     setImportText('');
     setImportError('');
+  };
+
+  // Show bulk import dialog
+  const handleShowBulkImport = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
+    e.stopPropagation(); // Stop event propagation
+    setIsBulkImporting(true);
+    setBulkImportText('');
+    setBulkImportError('');
+  };
+
+  // Import references from bulk text
+  const handleBulkImportReferences = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
+    e.stopPropagation(); // Stop event propagation
+    try {
+      if (!bulkImportText.trim()) {
+        setBulkImportError('Please enter references to import');
+        return;
+      }
+
+      // Split the text by new lines
+      const lines = bulkImportText.split('\n').filter(line => line.trim());
+      
+      if (lines.length === 0) {
+        setBulkImportError('No valid references found');
+        return;
+      }
+
+      // Create a reference for each line
+      const newReferences = lines.map(line => {
+        const trimmedLine = line.trim();
+        
+        // Try to extract author, title, year, and publisher
+        let authors: string[] = [''];
+        let title = '';
+        let year = '2023'; // Default year to ensure validation passes
+        let publisher = 'Unknown Publisher'; // Default publisher to ensure validation passes
+        
+        // Parse the reference line
+        // Format typically: Author. Title. Publisher, Year.
+        
+        // Extract author (text before first period)
+        const firstPeriodIndex = trimmedLine.indexOf('.');
+        if (firstPeriodIndex > 0) {
+          authors = [trimmedLine.substring(0, firstPeriodIndex).trim()];
+          let remaining = trimmedLine.substring(firstPeriodIndex + 1).trim();
+          
+          // Extract title (text between first and second period)
+          const secondPeriodIndex = remaining.indexOf('.');
+          if (secondPeriodIndex > 0) {
+            title = remaining.substring(0, secondPeriodIndex).trim();
+            remaining = remaining.substring(secondPeriodIndex + 1).trim();
+            
+            // Extract publisher and year
+            // Look for year pattern in the remaining text
+            const yearMatch = remaining.match(/\b(19|20)\d{2}\b/);
+            if (yearMatch) {
+              year = yearMatch[0];
+              
+              // Publisher is typically before the year
+              const yearIndex = remaining.indexOf(year);
+              if (yearIndex > 0) {
+                publisher = remaining.substring(0, yearIndex).trim();
+                // Remove trailing comma, period, etc.
+                publisher = publisher.replace(/[,.:;]$/, '').trim();
+              }
+            } else {
+              // If no year found, assume the remaining text is the publisher
+              publisher = remaining.replace(/[,.:;]$/, '').trim();
+            }
+          } else {
+            // If no second period, use the remaining text as title
+            title = remaining;
+          }
+        } else {
+          // If no period found, use the whole line as title
+          title = trimmedLine;
+        }
+        
+        return {
+          id: uuidv4(),
+          type: 'book' as const,
+          title: title,
+          authors: authors,
+          year: year,
+          publisher: publisher
+        };
+      });
+
+      setReferences(prev => [...prev, ...newReferences]);
+      setIsBulkImporting(false);
+    } catch (error) {
+      setBulkImportError('Failed to import references: ' + (error instanceof Error ? error.message : String(error)));
+    }
   };
 
   // Import references from text
@@ -150,13 +263,23 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({
             Reference Management
           </span>
           {!isAddingReference && !editingReference && (
-            <button
-              onClick={() => setIsAddingReference(true)}
-              className="reference-action-button primary"
-            >
-              <FiPlus size={16} />
-              <span>Add Reference</span>
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleShowBulkImport}
+                className="reference-action-button"
+                type="button" // Explicitly set type to button
+              >
+                <FiList size={16} />
+                <span>Bulk Import</span>
+              </button>
+              <button
+                onClick={() => setIsAddingReference(true)}
+                className="reference-action-button primary"
+              >
+                <FiPlus size={16} />
+                <span>Add Reference</span>
+              </button>
+            </div>
           )}
         </h3>
 
@@ -197,7 +320,62 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({
         )}
       </div>
 
-      {/* Import Dialog */}
+      {/* Bulk Import Dialog */}
+      {isBulkImporting && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-white/10 rounded-lg p-6 max-w-2xl w-full mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-white/90 font-medium flex items-center">
+              <FiFile className="mr-2" />
+                Bulk Import References
+              </h3>
+              <button
+                onClick={() => setIsBulkImporting(false)}
+                className="text-white/60 hover:text-white/90"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-white/70 text-sm mb-2">
+                Paste your references below, one per line. Each line will be imported as a separate reference.
+              </p>
+              <textarea
+                value={bulkImportText}
+                onChange={(e) => setBulkImportText(e.target.value)}
+                className="w-full h-64 bg-black/30 border border-white/10 rounded-md text-white/80 p-3 text-sm font-mono"
+                placeholder="James, C.L.R. The Black Jacobins: Toussaint L'Ouverture and the San Domingo Revolution. Vintage Books, 1989 (1938).
+Dubois, Laurent. Avengers of the New World: The Story of the Haitian Revolution. Harvard University Press, 2004.
+Fick, Carolyn E. The Making of Haiti: The Saint Domingue Revolution from Below. University of Tennessee Press, 1990."
+              />
+              {bulkImportError && (
+                <p className="text-red-400 text-xs mt-2">{bulkImportError}</p>
+              )}
+            </div>
+            
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsBulkImporting(false)}
+                className="reference-action-button"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleBulkImportReferences}
+                className="reference-action-button primary"
+              >
+                <FiCheck size={16} />
+                Import
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* JSON Import Dialog */}
       {isImporting && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-black/90 border border-white/10 rounded-lg p-6 max-w-2xl w-full mx-4">
@@ -239,12 +417,14 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({
             
             <div className="flex justify-end gap-3">
               <button
+                type="button"
                 onClick={() => setIsImporting(false)}
                 className="reference-action-button"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleImportReferences}
                 className="reference-action-button primary"
               >

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
@@ -7,17 +5,45 @@ import { NewArticleForm } from "@/components/articles/NewArticleForm";
 import UserNav from "@/components/user/UserNav";
 import { getCurrentUser } from "@/lib/auth";
 import GreetingHeader from "@/components/dashboard/GreetingHeader";
+import { Metadata } from "next";
 
-/**
- * Final workaround for the Next.js 15 type conflict:
- * We disable the no-explicit-any rule in this file to sidestep
- * Next.js's usage of Promise<any> in dynamic route param checks.
- * This file is otherwise the same as before, just ignoring the ESLint rule.
- */
-export default async function EditArticlePage(props: any) {
-  const { params } = props;
+// Define the params type
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
 
-  if (!params?.id) {
+// Generate metadata for the page
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  // Safely access the ID
+  const id = params.id;
+  
+  try {
+    // Get article title for metadata
+    const article = await prisma.article.findUnique({
+      where: { id },
+      select: { title: true },
+    });
+    
+    return {
+      title: article ? `Edit: ${article.title} | AfroWiki` : 'Edit Article | AfroWiki',
+      description: 'Edit your article on AfroWiki',
+    };
+  } catch {
+    // Ignore error and return default metadata
+    return {
+      title: 'Edit Article | AfroWiki',
+      description: 'Edit your article on AfroWiki',
+    };
+  }
+}
+
+export default async function EditArticlePage({ params }: PageProps) {
+  // Safely access the ID
+  const id = params.id;
+  
+  if (!id) {
     redirect("/dashboard");
     return null;
   }
@@ -55,7 +81,7 @@ export default async function EditArticlePage(props: any) {
   // Get article with user check
   const article = await prisma.article.findUnique({
     where: {
-      id: params.id,
+      id: id, // Use the awaited id
       authorId: user.id,
     },
     include: {
@@ -92,7 +118,7 @@ export default async function EditArticlePage(props: any) {
       
       <UserNav currentPath="/articles/edit" />
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         <NewArticleForm
           categories={categories}
           editMode={true}

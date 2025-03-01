@@ -140,11 +140,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           deleteMany: {}, // Delete all existing references
           create: references
             .filter((ref: string) => ref.trim() !== '')
-            .map((ref: string, index: number) => ({
-              url: ref.startsWith('http') ? ref : 'https://example.com',
-              title: `Reference ${index + 1}`,
-              description: ref
-            }))
+            .map((ref: string) => {
+              // If it's a URL, use it as the URL and a shortened version as the title
+              if (ref.startsWith('http')) {
+                return {
+                  url: ref,
+                  title: ref.substring(0, 50) + (ref.length > 50 ? '...' : ''),
+                  description: ref
+                };
+              } 
+              // Otherwise, use the reference text as the title and description
+              return {
+                url: 'https://example.com', // Default URL
+                title: ref, // Use the full reference text as the title
+                description: ref
+              };
+            })
         },
         // Update categories
         categories: {

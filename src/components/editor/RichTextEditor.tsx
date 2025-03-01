@@ -33,7 +33,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Disable the codeBlock from StarterKit since we're adding it separately
+        codeBlock: false,
+      }),
       Image,
       Link.configure({
         openOnClick: false,
@@ -60,6 +63,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       }),
     ],
     content,
+    // Set immediatelyRender to false to avoid SSR hydration mismatches
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onChange(html);

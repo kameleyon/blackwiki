@@ -26,8 +26,8 @@ interface ArticleActionsProps {
   authorId?: string;
   currentUserId?: string;
   isAdmin?: boolean;
-  isPublished?: boolean;
   factCheckStatus?: 'pass' | 'fail' | 'not-relevant';
+  status?: string;
 }
 
 export default function ArticleActions({
@@ -35,25 +35,17 @@ export default function ArticleActions({
   authorId,
   currentUserId,
   isAdmin,
-  isPublished,
   factCheckStatus = 'not-relevant',
+  status = 'draft',
 }: ArticleActionsProps) {
-  // Display fact check status badge
-  const getFactCheckBadge = () => {
-    switch (factCheckStatus) {
-      case 'pass':
-        return <div className="text-sm text-green-400 bg-green-400/10 px-3 py-1 rounded-full">Fact Check: Passed</div>;
-      case 'fail':
-        return <div className="text-sm text-red-400 bg-red-400/10 px-3 py-1 rounded-full">Fact Check: Failed</div>;
-      default:
-        return null;
-    }
-  };
+  // Removed unused function
 
   const [showVersions, setShowVersions] = useState(false);
   const [versions, setVersions] = useState<Version[]>([]);
   const [currentVersionId, setCurrentVersionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const canEdit = currentUserId === authorId || isAdmin;
 
@@ -115,6 +107,40 @@ export default function ArticleActions({
     }
   };
 
+  // Handle submit for review
+  const handleSubmitForReview = async () => {
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      
+      const response = await fetch(`/api/articles/confirm/${articleId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'confirm'
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit article for review');
+      }
+      
+      // Redirect to dashboard after successful submission
+      const data = await response.json();
+      if (data.redirect) {
+        window.location.href = data.redirect;
+      }
+    } catch (error) {
+      console.error('Error submitting article:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to submit article for review');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4 flex-wrap">
@@ -137,16 +163,42 @@ export default function ArticleActions({
               <FiClock size={16} />
               Version History
             </button>
+            
+            {/* Submit for Review Button - only show for drafts */}
+            {status === 'draft' && (
+              <button
+                onClick={handleSubmitForReview}
+                disabled={isSubmitting || factCheckStatus === 'fail'}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
+                  ${factCheckStatus === 'fail' 
+                    ? 'bg-red-500/20 text-red-200 cursor-not-allowed' 
+                    : 'bg-green-500/20 text-green-200 hover:bg-green-500/30'}`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-white/80 rounded-full border-t-transparent"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <FiEye size={16} />
+                    Submit for Review
+                  </>
+                )}
+              </button>
+            )}
           </>
         )}
-        {!isPublished && canEdit && (
-          <div className="text-sm text-white/60 bg-white/5 px-3 py-1 rounded-full">
-            <FiEye className="inline mr-1" size={14} />
-            Draft
-          </div>
-        )}
-        {factCheckStatus !== 'not-relevant' && getFactCheckBadge()}
+        
+        {/* Fact check badge is now displayed in the review page */}
       </div>
+      
+      {/* Error message */}
+      {submitError && (
+        <div className="text-red-400 text-sm mt-2 p-2 bg-red-500/10 rounded">
+          {submitError}
+        </div>
+      )}
 
       {showVersions && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">

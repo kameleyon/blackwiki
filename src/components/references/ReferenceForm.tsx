@@ -514,8 +514,8 @@ const ReferenceForm: React.FC<ReferenceFormProps> = ({
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     
     // Validate before saving
     const validation = validateReference(formData);
@@ -599,7 +599,7 @@ const ReferenceForm: React.FC<ReferenceFormProps> = ({
       </div>
 
       {/* Reference Form */}
-      <form onSubmit={handleSubmit}>
+      <div className="reference-form">
         <div className="reference-section">
           <h3 className="reference-heading">Reference Details</h3>
           
@@ -731,7 +731,8 @@ const ReferenceForm: React.FC<ReferenceFormProps> = ({
             </button>
           )}
           <button
-            type="submit"
+            type="button"
+            onClick={() => handleSubmit()}
             className="reference-action-button primary"
             disabled={!validationResult.isValid}
           >
@@ -739,7 +740,7 @@ const ReferenceForm: React.FC<ReferenceFormProps> = ({
             Save Reference
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

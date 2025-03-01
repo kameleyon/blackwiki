@@ -10,6 +10,8 @@ import ArticleActions from "@/components/articles/ArticleActions";
 import ContentValidator from "@/components/validator/ContentValidator";
 import ReactMarkdown from "react-markdown";
 import { Metadata } from 'next';
+import parse from 'html-react-parser';
+import '../article-content.css';
 
 type Article = {
   id: string;
@@ -88,6 +90,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
     image: string | null;
     imageAlt: string | null;
     authorId: string;
+    status: string;
     references: Array<{
       articleId: string;
       title: string;
@@ -145,9 +148,33 @@ export default async function ReviewArticlePage({ params }: PageProps) {
     authorId: article.authorId,
     categories: article.categories,
     tags: article.tags,
-    references: article.references.map(ref => ref.url),
+    references: article.references.map(ref => {
+      // If the reference has a title, use that, otherwise use the URL
+      if (ref.title && ref.title.trim() !== '') {
+        return ref.title;
+      }
+      // If no title but has a description, use that
+      if (ref.description && ref.description.trim() !== '') {
+        return ref.description;
+      }
+      // Fallback to URL
+      return ref.url;
+    }),
     metadata: article.metadata ? JSON.parse(article.metadata) : undefined,
   };
+
+  // Ensure metadata is properly formatted
+  if (typeof validArticle.metadata === 'string') {
+    try {
+      validArticle.metadata = JSON.parse(validArticle.metadata);
+    } catch (e) {
+      console.error('Failed to parse metadata:', e);
+      validArticle.metadata = {
+        keywords: [],
+        description: ''
+      };
+    }
+  }
 
   // Get fact check results
   const factCheck = await checkArticleFacts(validArticle.title, validArticle.content);
@@ -181,6 +208,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
                   src={validArticle.image}
                   alt={validArticle.imageAlt || validArticle.title}
                   fill
+                  priority
                   className="object-cover rounded-lg"
                 />
               </div>
@@ -199,28 +227,10 @@ export default async function ReviewArticlePage({ params }: PageProps) {
             </div>
             
             <div className="prose prose-invert prose-sm max-w-none leading-loose">
-              <ReactMarkdown 
-                components={{
-                  h1: ({...props}) => <h1 className="text-2xl font-bold mb-4" {...props} />,
-                  h2: ({...props}) => <h2 className="text-xl font-semibold mb-3" {...props} />,
-                  h3: ({...props}) => <h3 className="text-lg font-medium mb-2" {...props} />,
-                  p: ({...props}) => <p className="mb-4 leading-loose" {...props} />,
-                  ul: ({...props}) => <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />,
-                  ol: ({...props}) => <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />,
-                  li: ({...props}) => <li className="leading-loose" {...props} />,
-                  blockquote: ({...props}) => (
-                    <blockquote className="border-l-4 border-white/20 pl-4 italic mb-4" {...props} />
-                  ),
-                  code: ({...props}) => (
-                    <code className="bg-black/30 rounded px-1 py-0.5" {...props} />
-                  ),
-                  pre: ({...props}) => (
-                    <pre className="bg-black/30 rounded p-4 mb-4 overflow-x-auto" {...props} />
-                  ),
-                }}
-              >
-                {validArticle.content}
-              </ReactMarkdown>
+              {/* Use HTML parser instead of ReactMarkdown for content with HTML tags */}
+              <div className="article-content">
+                {parse(validArticle.content)}
+              </div>
             </div>
 
             {/* References Section */}
@@ -230,9 +240,33 @@ export default async function ReviewArticlePage({ params }: PageProps) {
                   <FiBookOpen className="mr-2" />
                   References
                 </h3>
-                <ul className="space-y-2">
-                {validArticle.references.map((reference: string, index: number) => (
-                    <li key={index} className="text-white/70 text-sm">
+                <ol className="list-decimal pl-6 space-y-2">
+                {validArticle.references.map((reference: string, index: number) => {
+                  // Process the reference to format book titles, article titles, etc.
+                  let formattedReference = reference;
+                  
+                  // Try to identify and italicize titles
+                  // This is a simple approach - a more robust solution would use regex patterns
+                  // for different citation styles
+                  const titlePatterns = [
+                    // Match titles that might be in quotes
+                    /"([^"]+)"/g,
+                    // Match titles that might be between periods
+                    /\. ([^.]+)\./g,
+                    // Match titles that might be at the start (for books)
+                    /^([^.]+)\./g
+                  ];
+                  
+                  // Apply each pattern
+                  titlePatterns.forEach(pattern => {
+                    formattedReference = formattedReference.replace(pattern, (match, title) => {
+                      // Replace the matched title with an italicized version
+                      return match.replace(title, `<em>${title}</em>`);
+                    });
+                  });
+                  
+                  return (
+                    <li key={index} className="text-white/70 text-sm mb-2">
                       {reference.startsWith('http') ? (
                         <a 
                           href={reference} 
@@ -244,11 +278,12 @@ export default async function ReviewArticlePage({ params }: PageProps) {
                           {reference}
                         </a>
                       ) : (
-                        reference
+                        <div dangerouslySetInnerHTML={{ __html: formattedReference }} />
                       )}
                     </li>
-                  ))}
-                </ul>
+                  );
+                })}
+                </ol>
               </div>
             )}
 
@@ -317,6 +352,22 @@ export default async function ReviewArticlePage({ params }: PageProps) {
                 {factCheck.analysis}
               </ReactMarkdown>
             </div>
+            
+            {/* Fact Check Badge at the bottom */}
+            {factCheckStatus === 'pass' && (
+              <div className="mt-4 flex justify-end">
+                <div className="text-sm text-green-400 bg-green-400/10 px-3 py-1 rounded-full">
+                  Fact Check: Passed
+                </div>
+              </div>
+            )}
+            {factCheckStatus === 'fail' && (
+              <div className="mt-4 flex justify-end">
+                <div className="text-sm text-red-400 bg-red-400/10 px-3 py-1 rounded-full">
+                  Fact Check: Failed
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-white/5 rounded-xl p-6">
@@ -325,6 +376,9 @@ export default async function ReviewArticlePage({ params }: PageProps) {
             <ArticleActions 
               articleId={validArticle.id} 
               factCheckStatus={factCheckStatus}
+              status={article.status}
+              authorId={article.authorId}
+              currentUserId={user.id}
             />
           </div>
 
