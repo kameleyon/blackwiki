@@ -18,7 +18,7 @@ export default function SignOut() {
       <div className="max-w-md w-full mx-auto p-8 bg-white/5 rounded-xl shadow-lg">
         <div className="flex justify-center mb-4">
           <Image 
-            src="/bwlogo.PNG" 
+            src="/logo.png" 
             alt="AfroWiki Logo" 
             width={100} 
             height={100} 
