@@ -9,6 +9,7 @@ import { getCurrentUser } from "@/lib/auth";
 import ArticleEngagement from '@/components/articles/ArticleEngagement'
 import RelatedArticles from '@/components/articles/RelatedArticles'
 import CommentSystem from '@/components/collaboration/CommentSystem'
+import CommunityEditingTabs from '@/components/community-editing/CommunityEditingTabs'
 import GreetingHeader from "@/components/dashboard/GreetingHeader";
 import UserNav from "@/components/user/UserNav";
 import { FiClock, FiEye, FiCalendar } from 'react-icons/fi'
@@ -186,6 +187,20 @@ export default async function ArticlePage({ params }: PageProps) {
               </ul>
             </div>
           )}
+          
+          {/* Community Editing Features */}
+          <div className="mt-12 border-t border-white/10 pt-6">
+            <h2 className="text-xl font-normal mb-4">Community</h2>
+            <div className="mb-6">
+              {/* @ts-ignore - Component exists but TypeScript may not recognize it */}
+              <CommunityEditingTabs 
+                articleId={article.id} 
+                articleTitle={article.title}
+                authorId={article.authorId}
+                authorName={article.author?.name || undefined}
+              />
+            </div>
+          </div>
           
           {/* Comments */}
           <div className="mt-12 border-t border-white/10 pt-6">

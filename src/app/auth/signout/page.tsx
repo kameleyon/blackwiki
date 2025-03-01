@@ -16,19 +16,19 @@ export default function SignOut() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full mx-auto p-8 bg-white/5 rounded-xl shadow-lg">
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4">
           <Image 
             src="/bwlogo.PNG" 
             alt="AfroWiki Logo" 
             width={100} 
             height={100} 
-            className="rounded-full"
+            className="rounded-2xl"
           />
         </div>
         
-        <h1 className="text-3xl font-semibold text-center mb-6 text-white/90">Sign Out</h1>
+        <h1 className="text-3xl font-normal text-center mb-4 text-white/90">Sign Out</h1>
         
-        <p className="text-white/70 text-center mb-8">
+        <p className="text-white/70 text-center mb-4">
           Are you sure you want to sign out?
         </p>
 

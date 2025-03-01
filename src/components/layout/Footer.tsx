@@ -8,7 +8,19 @@ export function Footer() {
           <div className="text-sm text-white/60 hover:text-white/80 transition-colors">
             © {new Date().getFullYear()} AfroWiki. All rights reserved.
           </div>
-          <div className="flex space-x-6">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+            <Link 
+              href="/foundation" 
+              className="text-sm text-white/60 hover:text-white transition-colors"
+            >
+              Foundation
+            </Link>
+            <Link 
+              href="/community" 
+              className="text-sm text-white/60 hover:text-white transition-colors"
+            >
+              Community
+            </Link>
             <Link 
               href="/terms" 
               className="text-sm text-white/60 hover:text-white transition-colors"
