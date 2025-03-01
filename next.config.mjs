@@ -88,6 +88,9 @@ const config = {
     Object.assign(config.resolve.fallback, {
       canvas: false,
     });
+
+    // Configure webpack cache
+    config.cache = false; // Disable webpack caching temporarily to fix the build
     
     return config;
   },
