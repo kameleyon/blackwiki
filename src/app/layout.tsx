@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "@/components/layout/SessionProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import ReactQueryProvider from "@/lib/react-query-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,13 +22,15 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <SessionProvider>
-          <div className="flex flex-col min-h-screen bg-background">
-            <Navbar />
-            <main className="flex-1 flex flex-col pt-16">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <ReactQueryProvider>
+            <div className="flex flex-col min-h-screen bg-background">
+              <Navbar />
+              <main className="flex-1 flex flex-col pt-16">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </ReactQueryProvider>
         </SessionProvider>
       </body>
     </html>

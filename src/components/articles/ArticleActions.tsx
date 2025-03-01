@@ -143,6 +143,11 @@ export default function ArticleActions({
 
   return (
     <div className="space-y-4">
+      {/* Debug info */}
+      <div className="text-xs text-white/50 mb-2">
+        Status: {status}, CanEdit: {canEdit ? 'true' : 'false'}, FactCheck: {factCheckStatus}
+      </div>
+      
       <div className="flex items-center gap-4 flex-wrap">
         {canEdit && (
           <>
@@ -164,29 +169,27 @@ export default function ArticleActions({
               Version History
             </button>
             
-            {/* Submit for Review Button - only show for drafts */}
-            {status === 'draft' && (
-              <button
-                onClick={handleSubmitForReview}
-                disabled={isSubmitting || factCheckStatus === 'fail'}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
-                  ${factCheckStatus === 'fail' 
-                    ? 'bg-red-500/20 text-red-200 cursor-not-allowed' 
-                    : 'bg-green-500/20 text-green-200 hover:bg-green-500/30'}`}
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin h-4 w-4 border-2 border-white/80 rounded-full border-t-transparent"></div>
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <FiEye size={16} />
-                    Submit for Review
-                  </>
-                )}
-              </button>
-            )}
+            {/* Submit for Review Button - always show for debugging */}
+            <button
+              onClick={handleSubmitForReview}
+              disabled={isSubmitting || factCheckStatus === 'fail'}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
+                ${factCheckStatus === 'fail' 
+                  ? 'bg-red-500/20 text-red-200 cursor-not-allowed' 
+                  : 'bg-green-500/20 text-green-200 hover:bg-green-500/30'}`}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin h-4 w-4 border-2 border-white/80 rounded-full border-t-transparent"></div>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <FiEye size={16} />
+                  Submit for Review
+                </>
+              )}
+            </button>
           </>
         )}
         
