@@ -19,7 +19,7 @@ export default function DashboardNav() {
   const pathname = usePathname();
   
   const isActive = (path: string) => {
-    return pathname === path ? "text-white font-medium" : "text-gray-600 hover:text-gray-200";
+    return pathname === path ? "text-white font-medium" : "text-gray-400 hover:text-gray-200";
   };
 
   return (
@@ -92,7 +92,7 @@ export default function DashboardNav() {
       <div className="flex items-center justify-end gap-4 mb-4">
         <Link
           href="/profile"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
+          className="flex items-center gap-2 text-gray-400 hover:text-gray-200"
           title="My Profile"
         >
           <FiUser size={18} />
@@ -100,7 +100,7 @@ export default function DashboardNav() {
         </Link>
         <Link
           href="/settings"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
+          className="flex items-center gap-2 text-gray-400 hover:text-gray-200"
           title="Settings"
         >
           <FiSettings size={18} />
@@ -108,7 +108,7 @@ export default function DashboardNav() {
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: '/' })}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
+          className="flex items-center gap-2 text-gray-400 hover:text-gray-200"
           title="Log out"
         >
           <FiLogOut size={18} />

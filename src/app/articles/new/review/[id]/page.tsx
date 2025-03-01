@@ -189,7 +189,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
     <div className="container mx-auto px-4 py-8">
       {/* Navigation */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold pl-4 mb-4">Review Article</h1>
+        <h1 className="text-2xl font-normal pl-4 mb-4">Review Article</h1>
       </div>
       <UserNav currentPath="/articles/new" />
       
@@ -198,7 +198,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
         <div className="space-y-6">
           <div className="bg-white/5 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-100">Article Preview</h2>
+              <h2 className="text-xl font-normal text-gray-100">Article Preview</h2>
               <EditButton articleId={validArticle.id} />
             </div>
             
@@ -214,7 +214,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
               </div>
             )}
 
-            <h1 className="text-2xl font-bold text-gray-100 mb-4">{validArticle.title}</h1>
+            <h1 className="text-2xl font-normal text-gray-100 mb-4">{validArticle.title}</h1>
             
             <div className="prose prose-invert prose-sm max-w-none leading-loose mb-6">
               <ReactMarkdown 
@@ -236,7 +236,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
             {/* References Section */}
             {validArticle.references && validArticle.references.length > 0 && validArticle.references[0] !== "" && (
               <div className="mt-8 pt-6 border-t border-white/10">
-                <h3 className="flex items-center text-lg font-medium mb-3">
+                <h3 className="flex items-center text-lg font-normal mb-3">
                   <FiBookOpen className="mr-2" />
                   References
                 </h3>
@@ -325,7 +325,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
           {/* Fact Check Results */}
           <div className="bg-white/5 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-white/80">Fact Check Results</h2>
+              <h2 className="text-xl font-normal text-white/80">Fact Check Results</h2>
               {!factCheck.success && (
                 <div className="flex items-center gap-2 text-white/70 text-sm">
                   <FiLoader className="animate-spin" />
@@ -337,9 +337,9 @@ export default async function ReviewArticlePage({ params }: PageProps) {
             <div className="prose prose-invert prose-sm max-w-none leading-loose">
               <ReactMarkdown 
                 components={{
-                  h1: ({...props}) => <h1 className="text-2xl font-bold mb-4" {...props} />,
-                  h2: ({...props}) => <h2 className="text-lg font-semibold mb-3" {...props} />,
-                  h3: ({...props}) => <h3 className="text-md font-medium mb-2" {...props} />,
+                  h1: ({...props}) => <h1 className="text-2xl font-normal mb-4" {...props} />,
+                  h2: ({...props}) => <h2 className="text-lg font-normal mb-3" {...props} />,
+                  h3: ({...props}) => <h3 className="text-md font-normal mb-2" {...props} />,
                   p: ({...props}) => <p className="mb-4 text-white/70 font-light text-sm leading-loose" {...props} />,
                   ul: ({...props}) => <ul className="list-disc pl-6 mb-4 space-y-2 text-white/70 font-light text-sm" {...props} />,
                   ol: ({...props}) => <ol className="list-decimal pl-6 text-white/70 font-light text-sm mb-4 space-y-2" {...props} />,
@@ -371,7 +371,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
           </div>
 
           <div className="bg-white/5 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">Actions</h2>
+            <h2 className="text-xl font-normal text-gray-100 mb-4">Actions</h2>
             
             <ArticleActions 
               articleId={validArticle.id} 
@@ -385,10 +385,10 @@ export default async function ReviewArticlePage({ params }: PageProps) {
           {/* SEO Preview */}
           {validArticle.metadata && (
             <div className="bg-white/5 rounded-xl p-6">
-              <h2 className="text-xl font-semibold text-gray-100 mb-4">SEO Preview</h2>
+              <h2 className="text-xl font-normal text-gray-100 mb-4">SEO Preview</h2>
               
               <div className="bg-white/5 rounded-md p-4 mb-4">
-                <h3 className="text-lg font-medium text-white/90 mb-1 line-clamp-1">{validArticle.title}</h3>
+                <h3 className="text-lg font-normal text-white/90 mb-1 line-clamp-1">{validArticle.title}</h3>
                 <div className="text-green-400 text-xs mb-1">afrowiki.com › articles › {validArticle.title.toLowerCase().replace(/\s+/g, '-')}</div>
                 <p className="text-sm text-white/70 line-clamp-2">
                   {validArticle.metadata.description || validArticle.summary}
@@ -397,7 +397,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
               
               {validArticle.metadata.keywords && validArticle.metadata.keywords.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-white/80 mb-2">Keywords</h3>
+                  <h3 className="text-sm font-normal text-white/80 mb-2">Keywords</h3>
                   <div className="flex flex-wrap gap-1">
                     {validArticle.metadata.keywords.map((keyword: KeywordType, index: number) => (
                       <span key={index} className="px-2 py-0.5 bg-white/5 text-white/60 rounded text-xs">

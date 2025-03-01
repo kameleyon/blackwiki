@@ -68,7 +68,7 @@ export default function Register() {
         transition={{ duration: 0.5 }}
         className="max-w-md w-full mx-auto p-8"
       >
-        <h1 className="text-4xl font-bold text-center mb-8">Create Account</h1>
+        <h1 className="text-4xl font-normal text-center mb-8">Create Account</h1>
         <p className="text-muted-foreground text-center mb-8">
           Join AfroWiki to contribute to the knowledge base
         </p>

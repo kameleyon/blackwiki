@@ -87,7 +87,7 @@ export default async function ProfilePage() {
               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-100 flex items-center gap-3">
+              <h1 className="text-2xl font-normal text-gray-100 flex items-center gap-3">
                 {userProfile.name}
                 <Link 
                   href="/settings"
@@ -114,7 +114,7 @@ export default async function ProfilePage() {
         <div className="space-y-6">
           {userProfile.bio && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-200 mb-2">About</h2>
+              <h2 className="text-lg font-normal text-gray-200 mb-2">About</h2>
               <div className="text-white/70 font-light prose prose-invert prose-sm leading-loose max-w-none">
                 <ReactMarkdown>{userProfile.bio}</ReactMarkdown>
               </div>
@@ -123,14 +123,14 @@ export default async function ProfilePage() {
 
           {userProfile.location && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-200 mb-2">Location</h2>
+              <h2 className="text-lg font-normal text-gray-200 mb-2">Location</h2>
               <p className="text-white/70 font-light">{userProfile.location}</p>
             </div>
           )}
 
           {expertiseTags.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-200 mb-2">Areas of Expertise</h2>
+              <h2 className="text-lg font-normal text-gray-200 mb-2">Areas of Expertise</h2>
               <div className="flex flex-wrap gap-2">
                 {expertiseTags.map((tag: string, index: number) => (
                   <span 
@@ -146,7 +146,7 @@ export default async function ProfilePage() {
 
           {interestTags.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-200 mb-2">Interests</h2>
+              <h2 className="text-lg font-normal text-gray-200 mb-2">Interests</h2>
               <div className="flex flex-wrap gap-2">
                 {interestTags.map((tag: string, index: number) => (
                   <span 
@@ -161,7 +161,7 @@ export default async function ProfilePage() {
           )}
 
           <div>
-            <h2 className="text-lg font-semibold text-gray-200 mb-2">Contact</h2>
+            <h2 className="text-lg font-normal text-gray-200 mb-2">Contact</h2>
             <div className="space-y-2">
               {userProfile.website && (
                 <a 

@@ -15,7 +15,8 @@
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
-  font-weight: 500;
+  font-weight: 400;
+  font-family: 'League Spartan', sans-serif;
 }
 
 .validator-heading svg {
@@ -107,9 +108,10 @@
 }
 
 .validator-issue-title {
-  font-weight: 500;
+  font-weight: 400;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.9);
+  font-family: 'League Spartan', sans-serif;
 }
 
 .validator-issue-description {
@@ -166,8 +168,9 @@
 }
 
 .validator-summary-title {
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 0.25rem;
+  font-family: 'League Spartan', sans-serif;
 }
 
 .validator-summary-description {

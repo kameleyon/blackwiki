@@ -29,7 +29,7 @@ export default function GreetingHeader({ user, totalArticles, publishedArticles,
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold">{greeting}, {user.name || 'Scholar'}</h1>
+            <h1 className="text-2xl font-normal">{greeting}, {user.name || 'Scholar'}</h1>
             {pageName && <span className="text-gray-400">• {pageName}</span>}
           </div>
           <p className="text-gray-400 mt-1">
@@ -41,14 +41,14 @@ export default function GreetingHeader({ user, totalArticles, publishedArticles,
         <div className="flex items-center gap-3">
           <Link 
             href="/articles/new" 
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-gray-600 hover:text-gray-200 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-gray-200 transition-colors flex items-center gap-2"
           >
             <FiEdit size={16} />
             <span>New Article</span>
           </Link>
           <Link 
             href="/settings" 
-            className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-600 hover:text-gray-200 transition-colors"
+            className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-gray-200 transition-colors"
             title="Dashboard Settings"
           >
             <FiSettings size={18} />

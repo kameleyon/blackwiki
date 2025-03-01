@@ -51,15 +51,15 @@ export default function Home() {
         className="mt-12 mb-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center max-w-4xl mx-auto"
       >
         <div className="p-4">
-          <h2 className="text-xl font-semibold text-white/80 mb-2">History & Heritage</h2>
+          <h2 className="text-xl font-normal text-white/80 mb-2">History & Heritage</h2>
           <p className="text-muted-foreground">Discover the rich history and cultural heritage of the African diaspora</p>
         </div>
         <div className="p-4">
-          <h2 className="text-xl font-semibold text-white/80 mb-2">Art & Culture</h2>
+          <h2 className="text-xl font-normal text-white/80 mb-2">Art & Culture</h2>
           <p className="text-muted-foreground">Explore Black art, music, literature, and cultural expressions</p>
         </div>
         <div className="p-4">
-          <h2 className="text-xl font-semibold text-white/80 mb-2">Innovation & Impact</h2>
+          <h2 className="text-xl font-normal text-white/80 mb-2">Innovation & Impact</h2>
           <p className="text-muted-foreground">Learn about Black innovators, leaders, and their global impact</p>
         </div>
       </motion.div>

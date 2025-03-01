@@ -298,7 +298,7 @@ const ContentValidator: React.FC<ContentValidatorProps> = ({
 
   return (
     <div className="bg-white/5 rounded-xl p-6">
-      <h2 className="text-xl font-semibold text-white/80 mb-4">Content Validation</h2>
+      <h2 className="text-xl font-normal text-white/80 mb-4">Content Validation</h2>
       
       {/* Overall Score */}
       <div className="validator-summary mb-6">
@@ -307,7 +307,7 @@ const ContentValidator: React.FC<ContentValidatorProps> = ({
           <span className="validator-summary-score-label">Score</span>
         </div>
         <div className="validator-summary-details">
-          <h3 className="validator-summary-title">
+          <h3 className="validator-summary-title font-normal">
             {validation.overallScore >= 90 ? 'Excellent' : 
              validation.overallScore >= 80 ? 'Very Good' :
              validation.overallScore >= 70 ? 'Good' :
@@ -712,7 +712,7 @@ const ContentValidator: React.FC<ContentValidatorProps> = ({
             
             <div className="mt-4 space-y-4">
               <div>
-                <h4 className="text-sm font-medium text-white/80 mb-2">Strengths</h4>
+                <h4 className="text-sm font-normal text-white/80 mb-2">Strengths</h4>
                 <ul className="list-disc pl-5 text-sm text-white/70 space-y-1">
                   {validation.contentQuality.strengths.map((strength, index) => (
                     <li key={index}>{strength}</li>
@@ -721,7 +721,7 @@ const ContentValidator: React.FC<ContentValidatorProps> = ({
               </div>
               
               <div>
-                <h4 className="text-sm font-medium text-white/80 mb-2">Areas for Improvement</h4>
+                <h4 className="text-sm font-normal text-white/80 mb-2">Areas for Improvement</h4>
                 <ul className="list-disc pl-5 text-sm text-white/70 space-y-1">
                   {validation.contentQuality.weaknesses.length > 0 ? 
                     validation.contentQuality.weaknesses.map((weakness, index) => (
@@ -733,7 +733,7 @@ const ContentValidator: React.FC<ContentValidatorProps> = ({
               </div>
               
               <div>
-                <h4 className="text-sm font-medium text-white/80 mb-2">Suggestions</h4>
+                <h4 className="text-sm font-normal text-white/80 mb-2">Suggestions</h4>
                 <ul className="list-disc pl-5 text-sm text-white/70 space-y-1">
                   {validation.contentQuality.suggestions.map((suggestion, index) => (
                     <li key={index}>{suggestion}</li>

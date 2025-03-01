@@ -108,7 +108,7 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white/5 rounded-xl p-6">
-      <h2 className="text-xl font-semibold text-gray-100">Profile Settings</h2>
+      <h2 className="text-xl font-normal text-gray-100">Profile Settings</h2>
 
       <div className="flex items-center gap-4">
         <div 

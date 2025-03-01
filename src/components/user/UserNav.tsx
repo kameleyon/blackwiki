@@ -16,7 +16,7 @@ export default function UserNav({ currentPath }: UserNavProps) {
         className={`flex items-center gap-2 ${
           currentPath === '/dashboard' 
             ? 'text-gray-200 font-medium' 
-            : 'text-gray-600 hover:text-gray-200'
+            : 'text-gray-400 hover:text-gray-200'
         }`}
         title="Articles"
       >
@@ -28,7 +28,7 @@ export default function UserNav({ currentPath }: UserNavProps) {
         className={`flex items-center gap-2 ${
           currentPath === '/media' 
             ? 'text-gray-200 font-medium' 
-            : 'text-gray-600 hover:text-gray-200'
+            : 'text-gray-400 hover:text-gray-200'
         }`}
         title="Media"
       >
@@ -40,7 +40,7 @@ export default function UserNav({ currentPath }: UserNavProps) {
         className={`flex items-center gap-2 ${
           currentPath === '/organization' 
             ? 'text-gray-200 font-medium' 
-            : 'text-gray-600 hover:text-gray-200'
+            : 'text-gray-400 hover:text-gray-200'
         }`}
         title="Organization"
       >
@@ -52,7 +52,7 @@ export default function UserNav({ currentPath }: UserNavProps) {
         className={`flex items-center gap-2 ${
           currentPath === '/articles/new' 
             ? 'text-gray-200 font-medium' 
-            : 'text-gray-600 hover:text-gray-200'
+            : 'text-gray-400 hover:text-gray-200'
         }`}
         title="New Post"
       >
@@ -64,7 +64,7 @@ export default function UserNav({ currentPath }: UserNavProps) {
         className={`flex items-center gap-2 ${
           currentPath === '/profile' 
             ? 'text-gray-200 font-medium' 
-            : 'text-gray-600 hover:text-gray-200'
+            : 'text-gray-400 hover:text-gray-200'
         }`}
         title="My Profile"
       >
@@ -76,7 +76,7 @@ export default function UserNav({ currentPath }: UserNavProps) {
         className={`flex items-center gap-2 ${
           currentPath === '/settings' 
             ? 'text-gray-200 font-medium' 
-            : 'text-gray-600 hover:text-gray-200'
+            : 'text-gray-400 hover:text-gray-200'
         }`}
         title="Settings"
       >
@@ -85,7 +85,7 @@ export default function UserNav({ currentPath }: UserNavProps) {
       </Link>
       <button 
         onClick={() => signOut({ callbackUrl: '/' })}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-200"
+        className="flex items-center gap-2 text-gray-400 hover:text-gray-200"
         title="Log out"
       >
         <FiLogOut size={20} />

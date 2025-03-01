@@ -15,11 +15,11 @@ export function Navbar() {
         <h1 className="text-3xl mt-2">AfroWiki</h1>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center  gap-4">
           {session ? (
             <div className="flex items-center gap-4">
               <Link href={session.user.role === 'admin' ? '/admin' : '/dashboard'}>
-                <span className="text-xs sm:text-sm text-white/70 hover:text-white/90 transition-colors">{session.user.name}</span>
+                <h1 className="text-xl xl:text-md text-white/70 hover:text-white/90 transition-colors">{session.user.name}</h1>
               </Link>
               <Link href={session.user.role === 'admin' ? '/admin' : '/dashboard'}>
                 <CircleUserRound className="w-6 h-6 text-white/70 hover:text-white/90 transition-colors" />

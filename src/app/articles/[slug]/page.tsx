@@ -1,13 +1,19 @@
 import { getArticleBySlug, incrementArticleViews } from '@/lib/db'
+import { prisma } from "@/lib/db";
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from 'next'
+import { getServerSession } from "next-auth";
+import { getCurrentUser } from "@/lib/auth";
 import ArticleEngagement from '@/components/articles/ArticleEngagement'
 import RelatedArticles from '@/components/articles/RelatedArticles'
 import CommentSystem from '@/components/collaboration/CommentSystem'
+import GreetingHeader from "@/components/dashboard/GreetingHeader";
+import UserNav from "@/components/user/UserNav";
 import { FiClock, FiEye, FiCalendar } from 'react-icons/fi'
 import { processArticleContent, markdownToHtml } from '@/lib/markdownCleaner'
+import '@/app/articles/new/review/article-content.css'
 
 interface PageProps {
   params: {
@@ -40,14 +46,49 @@ export default async function ArticlePage({ params }: PageProps) {
   // Increment view count
   await incrementArticleViews(article.id)
   
+  // Get current user for the greeting header
+  const session = await getServerSession();
+  const currentUser = await getCurrentUser();
+  
+  // Calculate statistics for the greeting header
+  let totalArticles = 0;
+  let publishedArticles = 0;
+  
+  if (currentUser) {
+    totalArticles = await prisma.article.count({
+      where: { authorId: currentUser.id }
+    });
+    
+    publishedArticles = await prisma.article.count({
+      where: { 
+        authorId: currentUser.id,
+        isPublished: true
+      }
+    });
+  }
+  
   // Calculate reading time (rough estimate)
   const wordsPerMinute = 200
   const wordCount = article.content.split(/\s+/).length
   const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col lg:flex-row gap-8">
+    <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
+      {/* Personalized Header - only show if user is logged in */}
+      {currentUser && (
+        <>
+          <GreetingHeader 
+            user={currentUser} 
+            totalArticles={totalArticles} 
+            publishedArticles={publishedArticles} 
+            pageName="View Article"
+          />
+          
+          <UserNav currentPath="/articles/view" />
+        </>
+      )}
+      
+      <div className="flex flex-col lg:flex-row gap-8 mt-8">
         <div className="lg:w-3/4">
           {/* Article Header */}
           <div className="mb-8">
@@ -63,7 +104,7 @@ export default async function ArticlePage({ params }: PageProps) {
               </div>
             )}
             
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">{article.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-normal mb-4">{article.title}</h1>
             
             <div className="flex flex-wrap gap-2 mb-4">
               {article.categories.map(category => (
@@ -125,7 +166,7 @@ export default async function ArticlePage({ params }: PageProps) {
           {/* References */}
           {article.references.length > 0 && (
             <div className="mt-12 border-t border-white/10 pt-6">
-              <h2 className="text-xl font-semibold mb-4">References</h2>
+              <h2 className="text-xl font-normal mb-4">References</h2>
               <ul className="space-y-2">
                 {article.references.map(reference => (
                   <li key={reference.id}>
@@ -173,7 +214,7 @@ export default async function ArticlePage({ params }: PageProps) {
             
             {/* Table of Contents - Placeholder for future implementation */}
             <div className="bg-white/5 rounded-lg p-4">
-              <h3 className="text-lg font-semibold mb-4">Table of Contents</h3>
+              <h3 className="text-lg font-normal mb-4">Table of Contents</h3>
               <div className="text-sm text-white/70">
                 <p>This feature will be implemented soon.</p>
               </div>
