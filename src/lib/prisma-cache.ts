@@ -29,14 +29,21 @@ export async function getCachedArticles(options: QueryOptions) {
   }
   
   // If not in cache, fetch from database
-  const articles = await prisma.article.findMany({
+  const queryOptions: any = {
     skip,
     take,
     where,
     orderBy,
-    include,
-    select,
-  });
+  };
+  
+  // Only use either select or include, not both
+  if (select) {
+    queryOptions.select = select;
+  } else if (include) {
+    queryOptions.include = include;
+  }
+  
+  const articles = await prisma.article.findMany(queryOptions);
   
   // Cache the result for 5 minutes (300 seconds)
   await setCachedData(cacheKey, articles, 300);
@@ -69,11 +76,18 @@ export async function getCachedArticleById(
   }
   
   // If not in cache, fetch from database
-  const article = await prisma.article.findUnique({
-    where: { id },
-    include,
-    select,
-  });
+  const queryOptions: any = {
+    where: { id }
+  };
+  
+  // Only use either select or include, not both
+  if (select) {
+    queryOptions.select = select;
+  } else if (include) {
+    queryOptions.include = include;
+  }
+  
+  const article = await prisma.article.findUnique(queryOptions);
   
   // Cache the result for 5 minutes (300 seconds)
   if (article) {
@@ -115,14 +129,21 @@ export async function getCachedUserArticles(
   }
   
   // If not in cache, fetch from database
-  const articles = await prisma.article.findMany({
+  const queryOptions: any = {
     skip,
     take,
     where: fullWhere,
     orderBy,
-    include,
-    select,
-  });
+  };
+  
+  // Only use either select or include, not both
+  if (select) {
+    queryOptions.select = select;
+  } else if (include) {
+    queryOptions.include = include;
+  }
+  
+  const articles = await prisma.article.findMany(queryOptions);
   
   // Cache the result for 5 minutes (300 seconds)
   await setCachedData(cacheKey, articles, 300);

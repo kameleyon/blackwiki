@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import AdminNav from "@/components/admin/AdminNav";
+import AdminGreetingHeader from "@/components/admin/AdminGreetingHeader";
 import { FiUsers, FiFileText, FiFlag, FiActivity } from "react-icons/fi";
 
 async function getAdminStats() {
@@ -9,7 +10,7 @@ async function getAdminStats() {
     prisma.user.count(),
     prisma.article.count(),
     prisma.article.count({
-      where: { status: "pending" }
+      where: { status: { in: ["pending", "in review"] } }
     }),
     prisma.article.count({
       where: { status: "reported" }
@@ -48,7 +49,7 @@ export default async function AdminDashboard() {
   // Get user role
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { role: true }
+    select: { role: true, id: true, name: true }
   });
 
   if (user?.role !== "admin") {
@@ -59,9 +60,13 @@ export default async function AdminDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold pl-4">Admin Dashboard</h1>
-      </div>
+      <AdminGreetingHeader 
+        user={{ id: user.id, name: user.name }}
+        totalUsers={stats.totalUsers}
+        totalArticles={stats.totalArticles}
+        pendingReviews={stats.pendingArticles}
+        pageName="Overview"
+      />
 
       <AdminNav />
 
@@ -71,7 +76,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/60 text-sm">Total Users</p>
-              <h3 className="text-2xl font-semibold mt-1">{stats.totalUsers}</h3>
+              <h3 className="text-2xl font-normal mt-1">{stats.totalUsers}</h3>
             </div>
             <div className="bg-white/10 p-3 rounded-lg">
               <FiUsers className="w-6 h-6 text-white/80" />
@@ -83,7 +88,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/60 text-sm">Total Articles</p>
-              <h3 className="text-2xl font-semibold mt-1">{stats.totalArticles}</h3>
+              <h3 className="text-2xl font-normal mt-1">{stats.totalArticles}</h3>
             </div>
             <div className="bg-white/10 p-3 rounded-lg">
               <FiFileText className="w-6 h-6 text-white/80" />
@@ -95,7 +100,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/60 text-sm">Pending Reviews</p>
-              <h3 className="text-2xl font-semibold mt-1">{stats.pendingArticles}</h3>
+              <h3 className="text-2xl font-normal mt-1">{stats.pendingArticles}</h3>
             </div>
             <div className="bg-white/10 p-3 rounded-lg">
               <FiActivity className="w-6 h-6 text-white/80" />
@@ -107,7 +112,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/60 text-sm">Reports</p>
-              <h3 className="text-2xl font-semibold mt-1">{stats.totalReports}</h3>
+              <h3 className="text-2xl font-normal mt-1">{stats.totalReports}</h3>
             </div>
             <div className="bg-white/10 p-3 rounded-lg">
               <FiFlag className="w-6 h-6 text-white/80" />
@@ -118,7 +123,7 @@ export default async function AdminDashboard() {
 
       {/* Recent Activity */}
       <div className="bg-white/5 rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+        <h2 className="text-xl font-normal mb-4">Recent Activity</h2>
         <div className="space-y-4">
           {stats.recentActivity.map((activity) => (
             <div

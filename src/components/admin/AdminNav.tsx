@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiUsers, FiFileText, FiSettings, FiActivity, FiFlag, FiLogOut } from "react-icons/fi";
+import { FiUsers, FiFileText, FiSettings, FiActivity, FiFlag, FiLogOut, FiBarChart2 } from "react-icons/fi";
 import { signOut } from "next-auth/react";
 
 export function AdminNav() {
@@ -14,6 +14,12 @@ export function AdminNav() {
       href: "/admin",
       icon: FiActivity,
       active: pathname === "/admin",
+    },
+    {
+      label: "Analytics",
+      href: "/admin/analytics",
+      icon: FiBarChart2,
+      active: pathname === "/admin/analytics",
     },
     {
       label: "Users",

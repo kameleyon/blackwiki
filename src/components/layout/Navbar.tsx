@@ -19,10 +19,10 @@ export function Navbar() {
           {session ? (
             <div className="flex items-center gap-4">
               <Link href={session.user.role === 'admin' ? '/admin' : '/dashboard'}>
-                <h1 className="text-xl xl:text-md text-white/70 hover:text-white/90 transition-colors">{session.user.name}</h1>
+                <h1 className="text-xl xl:text-md text-gray-400 hover:text-white/90 transition-colors">{session.user.name}</h1>
               </Link>
               <Link href={session.user.role === 'admin' ? '/admin' : '/dashboard'}>
-                <CircleUserRound className="w-6 h-6 text-white/70 hover:text-white/90 transition-colors" />
+                <CircleUserRound className="w-6 h-6 text-gray-400 hover:text-white/90 transition-colors" />
               </Link>
             </div>
           ) : (

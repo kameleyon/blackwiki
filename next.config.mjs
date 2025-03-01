@@ -72,6 +72,22 @@ const config = {
         },
       };
     }
+
+    // Fix Chart.js issues
+    if (!isServer) {
+      config.externals = [...(config.externals || []), { canvas: 'canvas' }];
+    }
+
+    // Add resolve fallbacks for Chart.js
+    if (!config.resolve) {
+      config.resolve = {};
+    }
+    if (!config.resolve.fallback) {
+      config.resolve.fallback = {};
+    }
+    Object.assign(config.resolve.fallback, {
+      canvas: false,
+    });
     
     return config;
   },
