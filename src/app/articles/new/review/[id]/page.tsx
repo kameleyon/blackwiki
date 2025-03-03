@@ -368,6 +368,13 @@ export default async function ReviewArticlePage({ params }: PageProps) {
                 </div>
               </div>
             )}
+            {factCheckStatus === 'not-relevant' && (
+              <div className="mt-4 flex justify-end">
+                <div className="text-sm text-yellow-400 bg-yellow-400/10 px-3 py-1 rounded-full">
+                  Not Relevant to AfroWiki
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-white/5 rounded-xl p-6">
