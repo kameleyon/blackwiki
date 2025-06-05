@@ -55,10 +55,13 @@ model User {
   edits         Edit[]
   sessions      Session[]
   commentLikes  CommentLike[]
-  reviews       Review[]      @relation("ReviewedBy")
-  reviewTasks   Review[]      @relation("AssignedTo")
+  reviews       Review[]      @relation("ReviewedBy") // Reviews performed by this user
+  reviewTasks   Review[]      @relation("AssignedTo") // Reviews assigned to this user
   branches      Branch[]      @relation("UserBranches")
   talkMessages  ArticleTalk[]
+  watchedArticles Watchlist[] // Articles this user is watching
+  auditLogs     AuditLog[] // Actions performed by this user
+  reviewerReputation Int @default(0) // Reputation score based on review quality/activity
 }
 
 model VerificationToken {
@@ -86,7 +89,12 @@ model Article {
   views       Int         @default(0)
   likes       Int         @default(0)
   isPublished Boolean     @default(false)
-  status      String      @default("pending") // approved, in review, denied
+  // More granular status: draft, pending_review, technical_review, editorial_review, final_review, changes_requested, approved, rejected, archived
+  status      String      @default("draft")
+  featured    Boolean     @default(false) // For highlighting important articles
+  qualityGrade String?    // e.g., "stub", "start", "b", "ga", "fa" based on quality assessment
+  protectionLevel String  @default("none") // e.g., "none", "semi-protected", "fully-protected"
+  isArchived  Boolean     @default(false) // To mark articles as archived instead of deleting
   author      User        @relation("AuthoredArticles", fields: [authorId], references: [id])
   edits       Edit[]
   comments    Comment[]
@@ -99,13 +107,16 @@ model Article {
   branches    Branch[]    @relation("ArticleBranches")
   collaborations Collaboration[] @relation("ArticleCollaborations")
   talkMessages ArticleTalk[]
+  watchers    Watchlist[] // Users watching this article
 }
 
+// Tracks the overall review process state for an article
 model ReviewState {
   id            String   @id @default(cuid())
   articleId     String   @unique
   article       Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  currentStage  String   // draft, technical_review, editorial_review, final_review
+  // Represents the current major stage in the review pipeline
+  currentStage  String   // e.g., "Peer Review", "Expert Review", "Admin Approval"
   startedAt     DateTime @default(now())
   lastUpdatedAt DateTime @updatedAt
   dueDate       DateTime?
@@ -140,6 +151,37 @@ model Review {
   @@index([status])
 }
 
+// Model to track which users are watching which articles for changes
+model Watchlist {
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, articleId])
+  @@index([userId])
+  @@index([articleId])
+}
+
+// Generic model for logging important actions across the system
+model AuditLog {
+  id         String   @id @default(cuid())
+  timestamp  DateTime @default(now())
+  userId     String? // User performing the action (null for system actions)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String // e.g., "article_status_changed", "review_submitted", "user_role_updated"
+  targetType String? // e.g., "Article", "Review", "User"
+  targetId   String? // ID of the affected entity
+  details    String? // JSON string with additional context (e.g., old/new status)
+
+  @@index([timestamp])
+  @@index([userId])
+  @@index([action])
+  @@index([targetType, targetId])
+}
+
 model Category {
   id          String    @id @default(cuid())
   name        String    @unique
@@ -172,7 +214,8 @@ model Edit {
   content   String
   summary   String?
   type      String   @default("content") // content, metadata, style, etc.
-  metadata  String?  // JSON string for additional edit metadata
+  metadata  String?  // JSON string for additional edit metadata (e.g., edit tags: minor, formatting, content)
+  changeSize Int?    // Optional: Could store calculated diff size, or calculate on demand
   createdAt DateTime @default(now())
   articleId String
   userId    String
