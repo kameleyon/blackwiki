@@ -33,12 +33,6 @@ export async function GET(
       return new NextResponse('Review not found', { status: 404 });
     }
 
-    // Optional: Add authorization check if reviews should only be visible to involved parties/admins
-    // const session = await getServerSession(); // Call without authOptions
-    // if (session?.user?.id !== review.assigneeId && session?.user?.role !== 'admin') {
-    //   return new NextResponse('Forbidden', { status: 403 });
-    // }
-
     return NextResponse.json(review);
   } catch (error) {
     console.error('[REVIEW_GET]', error);
@@ -137,8 +131,6 @@ export async function PUT(
       },
     });
 
-    // TODO: Potentially trigger next steps in the workflow based on status change
-    // e.g., if 'completed', update ReviewState or Article status
 
     return NextResponse.json(updatedReview);
   } catch (error) {
@@ -146,52 +138,3 @@ export async function PUT(
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
-
-// Optional DELETE handler (consider implications carefully)
-/*
-export async function DELETE(
-  request: Request,
-  { params }: { params: { reviewId: string } }
-) {
-  try {
-    const session = await getServerSession(); // Call without authOptions
-
-    if (!session?.user?.id || session.user.role !== 'admin') {
-      return new NextResponse('Forbidden: Only admins can delete reviews.', { status: 403 });
-    }
-
-    const review = await prisma.review.findUnique({ // Use prisma
-      where: { id: params.reviewId },
-      select: { id: true, articleId: true, type: true, assigneeId: true } // For audit log
-    });
-
-    if (!review) {
-      return new NextResponse('Review not found', { status: 404 });
-    }
-
-    await prisma.review.delete({ // Use prisma
-      where: { id: params.reviewId },
-    });
-
-    // Create an audit log entry
-    await prisma.auditLog.create({ // Use prisma
-      data: {
-        action: 'review_deleted',
-        targetType: 'Review',
-        targetId: params.reviewId,
-        userId: session.user.id,
-        details: JSON.stringify({
-          articleId: review.articleId,
-          reviewType: review.type,
-          assigneeId: review.assigneeId,
-        }),
-      },
-    });
-
-    return new NextResponse(null, { status: 204 }); // No Content
-  } catch (error) {
-    console.error('[REVIEW_DELETE]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
-  }
-}
-*/

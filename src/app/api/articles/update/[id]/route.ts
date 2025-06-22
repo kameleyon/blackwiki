@@ -54,7 +54,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       imageAlt,
       references = [],
       metadata = {},
-      enhanceWithAI = false
+      enhanceWithAI = false,
+      editSummary = ""
     } = data;
 
     // Verify article ownership
@@ -171,6 +172,52 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           })),
         },
       },
+    });
+
+    // Calculate change size (character difference)
+    const oldContentLength = article.content.length;
+    const newContentLength = contentWithoutMetadata.length;
+    const changeSize = newContentLength - oldContentLength;
+
+    // Create edit record for tracking
+    await prisma.edit.create({
+      data: {
+        content: contentWithoutMetadata,
+        summary: editSummary,
+        type: "content",
+        changeSize,
+        metadata: JSON.stringify({
+          titleChanged: title !== article.title,
+          imageChanged: image !== article.image,
+          categoriesChanged: true, // We could make this more precise
+          tagsChanged: true, // We could make this more precise
+          editSummary,
+          wordCountDiff: Math.round(changeSize / 5) // Rough estimate: 5 chars per word
+        }),
+        articleId: articleId,
+        userId: user.id
+      }
+    });
+
+    // Create audit log for change tracking
+    await prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        action: "article_updated",
+        targetType: "Article",
+        targetId: articleId,
+        details: JSON.stringify({
+          articleTitle: title,
+          editSummary,
+          changeSize,
+          changeType: changeSize > 100 ? "major" : changeSize > 0 ? "minor" : "formatting",
+          wordCountDiff: Math.round(changeSize / 5),
+          titleChanged: title !== article.title,
+          imageChanged: image !== article.image,
+          previousTitle: article.title,
+          newTitle: title
+        })
+      }
     });
 
     return NextResponse.json({

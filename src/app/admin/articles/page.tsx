@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import AdminNav from "@/components/admin/AdminNav";
 import CleanMarkdownButton from "@/components/admin/CleanMarkdownButton";
-import { FiEdit, FiEye, FiClock, FiUser } from "react-icons/fi";
+import { FiEdit, FiEye, FiClock, FiUser, FiSettings } from "react-icons/fi";
 import Link from "next/link";
 
 async function getArticles() {
@@ -90,6 +90,13 @@ export default async function AdminArticlesPage() {
                     >
                       <FiEdit className="w-3 h-3" />
                       Edit
+                    </Link>
+                    <Link 
+                      href={`/admin/articles/${article.id}/workflow`} 
+                      className="text-xs text-white/60 hover:text-white/80 flex items-center gap-1"
+                    >
+                      <FiSettings className="w-3 h-3" />
+                      Workflow
                     </Link>
                   </div>
                 </div>

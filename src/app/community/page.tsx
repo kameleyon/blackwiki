@@ -9,6 +9,8 @@ import {
   CommunityProjects,
   AnnouncementFeed
 } from '@/components/community';
+import Link from 'next/link';
+import { FileSearch, Users, BookOpen, Award } from 'lucide-react';
 
 const CommunityPage: React.FC = () => {
   return (
@@ -19,6 +21,33 @@ const CommunityPage: React.FC = () => {
           Connect with fellow contributors, participate in discussions, join events, and collaborate on projects
           to help build and improve AfroWiki.
         </p>
+      </div>
+      
+      {/* Community Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <Link href="/community/reviews" className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-colors">
+          <FileSearch className="h-8 w-8 mb-3 text-primary" />
+          <h3 className="text-lg font-medium mb-2">Review Center</h3>
+          <p className="text-sm text-muted-foreground">Help maintain content quality by reviewing articles</p>
+        </Link>
+        
+        <Link href="/community/projects" className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-colors">
+          <Users className="h-8 w-8 mb-3 text-primary" />
+          <h3 className="text-lg font-medium mb-2">Collaborations</h3>
+          <p className="text-sm text-muted-foreground">Join collaborative writing projects</p>
+        </Link>
+        
+        <Link href="/community/help" className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-colors">
+          <BookOpen className="h-8 w-8 mb-3 text-primary" />
+          <h3 className="text-lg font-medium mb-2">Help Center</h3>
+          <p className="text-sm text-muted-foreground">Learn how to contribute effectively</p>
+        </Link>
+        
+        <Link href="/community/achievements" className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-colors">
+          <Award className="h-8 w-8 mb-3 text-primary" />
+          <h3 className="text-lg font-medium mb-2">Achievements</h3>
+          <p className="text-sm text-muted-foreground">Track your contributions and earn badges</p>
+        </Link>
       </div>
       
       <div className="grid grid-cols-1 gap-8">

@@ -99,7 +99,6 @@ export async function POST(
     // Only article author or collaborators can create branches
     const isAuthor = article.authorId === user.id;
     if (!isAuthor && user.role !== 'admin') {
-      // TODO: Check if user is a collaborator
       // For now, only allow author and admin
       return NextResponse.json(
         { error: 'You do not have permission to create branches for this article' },
