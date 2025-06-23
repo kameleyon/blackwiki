@@ -1,0 +1,7 @@
+Black Culture Web Scraping Summary
+==================================================
+Date: 2025-06-22 19:42:03
+Total searches: 109
+Successful articles: 504
+Failed searches: 0
+
