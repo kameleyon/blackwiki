@@ -8,7 +8,15 @@
       "Bash(cp:*)",
       "Bash(rm:*)",
       "Bash(npx prisma:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(chmod:*)",
+      "Bash(./venv/Scripts/pip.exe install requests beautifulsoup4)",
+      "Bash(./venv/Scripts/pip.exe install nltk)",
+      "Bash(./venv/Scripts/python.exe comprehensive_black_culture_scraper.py)",
+      "Bash(./venv/Scripts/pip.exe install spacy --no-deps)",
+      "Bash(./venv/Scripts/pip.exe install catalogue cymem murmurhash preshed srsly thinc wasabi spacy-legacy spacy-loggers pydantic packaging weasel language-data typing-extensions confection)",
+      "Bash(./venv/Scripts/pip.exe install jinja2 langcodes \"thinc<8.4.0,>=8.3.4\")",
+      "Bash(./venv/Scripts/python.exe:*)"
     ],
     "deny": []
   }

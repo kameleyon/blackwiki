@@ -1,231 +1,141 @@
-# AfroWiki
+# Black Culture Wikipedia Scraper v2.0
 
-<div align="center">
+A comprehensive web scraper designed to collect, analyze, and organize information about Black culture, African history, and the African diaspora from Wikipedia.
 
-![AfroWiki Logo](public/bwikilogo.png)
-
-An AI-driven encyclopedia focused on Black and African culture, knowledge, and history.
-
-[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38B2AC)](https://tailwindcss.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-6-2D3748)](https://www.prisma.io/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-</div>
-
-## Overview
-
-AfroWiki is a modern, AI-enhanced knowledge platform dedicated to documenting and preserving Black history, culture, and achievements worldwide. Our platform combines community-contributed content with AI-driven insights to provide a comprehensive and focused resource for exploring Black heritage and contemporary culture.
-
-## Features
+## 🎯 Features
 
 ### Core Functionality
+- **Comprehensive Coverage**: Searches 200+ specific topics including:
+  - All 54 African countries
+  - Caribbean nations and culture  
+  - Historical figures and movements
+  - Music genres and artists
+  - Conflicts and social issues
+  - Religious/spiritual practices
 
-- **Authentication System**
-  - Multiple sign-in options (GitHub, Email/Password)
-  - Secure session management with JWT
-  - User profile management with image upload
-  - Role-based access control (User, Editor, Admin)
+### Advanced Capabilities
+- **Intelligent Content Processing**
+  - NLP-based entity extraction using spaCy
+  - Relevance scoring to filter unrelated content
+  - Duplicate detection with fuzzy matching
+  - Content categorization and theme classification
 
-- **Content Management**
-  - Article submission and review workflow
-  - Advanced rich text editor with:
-    - WYSIWYG editing interface
-    - Live markdown preview
-    - Split-screen editing mode
-    - Code block syntax highlighting
-    - Fullscreen editing mode
-    - Keyboard shortcuts
-  - Enhanced media management:
-    - Drag and drop file uploads
-    - Multiple file uploads
-    - Image cropping and resizing
-    - Automatic image optimization
-    - File organization system
-    - Media library with search and filtering
-  - Advanced content validation:
-    - Word count and readability metrics
-    - Grammar and style checking
-    - Broken link detection
-    - Citation format validation
-    - Duplicate content detection
-    - Content quality scoring
-  - Reference Management:
-    - Citation style selection (APA, MLA, Chicago, Harvard, IEEE)
-    - Automatic citation formatting
-    - Reference validation
-    - DOI/ISBN lookup
-    - Bibliography generation
-    - Citation preview
-  - Version control for content tracking
-  - Category and tag organization
-  - AI-powered content verification
+- **Media Extraction**
+  - Images with captions and metadata
+  - Audio files (speeches, music samples)
+  - Video content
+  - Gallery images
 
-- **Search & Discovery**
-  - Advanced search with filters
-  - Category-based browsing
-  - Smart result ranking
-  - Content recommendations
+- **AI-Powered Features**
+  - Article summarization using Claude (via OpenRouter)
+  - Content accuracy validation
+  - Auto-categorization
 
-### Technical Features
+### Technical Improvements (v2.0)
+- **Parallel Processing**: Process multiple searches simultaneously
+- **Progress Tracking**: Resume capability if interrupted
+- **Rate Limiting**: Respectful Wikipedia API usage
+- **Configuration Support**: Customizable settings via JSON
+- **Better Error Handling**: Exponential backoff and retry logic
 
-- **Modern Stack**
-  - Next.js 14 App Router
-  - TypeScript for type safety
-  - Prisma ORM for database management
-  - Tailwind CSS for styling
-  - Framer Motion for animations
+## 📋 Requirements
 
-- **Performance**
-  - Server-side rendering
-  - Optimized image handling
-  - Responsive design
-  - Dark mode by default
-
-See our [Progress Tracker](PROGRESS.md) for detailed development status.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18.0 or later
-- npm or yarn
-- Git
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/AfroWiki.git
-   cd AfroWiki
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Required environment variables:
-   ```env
-   # Database
-   DATABASE_URL="file:./dev.db"
-
-   # Authentication
-   NEXTAUTH_SECRET="your-secret-key"
-   GITHUB_ID="your-github-oauth-id"
-   GITHUB_SECRET="your-github-oauth-secret"
-
-   # Deployment (required in production)
-   NEXT_PUBLIC_BASE_URL="http://localhost:3000"  # In development
-   # NEXT_PUBLIC_BASE_URL="https://your-domain.com"  # In production
-   ```
-
-4. Initialize the database:
-   ```bash
-   npx prisma migrate dev
-   npx prisma db seed
-   ```
-
-5. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-The application will be available at `http://localhost:3000`.
-
-## Project Structure
-
-```
-AfroWiki/
-├── prisma/                # Database schema and migrations
-├── public/               # Static assets
-│   └── uploads/         # User-uploaded content
-├── src/
-│   ├── app/             # Next.js 14 app directory
-│   │   ├── api/        # API routes
-│   │   │   ├── admin/ # Admin-specific endpoints
-│   │   │   ├── auth/  # Authentication endpoints
-│   │   │   └── articles/ # Article management
-│   │   ├── articles/   # Article pages
-│   │   ├── auth/       # Authentication pages
-│   │   ├── dashboard/  # User dashboard
-│   │   ├── profile/    # User profile pages
-│   │   └── settings/   # User settings
-│   ├── components/     # Reusable React components
-│   │   ├── articles/  # Article-related components
-│   │   ├── dashboard/ # Dashboard components
-│   │   ├── layout/    # Layout components
-│   │   ├── ui/        # UI components
-│   │   └── user/      # User-related components
-│   └── lib/           # Utility functions and configurations
-│       ├── auth.ts    # Authentication utilities
-│       ├── config.ts  # Environment configuration
-│       ├── db.ts      # Database client
-│       └── factChecker.ts # AI fact-checking system
-└── types/             # TypeScript type definitions
+```bash
+pip install requests beautifulsoup4 spacy nltk
+python -m spacy download en_core_web_sm
 ```
 
-## Deployment
+### Optional (for AI features)
+- OpenRouter API key (set as environment variable `OPENROUTER_API_KEY`)
 
-### Environment Setup
+## 🚀 Usage
 
-1. Configure your deployment platform (Render, DigitalOcean, etc.) with the required environment variables.
-2. Set `NEXT_PUBLIC_BASE_URL` to your production domain (e.g., https://your-domain.com).
-3. Ensure your database connection string is properly configured for production.
+### Basic Usage
+```bash
+python scraper_improved.py
+```
 
-### Platform-Specific Notes
+### With Configuration
+1. Edit `config.json` to customize settings
+2. Run the scraper
 
-- The application uses dynamic base URL configuration for authentication redirects
-- All authentication callbacks and redirects will use the `NEXT_PUBLIC_BASE_URL` value
-- In development, it defaults to http://localhost:3000 if not set
-- File uploads are stored in the `public/uploads` directory
+### Resume Previous Run
+The scraper automatically saves progress and can resume if interrupted.
 
-## Contributing
+## 📁 Output Structure
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, and contribute to the project.
+```
+C:\Users\Administrator\myAPP\blackwiki\
+├── docs/
+│   ├── blackinfo2.csv          # Main data file
+│   ├── progress.json           # Progress tracking
+│   ├── failed_terms.json       # Failed searches for retry
+│   ├── collection_summary.json # Summary statistics
+│   └── logs/                   # Detailed logs
+├── media/                      # Downloaded media (if enabled)
+├── config.json                 # Configuration file
+└── scraper_improved.py         # Main script
+```
 
-### Development Workflow
+## 📊 Data Fields
 
-1. Fork and clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables (see above)
-4. Run database migrations: `npx prisma migrate dev`
-5. Start the development server: `npm run dev`
-6. Make your changes
-7. Run tests and linting: `npm run lint`
-8. Submit a pull request
+Each scraped article includes:
+- **Basic Info**: URL, title, search term
+- **Content**: Summary, relevant content excerpts
+- **Metadata**: Categories, key dates, sections
+- **Entities**: People, places, organizations, events
+- **Media**: Images, audio, video counts and metadata
+- **Analysis**: Relevance score, themes, auto-categories
 
-### Development Guidelines
+## ⚙️ Configuration Options
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Make your changes
-4. Run tests and linting: `npm run lint`
-5. Commit your changes: `git commit -m 'Add feature'`
-6. Push to your fork: `git push origin feature/your-feature`
-7. Create a pull request
+### Key Settings in config.json:
+- `parallel_workers`: Number of concurrent searches (default: 3)
+- `rate_limit_delay`: Delay between requests in seconds (default: 1.5)
+- `min_relevance_score`: Minimum score to include article (default: 0.3)
+- `batch_size`: Articles to process per batch (default: 10)
 
-## License
+## 🔧 Troubleshooting
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Common Issues:
+1. **Rate Limiting**: Increase `rate_limit_delay` if getting blocked
+2. **Memory Usage**: Reduce `parallel_workers` for lower memory systems
+3. **Failed Terms**: Run again to automatically retry failed searches
 
-## Acknowledgments
+### Performance Tips:
+- Use parallel processing for faster scraping
+- Adjust batch_size based on your system
+- Enable progress tracking to monitor long runs
 
-- The open-source community for various tools and libraries
-- All contributors who help make AfroWiki better
-- The Black community for inspiring this project
+## 📈 Statistics
 
-## Contact
+The scraper provides detailed statistics including:
+- Total articles collected
+- Articles per category
+- Failed searches
+- Execution time
+- Media counts
 
-For questions or support, please open an issue in our GitHub repository.
+## 🤝 Contributing
+
+Improvements welcome! Key areas:
+- Additional search terms
+- Better relevance scoring
+- More media extraction
+- Additional data sources
+
+## ⚠️ Ethical Usage
+
+This scraper is designed for educational and research purposes. Please:
+- Respect Wikipedia's terms of service
+- Use appropriate rate limiting
+- Credit sources appropriately
+- Consider donating to Wikipedia
+
+## 📝 License
+
+This project is for educational purposes. Respect all applicable licenses and copyrights.
 
 ---
 
-<div align="center">
-Made with ❤️ for the preservation and celebration of Black culture and history.
-</div>
+**Note**: The scraper handles sensitive historical topics. All content is sourced from Wikipedia and presented for educational purposes.

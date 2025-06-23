@@ -1,0 +1,19 @@
+{
+  "total_articles": 8273,
+  "unique_titles": 8261,
+  "categories": {
+    "African Countries": 606,
+    "Culture & History": 5440,
+    "Wars & Conflicts": 279,
+    "Kingdoms & Tribes": 343,
+    "Social Issues & Dark Corners": 212,
+    "Historical Figures & Leaders": 283,
+    "Haiti Deep Dive": 405,
+    "Caribbean Beyond Haiti": 246,
+    "Music & Musicians": 381,
+    "Social Movements": 78
+  },
+  "failed_terms": 4,
+  "execution_time": "266 minutes",
+  "date": "2025-06-23T04:31:16.164035"
+}

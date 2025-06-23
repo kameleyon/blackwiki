@@ -67,22 +67,35 @@ Format the response in Markdown for readability.`;
     }
 
     const data = await response.json() as OpenRouterResponse;
+    
+    // Guard against missing choices
+    if (!data.choices || !data.choices.length) {
+      throw new Error('Invalid response format from OpenRouter - no choices');
+    }
+    
     const analysisText = data.choices[0].message.content;
     
-    // Determine fact check status
+    // Determine fact check status with precise prefix matching
     let status: 'pass' | 'fail' | 'not-relevant';
     
-    if (analysisText.includes('NOT_RELEVANT')) {
+    // Extract the first line for prefix checking
+    const prefix = analysisText.trim().split('\n')[0].toUpperCase();
+    
+    if (prefix.startsWith('NOT_RELEVANT')) {
       status = 'not-relevant';
-    } else if (analysisText.includes('FAIL')) {
+    } else if (prefix.startsWith('FAIL')) {
       status = 'fail';
-    } else {
+    } else if (prefix.startsWith('PASS')) {
       status = 'pass';
+    } else {
+      status = 'pass'; // Default fallback
+      console.warn('Unexpected fact check prefix:', prefix);
     }
     
     // Log for debugging
     console.log('Fact check status:', status);
-    console.log('Analysis text starts with:', analysisText.substring(0, 50));
+    console.log('Full analysisText:\n', analysisText);
+    console.log('First line prefix:', prefix);
     
     // Remove the status prefix from the analysis
     const cleanedAnalysis = analysisText
