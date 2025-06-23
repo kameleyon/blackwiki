@@ -1,19 +1,19 @@
 {
-  "total_articles": 8273,
-  "unique_titles": 8261,
+  "total_articles": 6287,
+  "unique_titles": 6266,
   "categories": {
-    "African Countries": 606,
-    "Culture & History": 5440,
-    "Wars & Conflicts": 279,
-    "Kingdoms & Tribes": 343,
-    "Social Issues & Dark Corners": 212,
-    "Historical Figures & Leaders": 283,
-    "Haiti Deep Dive": 405,
-    "Caribbean Beyond Haiti": 246,
-    "Music & Musicians": 381,
-    "Social Movements": 78
+    "Historical Figures & Leaders": 216,
+    "Caribbean Beyond Haiti": 268,
+    "Culture & History": 4454,
+    "African Countries": 477,
+    "Wars & Conflicts": 150,
+    "Kingdoms & Tribes": 155,
+    "Social Issues & Dark Corners": 146,
+    "Haiti Deep Dive": 170,
+    "Music & Musicians": 217,
+    "Social Movements": 34
   },
-  "failed_terms": 4,
-  "execution_time": "266 minutes",
-  "date": "2025-06-23T04:31:16.164035"
+  "failed_terms": 1,
+  "execution_time": "196 minutes",
+  "date": "2025-06-23T15:00:57.530905"
 }

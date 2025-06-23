@@ -1,30 +1,7 @@
 [
   {
-    "term": "Kompa music",
-    "article": "What Hi-Fi?",
-    "url": "https://en.wikipedia.org/wiki/What_Hi-Fi?",
-    "error": "404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/What_Hi-Fi",
-    "timestamp": "2025-06-23T02:19:56.986059"
-  },
-  {
-    "term": "Nina Simone",
-    "article": "What Happened, Miss Simone?",
-    "url": "https://en.wikipedia.org/wiki/What_Happened,_Miss_Simone?",
-    "error": "404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/What_Happened,_Miss_Simone",
-    "timestamp": "2025-06-23T02:49:21.217544"
-  },
-  {
-    "term": "Malcolm X",
-    "article": "Who Killed Malcolm X?",
-    "url": "https://en.wikipedia.org/wiki/Who_Killed_Malcolm_X?",
-    "error": "404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/Who_Killed_Malcolm_X",
-    "timestamp": "2025-06-23T03:28:30.419157"
-  },
-  {
-    "term": "Black cinema history",
-    "article": "Is That Black Enough for You?!?",
-    "url": "https://en.wikipedia.org/wiki/Is_That_Black_Enough_for_You?!?",
-    "error": "404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/Is_That_Black_Enough_for_You?!?",
-    "timestamp": "2025-06-23T04:10:55.791108"
+    "term": "Callaloo Caribbean",
+    "error": "Set changed size during iteration",
+    "timestamp": "2025-06-23T13:21:42.759606"
   }
 ]
