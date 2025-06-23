@@ -1,0 +1,45 @@
+{
+  "max_retries": 3,
+  "base_delay": 2,
+  "rate_limit_delay": 1.0,
+  "min_relevance_score": 0.2,
+  "output_dir": "C:\\Users\\Administrator\\myAPP\\blackwiki\\docs",
+  "parallel_workers": 5,
+  "batch_size": 20,
+  "content_extraction": {
+    "max_chars": 500000,
+    "extract_all_paragraphs": true,
+    "include_references": true,
+    "include_external_links": true
+  },
+  "media_extraction": {
+    "extract_images": true,
+    "min_image_width": 30,
+    "extract_full_resolution": true,
+    "extract_audio": true,
+    "extract_video": true,
+    "extract_charts": true,
+    "extract_maps": true,
+    "max_images_per_article": 100,
+    "max_media_per_article": 150
+  },
+  "validation": {
+    "use_claude": false,
+    "use_relevance_scoring": true,
+    "min_content_length": 200,
+    "check_disambiguation": true,
+    "verify_media_extraction": true
+  },
+  "performance": {
+    "connection_timeout": 45,
+    "read_timeout": 60,
+    "use_compression": true,
+    "save_progress_interval": 10
+  },
+  "storage": {
+    "format": "csv",
+    "compress_content": false,
+    "separate_media_file": false,
+    "backup_enabled": true
+  }
+}
