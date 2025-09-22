@@ -17,6 +17,8 @@ import {
   FiCalendar
 } from 'react-icons/fi';
 import Link from 'next/link';
+import { ReviewQueueSkeleton } from '@/components/ui/SkeletonLoader';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface User {
   id: string;
@@ -216,9 +218,10 @@ export default function ReviewQueueManager({ currentUser }: ReviewQueueProps) {
 
   if (loading && reviews.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        <span className="ml-3 text-white/60">Loading reviews...</span>
+      <div className="space-y-4">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <ReviewQueueSkeleton key={index} />
+        ))}
       </div>
     );
   }

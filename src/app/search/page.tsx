@@ -7,6 +7,8 @@ import Link from "next/link";
 import { FiGrid, FiList, FiClock, FiEye, FiFilter, FiX } from "react-icons/fi";
 import { processArticleContent, markdownToHtml } from "@/lib/markdownCleaner";
 import AdvancedSearchFilters from "@/components/search/AdvancedSearchFilters";
+import { SearchResultSkeleton } from "@/components/ui/SkeletonLoader";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface SearchResult {
   id: string;
@@ -328,8 +330,10 @@ function SearchContent() {
       
       {/* Results */}
       {loading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <SearchResultSkeleton key={index} />
+          ))}
         </div>
       ) : results.length > 0 ? (
         <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { FiEdit, FiClock, FiEye } from 'react-icons/fi';
 import ChangeTracker from '../collaboration/ChangeTracker';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 
 interface Version {
   id: string;
@@ -217,8 +218,20 @@ export default function ArticleActions({
             </div>
 
             {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white/80"></div>
+              <div className="space-y-4">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div key={index} className="bg-white/5 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <SkeletonLoader variant="text" width="120px" height="16px" />
+                      <SkeletonLoader variant="text" width="80px" height="14px" />
+                    </div>
+                    <SkeletonLoader variant="text" width="100%" height="40px" className="mb-2" />
+                    <div className="flex items-center justify-between">
+                      <SkeletonLoader variant="text" width="150px" height="12px" />
+                      <SkeletonLoader variant="rectangular" width="60px" height="24px" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <ChangeTracker

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiFilter, FiX, FiCalendar, FiUser, FiTag, FiFolder, FiChevronDown } from "react-icons/fi";
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface FilterOption {
   id: string;
@@ -53,6 +54,46 @@ export default function AdvancedSearchFilters({
     authors: true,
     date: false
   });
+
+  // Focus management for accessibility
+  useEffect(() => {
+    if (isVisible) {
+      // Focus the first interactive element when panel opens
+      const firstButton = document.querySelector('#advanced-filters-panel button');
+      if (firstButton) {
+        (firstButton as HTMLElement).focus();
+      }
+    }
+  }, [isVisible]);
+
+  // Handle escape key and outside click
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isVisible) {
+        onToggle();
+      }
+    };
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (isVisible) {
+        const panel = document.getElementById('advanced-filters-panel');
+        const toggleButton = document.querySelector('[aria-controls="advanced-filters-panel"]');
+        if (panel && toggleButton && !panel.contains(event.target as Node) && !toggleButton.contains(event.target as Node)) {
+          onToggle();
+        }
+      }
+    };
+
+    if (isVisible) {
+      document.addEventListener('keydown', handleEscapeKey);
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isVisible, onToggle]);
 
   useEffect(() => {
     const fetchFilterOptions = async () => {
@@ -119,12 +160,18 @@ export default function AdvancedSearchFilters({
       {/* Toggle Button */}
       <button
         onClick={onToggle}
-        className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 text-sm transition-colors"
+        className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-white/30"
+        aria-expanded={isVisible}
+        aria-controls="advanced-filters-panel"
+        aria-label={`Advanced search filters${getActiveFiltersCount() > 0 ? ` (${getActiveFiltersCount()} active)` : ''}`}
       >
-        <FiFilter size={14} />
+        <FiFilter size={14} aria-hidden="true" />
         <span>Advanced Filters</span>
         {getActiveFiltersCount() > 0 && (
-          <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full">
+          <span 
+            className="bg-white/20 text-xs px-2 py-0.5 rounded-full"
+            aria-label={`${getActiveFiltersCount()} active filters`}
+          >
             {getActiveFiltersCount()}
           </span>
         )}
@@ -137,10 +184,14 @@ export default function AdvancedSearchFilters({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="absolute top-full mt-2 left-0 right-0 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 z-50 min-w-[600px]"
+            id="advanced-filters-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="advanced-filters-title"
+            className="absolute top-full mt-2 left-0 right-0 w-full max-w-4xl bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4 md:p-6 z-50 shadow-xl"
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg">Advanced Search Filters</h3>
+              <h3 id="advanced-filters-title" className="font-semibold text-lg">Advanced Search Filters</h3>
               <div className="flex items-center gap-2">
                 {getActiveFiltersCount() > 0 && (
                   <button
@@ -161,7 +212,7 @@ export default function AdvancedSearchFilters({
 
             {loading ? (
               <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/30"></div>
+                <LoadingSpinner size="md" />
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

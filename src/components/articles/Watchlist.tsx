@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { 
   Eye, 
   EyeOff, 
@@ -154,8 +155,28 @@ export default function Watchlist({ userId, showHeader = true }: WatchlistProps)
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      <div className="space-y-4 p-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="bg-white/5 rounded-lg p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <SkeletonLoader variant="text" width="70%" height="20px" className="mb-2" />
+                <SkeletonLoader variant="text" width="100%" height="16px" lines={2} />
+              </div>
+              <div className="flex items-center gap-2 ml-4">
+                <SkeletonLoader variant="circular" width="24px" height="24px" />
+                <SkeletonLoader variant="circular" width="24px" height="24px" />
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <SkeletonLoader variant="text" width="80px" height="14px" />
+                <SkeletonLoader variant="text" width="60px" height="14px" />
+              </div>
+              <SkeletonLoader variant="rectangular" width="80px" height="24px" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

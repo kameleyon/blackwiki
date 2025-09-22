@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { 
   FiGitBranch, FiGitMerge, FiGitCommit, FiPlus, 
   FiTrash2, FiCheck, FiX, FiInfo, 
@@ -402,7 +403,28 @@ const BranchManager: React.FC<BranchManagerProps> = ({
 
       <div className="branches-list">
         {loading ? (
-          <div className="loading-indicator">Loading branches...</div>
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="branch-item">
+                <div className="branch-header">
+                  <SkeletonLoader variant="circular" width="16px" height="16px" className="mr-2" />
+                  <SkeletonLoader variant="circular" width="16px" height="16px" className="mr-3" />
+                  <div className="branch-info flex-1">
+                    <div className="branch-name mb-1">
+                      <SkeletonLoader variant="text" width="60%" height="16px" />
+                    </div>
+                    <div className="branch-meta flex items-center gap-4">
+                      <SkeletonLoader variant="text" width="80px" height="12px" />
+                      <SkeletonLoader variant="text" width="100px" height="12px" />
+                    </div>
+                  </div>
+                  <div className="branch-actions">
+                    <SkeletonLoader variant="rectangular" width="24px" height="24px" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : branches.length === 0 ? (
           <div className="empty-state">
             <p>No branches found. Create a new branch to get started.</p>

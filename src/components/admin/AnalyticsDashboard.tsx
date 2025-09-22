@@ -12,6 +12,7 @@ import {
   FiSearch,
   FiDownload
 } from 'react-icons/fi';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { 
   Chart as ChartJS, 
   CategoryScale, 
@@ -42,6 +43,7 @@ ChartJS.register(
 );
 
 interface AnalyticsDashboardProps {
+  loading?: boolean;
   userMetrics: {
     totalUsers: number;
     newUsers: number;
@@ -76,6 +78,7 @@ interface AnalyticsDashboardProps {
 }
 
 export default function AnalyticsDashboard({
+  loading = false,
   userMetrics,
   contentMetrics,
   engagementMetrics,
@@ -244,53 +247,72 @@ export default function AnalyticsDashboard({
       
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Total Users</h3>
-            <FiUsers className="text-white/60" size={18} />
-          </div>
-          <p className="text-2xl font-normal">{userMetrics.totalUsers}</p>
-          <div className="mt-2 text-xs text-gray-500 flex items-center">
-            <FiTrendingUp className="text-green-400 mr-1" size={12} />
-            <span>{userMetrics.newUsers} new this {timeRange}</span>
-          </div>
-        </div>
-        
-        <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Total Articles</h3>
-            <FiFileText className="text-white/60" size={18} />
-          </div>
-          <p className="text-2xl font-normal">{contentMetrics.totalArticles}</p>
-          <div className="mt-2 text-xs text-gray-500 flex items-center">
-            <FiTrendingUp className="text-green-400 mr-1" size={12} />
-            <span>{contentMetrics.newArticles} new this {timeRange}</span>
-          </div>
-        </div>
-        
-        <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Total Views</h3>
-            <FiBarChart2 className="text-white/60" size={18} />
-          </div>
-          <p className="text-2xl font-normal">{engagementMetrics.totalViews}</p>
-          <div className="mt-2 text-xs text-gray-500 flex items-center">
-            <FiActivity className="text-white/60 mr-1" size={12} />
-            <span>Avg. quality score: {contentMetrics.averageQualityScore.toFixed(1)}/10</span>
-          </div>
-        </div>
-        
-        <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">User Retention</h3>
-            <FiPieChart className="text-white/60" size={18} />
-          </div>
-          <p className="text-2xl font-normal">{userMetrics.userRetention}%</p>
-          <div className="mt-2 text-xs text-gray-500 flex items-center">
-            <FiActivity className="text-white/60 mr-1" size={12} />
-            <span>Active collaborations: {collaborationMetrics.activeCollaborations}</span>
-          </div>
-        </div>
+        {loading ? (
+          // Skeleton loading for metrics cards
+          Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
+              <div className="flex items-center justify-between mb-2">
+                <SkeletonLoader variant="text" width="60%" height="16px" />
+                <SkeletonLoader variant="circular" width="18px" height="18px" />
+              </div>
+              <SkeletonLoader variant="text" width="80px" height="32px" className="mb-2" />
+              <div className="flex items-center">
+                <SkeletonLoader variant="circular" width="12px" height="12px" className="mr-1" />
+                <SkeletonLoader variant="text" width="40%" height="12px" />
+              </div>
+            </div>
+          ))
+        ) : (
+          <>
+            <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-400">Total Users</h3>
+                <FiUsers className="text-white/60" size={18} />
+              </div>
+              <p className="text-2xl font-normal">{userMetrics.totalUsers}</p>
+              <div className="mt-2 text-xs text-gray-500 flex items-center">
+                <FiTrendingUp className="text-green-400 mr-1" size={12} />
+                <span>{userMetrics.newUsers} new this {timeRange}</span>
+              </div>
+            </div>
+            
+            <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-400">Total Articles</h3>
+                <FiFileText className="text-white/60" size={18} />
+              </div>
+              <p className="text-2xl font-normal">{contentMetrics.totalArticles}</p>
+              <div className="mt-2 text-xs text-gray-500 flex items-center">
+                <FiTrendingUp className="text-green-400 mr-1" size={12} />
+                <span>{contentMetrics.newArticles} new this {timeRange}</span>
+              </div>
+            </div>
+            
+            <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-400">Total Views</h3>
+                <FiBarChart2 className="text-white/60" size={18} />
+              </div>
+              <p className="text-2xl font-normal">{engagementMetrics.totalViews}</p>
+              <div className="mt-2 text-xs text-gray-500 flex items-center">
+                <FiActivity className="text-white/60 mr-1" size={12} />
+                <span>Avg. quality score: {contentMetrics.averageQualityScore.toFixed(1)}/10</span>
+              </div>
+            </div>
+            
+            <div className="bg-white/5 rounded-xl p-4 shadow-sm shadow-black">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-400">User Retention</h3>
+                <FiPieChart className="text-white/60" size={18} />
+              </div>
+              <p className="text-2xl font-normal">{userMetrics.userRetention}%</p>
+              <div className="mt-2 text-xs text-gray-500 flex items-center">
+                <FiActivity className="text-white/60 mr-1" size={12} />
+                <span>Active collaborations: {collaborationMetrics.activeCollaborations}</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       
       {/* Main Charts Section */}

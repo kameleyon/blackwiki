@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FiClock } from 'react-icons/fi';
+import { ArticleCardSkeleton } from '@/components/ui/SkeletonLoader';
 
 interface Category {
   id: string;
@@ -86,12 +87,8 @@ export default function RelatedArticles({ categories, tags, currentArticleId }: 
       <div className="bg-white/5 rounded-lg p-4">
         <h3 className="text-lg font-semibold mb-4">Related Articles</h3>
         <div className="space-y-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse">
-              <div className="h-4 bg-white/10 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-white/10 rounded w-full mb-1"></div>
-              <div className="h-3 bg-white/10 rounded w-5/6"></div>
-            </div>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <ArticleCardSkeleton key={index} />
           ))}
         </div>
       </div>
