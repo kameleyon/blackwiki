@@ -74,7 +74,7 @@ async function deleteAllArticles() {
   console.log('All articles and related data deleted.');
 }
 
-async function parseMedia(mediaString: string): MediaData | null {
+async function parseMedia(mediaString: string): Promise<MediaData | null> {
   if (!mediaString || mediaString === '{}' || mediaString === '') {
     return null;
   }
@@ -105,7 +105,7 @@ async function createArticle(row: CSVRow, userId: string) {
   const slug = createSlug(row.title);
   
   // Parse media data
-  const mediaData = parseMedia(row.media || '{}');
+  const mediaData = await parseMedia(row.media || '{}');
   
   // Get the first image for the article's main image
   const mainImage = mediaData?.images?.[0];
