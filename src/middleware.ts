@@ -3,6 +3,32 @@ import type { NextRequest } from "next/server";
 import { compressMiddleware } from "@/lib/compression-middleware";
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  
+  // CRITICAL: Detect and clear broken JWT cookies to prevent infinite loops
+  if (!pathname.startsWith('/api/auth/force-reset') && !pathname.startsWith('/_next')) {
+    try {
+      const cookies = request.cookies;
+      const sessionToken = cookies.get('next-auth.session-token')?.value || 
+                           cookies.get('__Secure-next-auth.session-token')?.value;
+      
+      if (sessionToken) {
+        // Check if token looks malformed or if we're in an auth loop
+        const parts = sessionToken.split('.');
+        const isLoop = pathname === '/dashboard' && 
+                      request.headers.get('referer')?.includes('/auth/signin');
+        
+        if (parts.length !== 3 || isLoop) {
+          console.log('🔧 Detected broken JWT/auth loop, forcing reset');
+          return NextResponse.redirect(new URL('/api/auth/force-reset', request.url));
+        }
+      }
+    } catch (error) {
+      console.error('JWT detection error:', error);
+      return NextResponse.redirect(new URL('/api/auth/force-reset', request.url));
+    }
+  }
+
   // Clone the response
   const response = NextResponse.next();
 
