@@ -6,6 +6,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { FiGrid, FiList, FiClock, FiEye, FiFilter, FiX } from "react-icons/fi";
 import { processArticleContent, markdownToHtml } from "@/lib/markdownCleaner";
+import AdvancedSearchFilters from "@/components/search/AdvancedSearchFilters";
 
 interface SearchResult {
   id: string;
@@ -25,12 +26,31 @@ interface SearchResult {
 
 interface SearchResponse {
   query: string;
+  filters?: {
+    categories: string[];
+    tags: string[];
+    authors: string[];
+    dateFrom?: string;
+    dateTo?: string;
+    sortBy: string;
+    sortOrder: string;
+  };
   results: SearchResult[];
   totalResults: number;
   sources: {
     AfroWiki: number;
     wikipedia: number;
   };
+}
+
+interface SearchFilters {
+  categories: string[];
+  tags: string[];
+  authors: string[];
+  dateFrom: string;
+  dateTo: string;
+  sortBy: 'relevance' | 'recent' | 'views' | 'title';
+  sortOrder: 'asc' | 'desc';
 }
 
 type ViewMode = 'grid' | 'list';
@@ -44,17 +64,63 @@ function SearchContent() {
   const [searchData, setSearchData] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [sortBy, setSortBy] = useState<SortOption>('relevance');
+  // Remove redundant sortBy state - use advancedFilters.sortBy instead
   const [showFilters, setShowFilters] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [selectedSource, setSelectedSource] = useState<'all' | 'AfroWiki' | 'wikipedia'>('all');
+  const [advancedFilters, setAdvancedFilters] = useState<SearchFilters>({
+    categories: [],
+    tags: [],
+    authors: [],
+    dateFrom: '',
+    dateTo: '',
+    sortBy: 'relevance',
+    sortOrder: 'desc'
+  });
 
   useEffect(() => {
     const fetchResults = async () => {
-      if (!query) return;
+      // Allow search with any filters including date-only searches
+      if (!query && advancedFilters.categories.length === 0 && 
+          advancedFilters.tags.length === 0 && advancedFilters.authors.length === 0 &&
+          !advancedFilters.dateFrom && !advancedFilters.dateTo) {
+        return;
+      }
+      
       setLoading(true);
       try {
-        console.log('Fetching search results for:', query);
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        // Build search URL with advanced filters
+        const searchUrl = new URL('/api/search', window.location.origin);
+        if (query) searchUrl.searchParams.set('q', query);
+        if (advancedFilters.categories.length > 0) {
+          searchUrl.searchParams.set('categories', advancedFilters.categories.join(','));
+        }
+        if (advancedFilters.tags.length > 0) {
+          searchUrl.searchParams.set('tags', advancedFilters.tags.join(','));
+        }
+        if (advancedFilters.authors.length > 0) {
+          searchUrl.searchParams.set('authors', advancedFilters.authors.join(','));
+        }
+        if (advancedFilters.dateFrom) {
+          searchUrl.searchParams.set('dateFrom', advancedFilters.dateFrom);
+        }
+        if (advancedFilters.dateTo) {
+          searchUrl.searchParams.set('dateTo', advancedFilters.dateTo);
+        }
+        searchUrl.searchParams.set('sortBy', advancedFilters.sortBy);
+        searchUrl.searchParams.set('sortOrder', advancedFilters.sortOrder);
+        
+        // Include Wikipedia results only if no local filters are applied
+        if (advancedFilters.categories.length === 0 && 
+            advancedFilters.tags.length === 0 && 
+            advancedFilters.authors.length === 0) {
+          searchUrl.searchParams.set('includeWikipedia', selectedSource !== 'AfroWiki' ? 'true' : 'false');
+        } else {
+          searchUrl.searchParams.set('includeWikipedia', 'false');
+        }
+
+        console.log('Fetching search results with URL:', searchUrl.toString());
+        const response = await fetch(searchUrl.toString());
         
         if (!response.ok) {
           console.error('Search API response not OK:', response.status, response.statusText);
@@ -65,52 +131,54 @@ function SearchContent() {
         console.log('Raw search response data:', data);
         setSearchData(data);
         
-        // Apply filters and sorting
+        // Apply client-side source filtering (for backward compatibility)
         let filteredResults = [...(data.results || [])];
-        console.log('Initial results count:', filteredResults.length);
-        
-        // Filter by source if needed
         if (selectedSource !== 'all') {
           filteredResults = filteredResults.filter(result => result.source === selectedSource);
-          console.log('After source filtering:', filteredResults.length);
-        }
-        
-        // Apply sorting
-        if (sortBy === 'recent') {
-          filteredResults.sort((a, b) => {
-            if (!a.updatedAt || !b.updatedAt) return 0;
-            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-          });
-        } else if (sortBy === 'views') {
-          filteredResults.sort((a, b) => (b.views || 0) - (a.views || 0));
         }
         
         console.log('Final filtered results:', filteredResults);
         setResults(filteredResults);
       } catch (error) {
         console.error("Search error:", error);
+        setResults([]);
+        setSearchData(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchResults();
-  }, [query, selectedSource, sortBy]);
+  }, [query, selectedSource, advancedFilters]);
 
   const handleSourceFilter = (source: 'all' | 'AfroWiki' | 'wikipedia') => {
     setSelectedSource(source);
   };
 
-  const handleSortChange = (sort: SortOption) => {
-    setSortBy(sort);
+  const handleSortChange = (sort: 'relevance' | 'recent' | 'views') => {
+    const sortByMap = {
+      'relevance': 'relevance' as const,
+      'recent': 'recent' as const,
+      'views': 'views' as const
+    };
+    setAdvancedFilters(prev => ({
+      ...prev,
+      sortBy: sortByMap[sort]
+    }));
   };
 
-  if (!query) {
+  const hasFilters = advancedFilters.categories.length > 0 || 
+                    advancedFilters.tags.length > 0 || 
+                    advancedFilters.authors.length > 0 ||
+                    !!advancedFilters.dateFrom || 
+                    !!advancedFilters.dateTo;
+
+  if (!query && !hasFilters) {
     return (
       <div className="text-center text-white/70 py-12">
-        <h2 className="text-xl font-semibold mb-4">Enter a search term to begin</h2>
+        <h2 className="text-xl font-semibold mb-4">Enter a search term or apply filters to begin</h2>
         <p className="max-w-md mx-auto">
-          Search for articles about Black history, culture, and knowledge from both AfroWiki and Wikipedia.
+          Search for articles about Black history, culture, and knowledge. You can search by text, categories, tags, authors, or date ranges.
         </p>
       </div>
     );
@@ -156,13 +224,22 @@ function SearchContent() {
               </button>
             </div>
             
-            <button 
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 text-sm"
-            >
-              <FiFilter size={14} />
-              <span>Filters</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 text-sm"
+              >
+                <FiFilter size={14} />
+                <span>Basic Filters</span>
+              </button>
+              
+              <AdvancedSearchFilters
+                filters={advancedFilters}
+                onFiltersChange={setAdvancedFilters}
+                isVisible={showAdvancedFilters}
+                onToggle={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -222,7 +299,7 @@ function SearchContent() {
                 <button 
                   onClick={() => handleSortChange('relevance')}
                   className={`px-3 py-1 text-sm rounded-full ${
-                    sortBy === 'relevance' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
+                    advancedFilters.sortBy === 'relevance' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
                   }`}
                 >
                   Relevance
@@ -230,7 +307,7 @@ function SearchContent() {
                 <button 
                   onClick={() => handleSortChange('recent')}
                   className={`px-3 py-1 text-sm rounded-full ${
-                    sortBy === 'recent' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
+                    advancedFilters.sortBy === 'recent' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
                   }`}
                 >
                   Most Recent
@@ -238,7 +315,7 @@ function SearchContent() {
                 <button 
                   onClick={() => handleSortChange('views')}
                   className={`px-3 py-1 text-sm rounded-full ${
-                    sortBy === 'views' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
+                    advancedFilters.sortBy === 'views' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
                   }`}
                 >
                   Most Viewed

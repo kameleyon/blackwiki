@@ -8,7 +8,7 @@ type ArticleWithRelations = Article & {
   references: Array<{ id: string; url: string; title: string; description: string | null }>
 }
 
-type SearchResult = Pick<Article, 'id' | 'title' | 'summary' | 'slug' | 'content' | 'views' | 'updatedAt'> & {
+type SearchResult = Pick<Article, 'id' | 'title' | 'summary' | 'slug' | 'content' | 'views' | 'updatedAt' | 'createdAt'> & {
   categories: Array<{ id: string; name: string }>
   tags: Array<{ id: string; name: string }>
   author: { id: string; name: string | null }
@@ -100,21 +100,112 @@ export async function incrementArticleViews(articleId: string): Promise<void> {
   clearCache(`article:${articleId}`)
 }
 
-export async function searchArticles(query: string): Promise<SearchResult[]> {
-  const searchQuery = query.toLowerCase()
-  
+interface SearchFilters {
+  categories?: string[];
+  tags?: string[];
+  authors?: string[];
+  dateFrom?: string;
+  dateTo?: string;
+  sortBy?: 'relevance' | 'recent' | 'views' | 'title';
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+}
+
+export async function searchArticles(query: string, filters: SearchFilters = {}): Promise<SearchResult[]> {
+  const searchQuery = query.toLowerCase();
+  const {
+    categories = [],
+    tags = [],
+    authors = [],
+    dateFrom,
+    dateTo,
+    sortBy = 'relevance',
+    sortOrder = 'desc',
+    limit = 20
+  } = filters;
+
+  // Build the where clause
+  const whereConditions: any = {
+    AND: [
+      { isPublished: true },
+      { status: 'approved' }
+    ]
+  };
+
+  // Add text search
+  if (query.trim()) {
+    whereConditions.OR = [
+      { title: { contains: searchQuery, mode: 'insensitive' } },
+      { content: { contains: searchQuery, mode: 'insensitive' } },
+      { summary: { contains: searchQuery, mode: 'insensitive' } }
+    ];
+  }
+
+  // Add category filter (by name - matches UI behavior)
+  if (categories.length > 0) {
+    whereConditions.AND.push({
+      categories: {
+        some: {
+          name: { in: categories, mode: 'insensitive' }
+        }
+      }
+    });
+  }
+
+  // Add tag filter (by name - matches UI behavior)
+  if (tags.length > 0) {
+    whereConditions.AND.push({
+      tags: {
+        some: {
+          name: { in: tags, mode: 'insensitive' }
+        }
+      }
+    });
+  }
+
+  // Add author filter
+  if (authors.length > 0) {
+    whereConditions.AND.push({
+      author: {
+        OR: authors.map(authorId => ({
+          id: { equals: authorId }
+        }))
+      }
+    });
+  }
+
+  // Add date range filter
+  if (dateFrom || dateTo) {
+    const dateFilter: any = {};
+    if (dateFrom) dateFilter.gte = new Date(dateFrom);
+    if (dateTo) dateFilter.lte = new Date(dateTo);
+    whereConditions.AND.push({
+      updatedAt: dateFilter
+    });
+  }
+
+  // Build order by clause
+  let orderBy: any = [];
+  switch (sortBy) {
+    case 'recent':
+      orderBy = [{ updatedAt: sortOrder }];
+      break;
+    case 'views':
+      orderBy = [{ views: sortOrder }];
+      break;
+    case 'title':
+      orderBy = [{ title: sortOrder }];
+      break;
+    default: // relevance
+      orderBy = [
+        { views: 'desc' },
+        { updatedAt: 'desc' }
+      ];
+      break;
+  }
+
   const results = await prisma.article.findMany({
-    where: {
-      OR: [
-        { title: { contains: searchQuery } },
-        { content: { contains: searchQuery } },
-        { summary: { contains: searchQuery } }
-      ],
-      AND: [
-        { isPublished: true },
-        { status: 'approved' }
-      ]
-    },
+    where: whereConditions,
     select: {
       id: true,
       title: true,
@@ -123,6 +214,7 @@ export async function searchArticles(query: string): Promise<SearchResult[]> {
       content: true,
       views: true,
       updatedAt: true,
+      createdAt: true,
       categories: {
         select: { id: true, name: true }
       },
@@ -133,14 +225,79 @@ export async function searchArticles(query: string): Promise<SearchResult[]> {
         select: { id: true, name: true }
       }
     },
-    orderBy: [
-      { views: 'desc' },
-      { updatedAt: 'desc' }
-    ],
-    take: 20
-  })
+    orderBy,
+    take: limit
+  });
 
-  return results as SearchResult[]
+  return results as SearchResult[];
+}
+
+// Get search filter options
+export async function getSearchFilterOptions() {
+  return withCache(
+    'search:filter-options',
+    async () => {
+      const [categories, tags, authors] = await Promise.all([
+        // Get categories with article counts
+        prisma.category.findMany({
+          select: {
+            id: true,
+            name: true,
+            _count: {
+              select: { articles: true }
+            }
+          },
+          orderBy: { name: 'asc' }
+        }),
+        
+        // Get tags with article counts
+        prisma.tag.findMany({
+          select: {
+            id: true,
+            name: true,
+            _count: {
+              select: { articles: true }
+            }
+          },
+          orderBy: { name: 'asc' }
+        }),
+        
+        // Get authors with published article counts
+        prisma.user.findMany({
+          where: {
+            articles: {
+              some: {
+                isPublished: true,
+                status: 'approved'
+              }
+            }
+          },
+          select: {
+            id: true,
+            name: true,
+            _count: {
+              select: { 
+                articles: {
+                  where: {
+                    isPublished: true,
+                    status: 'approved'
+                  }
+                }
+              }
+            }
+          },
+          orderBy: { name: 'asc' }
+        })
+      ]);
+
+      return {
+        categories: categories.filter(cat => cat._count.articles > 0),
+        tags: tags.filter(tag => tag._count.articles > 0),
+        authors: authors.filter(author => author._count.articles > 0)
+      };
+    },
+    1800000 // 30 minutes cache
+  );
 }
 
 // Query optimization helpers

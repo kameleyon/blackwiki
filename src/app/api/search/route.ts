@@ -1,24 +1,50 @@
 import { NextResponse } from 'next/server'
-import { searchArticles } from '@/lib/db'
+import { searchArticles, getSearchFilterOptions } from '@/lib/db'
 import { searchWikipedia } from '@/lib/wikipedia'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const query = searchParams.get('q')
+  const query = searchParams.get('q') || ''
 
-  if (!query) {
+  // Parse filter parameters
+  const categories = searchParams.get('categories')?.split(',').filter(Boolean) || []
+  const tags = searchParams.get('tags')?.split(',').filter(Boolean) || []
+  const authors = searchParams.get('authors')?.split(',').filter(Boolean) || []
+  const dateFrom = searchParams.get('dateFrom') || undefined
+  const dateTo = searchParams.get('dateTo') || undefined
+  const sortBy = searchParams.get('sortBy') as 'relevance' | 'recent' | 'views' | 'title' || 'relevance'
+  const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' || 'desc'
+  const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100)
+  const includeWikipedia = searchParams.get('includeWikipedia') !== 'false'
+
+  // Allow searches with any combination of filters (including date-only searches)
+  if (!query && categories.length === 0 && tags.length === 0 && authors.length === 0 && !dateFrom && !dateTo) {
     return NextResponse.json(
-      { error: 'Search query is required' },
+      { error: 'Search query or at least one filter is required' },
       { status: 400 }
     )
   }
 
   try {
-    // Search both sources in parallel
-    const [localResults, wikiResults] = await Promise.all([
-      searchArticles(query),
-      searchWikipedia(query)
-    ])
+    // Build filter options for advanced search
+    const filters = {
+      categories,
+      tags,
+      authors,
+      dateFrom,
+      dateTo,
+      sortBy,
+      sortOrder,
+      limit
+    }
+
+    // Search local articles with filters (always include this)
+    const localResults = await searchArticles(query, filters)
+
+    // Search Wikipedia only if query is provided and not filtered to specific local content
+    const wikiResults = (includeWikipedia && query && categories.length === 0 && tags.length === 0 && authors.length === 0) 
+      ? await searchWikipedia(query)
+      : []
 
     // Transform local results to match the format
     const formattedLocalResults = localResults.map((article) => ({
@@ -32,6 +58,7 @@ export async function GET(request: Request) {
       author: article.author,
       views: article.views,
       updatedAt: article.updatedAt,
+      createdAt: article.createdAt,
     }))
 
     // Transform Wikipedia results to match the format
@@ -43,18 +70,23 @@ export async function GET(request: Request) {
       author: undefined,
       views: undefined,
       updatedAt: undefined,
+      createdAt: undefined,
     }))
 
-    // Combine results, with local results first
+    // Combine results - sorting is handled by the database for local results
     const combinedResults = {
       query,
+      filters: {
+        categories,
+        tags,
+        authors,
+        dateFrom,
+        dateTo,
+        sortBy,
+        sortOrder
+      },
       results: [
-        ...formattedLocalResults.sort((a, b) => {
-          if (a.views === b.views) {
-            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          }
-          return (b.views || 0) - (a.views || 0)
-        }),
+        ...formattedLocalResults,
         ...formattedWikiResults
       ],
       totalResults: formattedLocalResults.length + formattedWikiResults.length,
@@ -73,3 +105,4 @@ export async function GET(request: Request) {
     )
   }
 }
+
