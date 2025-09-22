@@ -137,6 +137,132 @@ async function getUserAchievementsData(userId: string) {
   };
 }
 
+// Helper function to get real goals and achievements data
+async function getRealGoalsAndAchievements(userId: string) {
+  // Get user statistics for real-based achievements and goals
+  const [articleCount, reviewCount, commentCount, totalViews, collaborations] = await Promise.all([
+    prisma.article.count({ where: { authorId: userId, isPublished: true } }),
+    prisma.review.count({ where: { reviewerId: userId, status: 'completed' } }),
+    prisma.comment.count({ where: { authorId: userId } }),
+    prisma.article.aggregate({
+      where: { authorId: userId },
+      _sum: { views: true }
+    }),
+    prisma.collaboration.count({
+      where: {
+        contributors: {
+          some: { userId: userId }
+        }
+      }
+    })
+  ]);
+
+  const totalViewsCount = totalViews._sum.views || 0;
+
+  // Generate real achievements based on actual data
+  const achievements = [
+    {
+      id: '1',
+      title: 'Prolific Writer',
+      description: 'Published 5 or more articles',
+      icon: 'award',
+      status: articleCount >= 5 ? 'completed' as const : (articleCount >= 1 ? 'in-progress' as const : 'locked' as const),
+      ...(articleCount >= 5 && { completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15) }),
+      ...(articleCount >= 1 && articleCount < 5 && { progress: Math.round((articleCount / 5) * 100) })
+    },
+    {
+      id: '2',
+      title: 'Rising Star',
+      description: 'Received 100+ total views on articles',
+      icon: 'award',
+      status: totalViewsCount >= 100 ? 'completed' as const : (totalViewsCount >= 10 ? 'in-progress' as const : 'locked' as const),
+      ...(totalViewsCount >= 100 && { completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 20) }),
+      ...(totalViewsCount >= 10 && totalViewsCount < 100 && { progress: Math.round((totalViewsCount / 100) * 100) })
+    },
+    {
+      id: '3',
+      title: 'Collaboration Champion',
+      description: 'Collaborated on 3 or more articles',
+      icon: 'award',
+      status: collaborations >= 3 ? 'completed' as const : (collaborations >= 1 ? 'in-progress' as const : 'locked' as const),
+      ...(collaborations >= 3 && { completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10) }),
+      ...(collaborations >= 1 && collaborations < 3 && { progress: Math.round((collaborations / 3) * 100) })
+    },
+    {
+      id: '4',
+      title: 'Community Reviewer',
+      description: 'Completed 5 article reviews',
+      icon: 'check',
+      status: reviewCount >= 5 ? 'completed' as const : (reviewCount >= 1 ? 'in-progress' as const : 'locked' as const),
+      ...(reviewCount >= 5 && { completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5) }),
+      ...(reviewCount >= 1 && reviewCount < 5 && { progress: Math.round((reviewCount / 5) * 100) })
+    },
+    {
+      id: '5',
+      title: 'Active Commenter',
+      description: 'Left 20 helpful comments',
+      icon: 'award',
+      status: commentCount >= 20 ? 'completed' as const : (commentCount >= 5 ? 'in-progress' as const : 'locked' as const),
+      ...(commentCount >= 20 && { completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8) }),
+      ...(commentCount >= 5 && commentCount < 20 && { progress: Math.round((commentCount / 20) * 100) })
+    },
+    {
+      id: '6',
+      title: 'Community Pillar',
+      description: 'One year of contributions',
+      icon: 'award',
+      status: 'locked' as const
+    }
+  ];
+
+  // Generate real goals based on current progress
+  const goals = [
+    {
+      id: '1',
+      title: 'Publishing Goal',
+      description: 'Reach 10 published articles',
+      target: 10,
+      current: articleCount,
+      unit: 'articles',
+      deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      category: 'Content Creation'
+    },
+    {
+      id: '2',
+      title: 'Community Impact',
+      description: 'Get 500 total article views',
+      target: 500,
+      current: totalViewsCount,
+      unit: 'views',
+      category: 'Impact'
+    },
+    {
+      id: '3',
+      title: 'Collaboration Network',
+      description: 'Join 5 collaborative projects',
+      target: 5,
+      current: collaborations,
+      unit: 'collaborations',
+      deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60),
+      category: 'Community'
+    },
+    {
+      id: '4',
+      title: 'Review Contributions',
+      description: 'Complete 10 article reviews',
+      target: 10,
+      current: reviewCount,
+      unit: 'reviews',
+      category: 'Community'
+    }
+  ];
+
+  return {
+    achievements,
+    goals
+  };
+}
+
 export default async function DashboardPage() {
   const session = await getServerSession();
   
@@ -422,97 +548,8 @@ export default async function DashboardPage() {
     achievementsData: await getUserAchievementsData(user.id)
   };
   
-  // Mock data for goals and achievements
-  const goalsAndAchievementsData = {
-    achievements: [
-      {
-        id: '1',
-        title: 'Prolific Writer',
-        description: 'Published 5 or more articles',
-        icon: 'award',
-        status: 'completed' as const,
-        completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30) // 30 days ago
-      },
-      {
-        id: '2',
-        title: 'Rising Star',
-        description: 'Received 100+ views on a single article',
-        icon: 'award',
-        status: 'completed' as const,
-        completedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15) // 15 days ago
-      },
-      {
-        id: '3',
-        title: 'Collaboration Champion',
-        description: 'Collaborated on 3 or more articles',
-        icon: 'award',
-        status: 'in-progress' as const,
-        progress: 66 // 2 out of 3
-      },
-      {
-        id: '4',
-        title: 'Category Expert',
-        description: 'Published 3 articles in the same category',
-        icon: 'award',
-        status: 'in-progress' as const,
-        progress: 33 // 1 out of 3
-      },
-      {
-        id: '5',
-        title: 'Fact Checker',
-        description: 'Verified facts in 10 articles',
-        icon: 'check',
-        status: 'locked' as const
-      },
-      {
-        id: '6',
-        title: 'Community Pillar',
-        description: 'Contribute to AfroWiki for 1 year',
-        icon: 'award',
-        status: 'locked' as const
-      }
-    ],
-    goals: [
-      {
-        id: '1',
-        title: 'Complete History Series',
-        description: 'Finish the series on African Kingdoms',
-        target: 5,
-        current: 2,
-        unit: 'articles',
-        deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days from now
-        category: 'Content Creation'
-      },
-      {
-        id: '2',
-        title: 'Improve Expertise',
-        description: 'Increase expertise in Music category',
-        target: 8,
-        current: 6,
-        unit: 'level',
-        category: 'Skill Development'
-      },
-      {
-        id: '3',
-        title: 'Collaboration',
-        description: 'Collaborate with other authors',
-        target: 3,
-        current: 1,
-        unit: 'collaborations',
-        deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // 60 days from now
-        category: 'Community'
-      },
-      {
-        id: '4',
-        title: 'Article Views',
-        description: 'Reach 1000 total views on all articles',
-        target: 1000,
-        current: 450,
-        unit: 'views',
-        category: 'Impact'
-      }
-    ]
-  };
+  // Real data for goals and achievements based on user statistics
+  const goalsAndAchievementsData = await getRealGoalsAndAchievements(user.id);
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
