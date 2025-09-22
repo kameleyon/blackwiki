@@ -7,13 +7,12 @@ import Link from 'next/link';
 
 interface Contribution {
   id: string;
-  type: 'edit' | 'comment' | 'talk' | 'article';
+  type: 'article_created' | 'article_edited' | 'review_completed' | 'comment_posted';
   title: string;
+  slug: string;
   summary?: string;
-  createdAt: string;
-  articleId: string;
-  articleTitle: string;
-  articleSlug: string;
+  timestamp: string;
+  data: any;
 }
 
 interface UserContributionsProps {
@@ -48,7 +47,7 @@ export default function UserContributions({ userId, username, limit = 50 }: User
       setError(null);
       
       const response = await fetch(
-        `/api/users/contributions/${displayUserId}?page=${page}&limit=${limit}&filter=${filter}`
+        `/api/users/${displayUserId}/contributions?type=${filter}&offset=${(page - 1) * limit}&limit=${limit}`
       );
       
       if (!response.ok) {
@@ -63,7 +62,7 @@ export default function UserContributions({ userId, username, limit = 50 }: User
         setContributions((prev) => [...prev, ...data.contributions]);
       }
       
-      setHasMore(data.hasMore);
+      setHasMore(data.pagination.hasMore);
     } catch (err) {
       console.error('Error fetching user contributions:', err);
       setError('Failed to load contributions. Please try again later.');
@@ -91,14 +90,14 @@ export default function UserContributions({ userId, username, limit = 50 }: User
 
   const getContributionIcon = (type: string) => {
     switch (type) {
-      case 'edit':
+      case 'article_created':
         return <FiEdit className="text-white/70" />;
-      case 'comment':
-        return <FiMessageSquare className="text-white/70" />;
-      case 'talk':
-        return <FiMessageSquare className="text-white/70" />;
-      case 'article':
+      case 'article_edited':
         return <FiEdit className="text-white/70" />;
+      case 'review_completed':
+        return <FiEye className="text-white/70" />;
+      case 'comment_posted':
+        return <FiMessageSquare className="text-white/70" />;
       default:
         return <FiEdit className="text-white/70" />;
     }
@@ -106,16 +105,16 @@ export default function UserContributions({ userId, username, limit = 50 }: User
 
   const getContributionTypeLabel = (type: string) => {
     switch (type) {
-      case 'edit':
-        return 'Edited';
-      case 'comment':
-        return 'Commented on';
-      case 'talk':
-        return 'Discussed';
-      case 'article':
-        return 'Created';
+      case 'article_created':
+        return 'Created article';
+      case 'article_edited':
+        return 'Edited article';
+      case 'review_completed':
+        return 'Completed review';
+      case 'comment_posted':
+        return 'Posted comment';
       default:
-        return 'Contributed to';
+        return 'Contribution';
     }
   };
 
@@ -193,15 +192,15 @@ export default function UserContributions({ userId, username, limit = 50 }: User
                     <div className="font-medium">
                       {getContributionTypeLabel(contribution.type)}{' '}
                       <Link 
-                        href={`/articles/${contribution.articleSlug}`}
+                        href={`/articles/${contribution.slug}`}
                         className="text-white hover:underline"
                       >
-                        {contribution.articleTitle}
+                        {contribution.title}
                       </Link>
                     </div>
                     <div className="flex items-center text-white/50 text-sm">
                       <FiCalendar size={12} className="mr-1" />
-                      {formatDate(contribution.createdAt)}
+                      {formatDate(contribution.timestamp)}
                     </div>
                   </div>
                   
@@ -213,16 +212,16 @@ export default function UserContributions({ userId, username, limit = 50 }: User
                   
                   <div className="flex flex-wrap gap-2 mt-2">
                     <Link
-                      href={`/articles/${contribution.articleSlug}`}
+                      href={`/articles/${contribution.slug}`}
                       className="flex items-center gap-1 px-2 py-1 bg-white/10 hover:bg-white/20 rounded text-white/80 text-sm transition-colors"
                     >
                       <FiEye size={12} />
                       View Article
                     </Link>
                     
-                    {contribution.type === 'edit' && (
+                    {(contribution.type === 'article_created' || contribution.type === 'article_edited') && (
                       <Link
-                        href={`/articles/edit/${contribution.articleId}`}
+                        href={`/articles/edit/${contribution.data?.articleId || contribution.id}`}
                         className="flex items-center gap-1 px-2 py-1 bg-white/10 hover:bg-white/20 rounded text-white/80 text-sm transition-colors"
                       >
                         <FiEdit size={12} />
