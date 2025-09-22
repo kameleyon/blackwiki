@@ -4,7 +4,7 @@ const config = {
   
   // Optimize images
   images: {
-    domains: ['localhost', 'afrowiki.onrender.com', 'afrowiki.org'],
+    domains: ['localhost', '0.0.0.0', 'afrowiki.onrender.com', 'afrowiki.org'],
     formats: ['image/webp'], // Prefer WebP format for better compression
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048], // Responsive image sizes
     imageSizes: [16, 32, 48, 64, 96, 128, 256], // Icon sizes
@@ -30,7 +30,7 @@ const config = {
   // Experimental features
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:3000', 'afrowiki.onrender.com', 'afrowiki.org'],
+      allowedOrigins: ['localhost:5000', '0.0.0.0:5000', 'afrowiki.onrender.com', 'afrowiki.org'],
       bodySizeLimit: '2mb',
     },
     optimizeCss: true, // Optimize CSS
