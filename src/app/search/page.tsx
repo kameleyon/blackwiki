@@ -4,12 +4,16 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { FiGrid, FiList, FiClock, FiEye, FiFilter, FiX } from "react-icons/fi";
+import { FiGrid, FiList, FiClock, FiEye, FiFilter, FiX, FiPlus, FiBookOpen } from "react-icons/fi";
 import { processArticleContent, markdownToHtml } from "@/lib/markdownCleaner";
 import AdvancedSearchFilters from "@/components/search/AdvancedSearchFilters";
 import { SearchResultSkeleton } from "@/components/ui/SkeletonLoader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useLiveRegion } from "@/components/accessibility/LiveRegion";
+import { ErrorState, useErrorHandler } from "@/components/ui/ErrorState";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { SearchEmptyState } from "@/components/ui/EmptyState";
+import { useKeyboardNavigation, useFocusManager } from "@/hooks/useKeyboardNavigation";
 
 interface SearchResult {
   id: string;
@@ -66,8 +70,22 @@ function SearchContent() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | Error | null>(null);
   const { announce, LiveRegionComponent } = useLiveRegion();
+  const { getErrorType, handleError } = useErrorHandler();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+  
+  // Keyboard navigation
+  const { focusNext, focusPrevious, focusFirst } = useFocusManager();
+  useKeyboardNavigation({
+    onEscape: () => {
+      setShowFilters(false);
+      setShowAdvancedFilters(false);
+    },
+    onArrowDown: () => focusNext(),
+    onArrowUp: () => focusPrevious(),
+    enabled: true
+  });
   // Remove redundant sortBy state - use advancedFilters.sortBy instead
   const [showFilters, setShowFilters] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -92,6 +110,7 @@ function SearchContent() {
       }
       
       setLoading(true);
+      setError(null); // Clear any previous errors
       
       // Announce loading state for accessibility
       announce('Loading search results...', 'polite');
@@ -172,11 +191,13 @@ function SearchContent() {
         if (selectedSource !== 'all' && data.totalResults !== filteredResults.length) {
           announce(`Filtered to ${filteredResults.length} results from ${selectedSource}.`, 'polite');
         }
-      } catch (error) {
-        console.error("Search error:", error);
+      } catch (err) {
+        const errorInfo = handleError(err as Error, getErrorType(err as Error));
+        setError(errorInfo.error);
         setResults([]);
         setSearchData(null);
         announce('Search failed. Please try again.', 'assertive');
+        console.error("Search error:", err);
       } finally {
         setLoading(false);
       }
@@ -206,6 +227,25 @@ function SearchContent() {
                     advancedFilters.authors.length > 0 ||
                     !!advancedFilters.dateFrom || 
                     !!advancedFilters.dateTo;
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <LiveRegionComponent />
+        <ErrorState
+          type={getErrorType(error)}
+          error={error}
+          onRetry={() => {
+            setError(null);
+            // Trigger refetch by updating a dependency
+            setAdvancedFilters(prev => ({...prev}));
+          }}
+          retrying={loading}
+        />
+      </div>
+    );
+  }
 
   if (!query && !hasFilters) {
     return (
@@ -459,26 +499,19 @@ function SearchContent() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white/5 rounded-xl">
-          <h2 className="text-xl font-semibold mb-2">No results found</h2>
-          <p className="text-white/70 mb-6">
-            We couldn&apos;t find any matches for &quot;{query}&quot;
-          </p>
-          <div className="flex justify-center gap-4">
-            <button 
-              onClick={() => router.push('/')}
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-            >
-              Go Home
-            </button>
-            <button 
-              onClick={() => router.push('/articles/new')}
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-            >
-              Create Article
-            </button>
-          </div>
-        </div>
+        <SearchEmptyState
+          title={query ? `No results for "${query}"` : 'No results with current filters'}
+          primaryAction={{
+            label: 'Create Article',
+            onClick: () => router.push('/articles/new'),
+            icon: <FiPlus className="w-4 h-4" />
+          }}
+          secondaryAction={{
+            label: 'Browse Articles',
+            onClick: () => router.push('/'),
+            icon: <FiBookOpen className="w-4 h-4" />
+          }}
+        />
       )}
     </div>
   );
@@ -486,15 +519,17 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Search Results</h1>
-      <Suspense fallback={
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-        </div>
-      }>
-        <SearchContent />
-      </Suspense>
-    </div>
+    <ErrorBoundary>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Search Results</h1>
+        <Suspense fallback={
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          </div>
+        }>
+          <SearchContent />
+        </Suspense>
+      </div>
+    </ErrorBoundary>
   );
 }

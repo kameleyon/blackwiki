@@ -55,7 +55,7 @@ export function ErrorState({
 
   // Auto-announce error for screen readers
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
+    if (typeof window !== 'undefined') {
       const announcement = `Error: ${finalTitle}. ${finalMessage}`;
       
       // Use aria-live region for screen readers
@@ -68,7 +68,9 @@ export function ErrorState({
 
       // Clean up
       setTimeout(() => {
-        document.body.removeChild(liveRegion);
+        if (document.body.contains(liveRegion)) {
+          document.body.removeChild(liveRegion);
+        }
       }, 1000);
     }
   }, [finalTitle, finalMessage, announcementPriority]);
