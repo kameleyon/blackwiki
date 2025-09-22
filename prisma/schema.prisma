@@ -60,6 +60,7 @@ model User {
   reviewTasks   Review[]      @relation("AssignedTo") // Reviews assigned to this user
   branches      Branch[]      @relation("UserBranches")
   talkMessages  ArticleTalk[]
+  discussionMessages DiscussionMessage[] @relation("DiscussionAuthor") // Discussion messages authored by this user
   watchedArticles Watchlist[] // Articles this user is watching
   auditLogs     AuditLog[] // Actions performed by this user
   reviewerReputation Int @default(0) // Reputation score based on review quality/activity
@@ -372,4 +373,24 @@ model ArticleTalk {
   @@index([articleId])
   @@index([authorId])
   @@index([section])
+}
+
+// Generic discussion/talk page messages for both articles and users
+model DiscussionMessage {
+  id         String   @id @default(cuid())
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  authorId   String
+  targetId   String   // Can be Article ID or User ID
+  targetType String   // "article" or "user"
+  parentId   String?  // For threaded replies
+  author     User     @relation("DiscussionAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  parent     DiscussionMessage? @relation("MessageReplies", fields: [parentId], references: [id], onDelete: SetNull)
+  replies    DiscussionMessage[] @relation("MessageReplies")
+
+  @@index([targetId, targetType])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([createdAt])
 }
