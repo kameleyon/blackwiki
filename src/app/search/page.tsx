@@ -9,6 +9,7 @@ import { processArticleContent, markdownToHtml } from "@/lib/markdownCleaner";
 import AdvancedSearchFilters from "@/components/search/AdvancedSearchFilters";
 import { SearchResultSkeleton } from "@/components/ui/SkeletonLoader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useLiveRegion } from "@/components/accessibility/LiveRegion";
 
 interface SearchResult {
   id: string;
@@ -65,6 +66,7 @@ function SearchContent() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const { announce, LiveRegionComponent } = useLiveRegion();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   // Remove redundant sortBy state - use advancedFilters.sortBy instead
   const [showFilters, setShowFilters] = useState(false);
@@ -90,6 +92,10 @@ function SearchContent() {
       }
       
       setLoading(true);
+      
+      // Announce loading state for accessibility
+      announce('Loading search results...', 'polite');
+      
       try {
         // Build search URL with advanced filters
         const searchUrl = new URL('/api/search', window.location.origin);
@@ -133,6 +139,26 @@ function SearchContent() {
         console.log('Raw search response data:', data);
         setSearchData(data);
         
+        // Announce search results for accessibility
+        if (query) {
+          if (data.totalResults === 0) {
+            announce(`No results found for "${query}".`, 'polite');
+          } else if (data.totalResults === 1) {
+            announce(`Found 1 result for "${query}".`, 'polite');
+          } else {
+            announce(`Found ${data.totalResults} results for "${query}".`, 'polite');
+          }
+        } else {
+          // Announce results for filter-only searches
+          if (data.totalResults === 0) {
+            announce('No results found with current filters.', 'polite');
+          } else if (data.totalResults === 1) {
+            announce('Found 1 result with current filters.', 'polite');
+          } else {
+            announce(`Found ${data.totalResults} results with current filters.`, 'polite');
+          }
+        }
+        
         // Apply client-side source filtering (for backward compatibility)
         let filteredResults = [...(data.results || [])];
         if (selectedSource !== 'all') {
@@ -141,10 +167,16 @@ function SearchContent() {
         
         console.log('Final filtered results:', filteredResults);
         setResults(filteredResults);
+        
+        // Announce filtered results when source filter is applied
+        if (selectedSource !== 'all' && data.totalResults !== filteredResults.length) {
+          announce(`Filtered to ${filteredResults.length} results from ${selectedSource}.`, 'polite');
+        }
       } catch (error) {
         console.error("Search error:", error);
         setResults([]);
         setSearchData(null);
+        announce('Search failed. Please try again.', 'assertive');
       } finally {
         setLoading(false);
       }
@@ -195,6 +227,7 @@ function SearchContent() {
 
   return (
     <div className="space-y-8">
+      <LiveRegionComponent />
       {/* Search Stats and Controls */}
       {searchData && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/5 p-4 rounded-lg">

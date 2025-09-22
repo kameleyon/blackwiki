@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -15,6 +16,8 @@ export default function LoadingSpinner({
   color = 'white',
   label = 'Loading...'
 }: LoadingSpinnerProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8', 
@@ -28,6 +31,19 @@ export default function LoadingSpinner({
     gray: 'border-gray-400'
   };
 
+  // Animation configuration respecting reduced motion preference
+  const animationProps = prefersReducedMotion 
+    ? {
+        // Truly static - no animation for reduced motion
+        animate: undefined,
+        transition: undefined
+      }
+    : {
+        // Normal rotation animation
+        animate: { rotate: 360 },
+        transition: { duration: 1, repeat: Infinity, ease: "linear" }
+      };
+
   return (
     <div 
       className={`inline-flex items-center justify-center ${className}`}
@@ -36,12 +52,7 @@ export default function LoadingSpinner({
     >
       <motion.div
         className={`${sizeClasses[size]} ${colorClasses[color]} border-2 border-t-transparent rounded-full`}
-        animate={{ rotate: 360 }}
-        transition={{ 
-          duration: 1, 
-          repeat: Infinity, 
-          ease: "linear" 
-        }}
+        {...animationProps}
       />
       <span className="sr-only">{label}</span>
     </div>

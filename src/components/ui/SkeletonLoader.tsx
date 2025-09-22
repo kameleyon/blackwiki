@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 interface SkeletonLoaderProps {
   className?: string;
@@ -19,6 +20,9 @@ export function SkeletonLoader({
   lines = 1,
   animate = true
 }: SkeletonLoaderProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const shouldAnimate = animate && !prefersReducedMotion;
+  
   const baseClasses = "bg-white/10";
   
   const variantClasses = {
@@ -28,7 +32,7 @@ export function SkeletonLoader({
     rounded: "rounded-xl"
   };
 
-  const pulseAnimation = animate ? {
+  const pulseAnimation = shouldAnimate ? {
     opacity: [0.6, 1, 0.6],
     transition: {
       duration: 1.5,
