@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 
 const handler = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID || "",
@@ -63,12 +62,36 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account }) {
-      try {
-        if (account) {
-          try {
-            // Check if user exists in our database
-            const dbUser = await prisma.user.findUnique({
-              where: { email: token.email || "" },
+      if (account) {
+        try {
+          // Check if user exists in our database
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email || "" },
+            select: {
+              id: true,
+              role: true,
+              bio: true,
+              location: true,
+              website: true,
+              wecherp: true,
+              expertise: true,
+              interests: true,
+              joinedAt: true,
+              lastActive: true,
+            },
+          });
+
+          if (dbUser) {
+            Object.assign(token, dbUser);
+          } else {
+            // Create new user if they don't exist
+            const newUser = await prisma.user.create({
+              data: {
+                email: token.email || "",
+                name: token.name || "",
+                image: token.picture,
+                role: "user", // Default role
+              },
               select: {
                 id: true,
                 role: true,
@@ -82,55 +105,19 @@ const handler = NextAuth({
                 lastActive: true,
               },
             });
-
-            if (dbUser) {
-              Object.assign(token, dbUser);
-            } else {
-              // Create new user if they don't exist
-              const newUser = await prisma.user.create({
-                data: {
-                  email: token.email || "",
-                  name: token.name || "",
-                  image: token.picture,
-                  role: "user", // Default role
-                },
-                select: {
-                  id: true,
-                  role: true,
-                  bio: true,
-                  location: true,
-                  website: true,
-                  wecherp: true,
-                  expertise: true,
-                  interests: true,
-                  joinedAt: true,
-                  lastActive: true,
-                },
-              });
-              Object.assign(token, newUser);
-            }
-          } catch (error) {
-            console.error("Error handling auth:", error);
+            Object.assign(token, newUser);
           }
+        } catch (error) {
+          console.error("Error handling auth:", error);
         }
-        return token;
-      } catch (jwtError) {
-        // CRITICAL: Catch JWT decryption errors and return null to force reauthentication
-        console.error("🔧 JWT Error caught, clearing token:", jwtError.message);
-        return null;
       }
+      return token;
     },
     async session({ session, token }) {
-      try {
-        if (session.user && token) {
-          Object.assign(session.user, token);
-        }
-        return session;
-      } catch (sessionError) {
-        // CRITICAL: Catch session errors and return null to force reauthentication
-        console.error("🔧 Session Error caught, clearing session:", sessionError.message);
-        return null;
+      if (session.user) {
+        Object.assign(session.user, token);
       }
+      return session;
     },
     async redirect({ url }) {
       try {

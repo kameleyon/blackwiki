@@ -21,25 +21,15 @@ import AdvancedStatistics from '@/components/dashboard/AdvancedStatistics';
 import GoalsAndAchievements from '@/components/dashboard/GoalsAndAchievements';
 
 export default async function DashboardPage() {
-  // Handle JWT decryption failures gracefully to prevent infinite redirect loops
-  let session = null;
-  let user = null;
+  const session = await getServerSession();
   
-  try {
-    session = await getServerSession();
-    if (session?.user?.email) {
-      user = await getCurrentUser();
-    }
-  } catch (error) {
-    // JWT decryption failed - clear invalid session 
-    console.error("JWT session error - redirecting to clear invalid session:", error);
-    redirect('/api/auth/clear-session');
-  }
-  
-  // If no valid session, redirect to sign-in
+  // First check if session exists to avoid redirect loop
   if (!session?.user?.email) {
     redirect('/auth/signin');
   }
+  
+  const user = await getCurrentUser();
+  console.log("DEBUG user:", user);
   
   // Only redirect if we have a session but no user in the database
   if (!user && session?.user?.email) {
