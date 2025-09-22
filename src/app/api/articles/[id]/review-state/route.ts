@@ -171,6 +171,28 @@ export async function PUT(
       stages: Record<string, ReviewStageData>;
     };
 
+    // Validate stage data
+    const validStages = ['technical', 'editorial', 'final'];
+    if (!validStages.includes(currentStage)) {
+      return NextResponse.json({ error: 'Invalid current stage' }, { status: 400 });
+    }
+
+    for (const [type, stage] of Object.entries(stages)) {
+      if (!validStages.includes(type)) {
+        return NextResponse.json({ error: `Invalid stage type: ${type}` }, { status: 400 });
+      }
+      
+      const validStatuses = ['pending', 'in_progress', 'completed', 'blocked'];
+      if (!validStatuses.includes(stage.status)) {
+        return NextResponse.json({ error: `Invalid status: ${stage.status}` }, { status: 400 });
+      }
+      
+      // Validate score if provided
+      if (stage.score !== null && stage.score !== undefined && (stage.score < 1 || stage.score > 100)) {
+        return NextResponse.json({ error: 'Score must be between 1 and 100' }, { status: 400 });
+      }
+    }
+
     // Update review state in a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Update or create review state
@@ -188,8 +210,17 @@ export async function PUT(
         },
       });
 
+      // Track changes for audit logging
+      const auditDetails: any = {
+        articleId: params.id,
+        currentStage,
+        stagesUpdated: Object.keys(stages),
+      };
+
       // Update reviews for each stage
       for (const [type, stage] of Object.entries(stages)) {
+        const existingReview = article.reviews.find(r => r.type === type);
+        
         await tx.review.upsert({
           where: {
             articleId_type: {
@@ -214,9 +245,29 @@ export async function PUT(
             score: stage.score,
             checklist: JSON.stringify(stage.checklist),
             metadata: JSON.stringify({ blockReason: stage.blockReason }),
+            ...(stage.status === 'completed' && !existingReview?.completedAt ? { completedAt: new Date() } : {}),
           },
         });
+
+        // Track significant changes
+        if (existingReview?.status !== stage.status) {
+          auditDetails[`${type}_status_change`] = {
+            from: existingReview?.status || 'none',
+            to: stage.status
+          };
+        }
       }
+
+      // Create audit log entry
+      await tx.auditLog.create({
+        data: {
+          userId: user.id,
+          action: 'review_state_updated',
+          targetType: 'Article',
+          targetId: params.id,
+          details: JSON.stringify(auditDetails),
+        },
+      });
 
       return reviewState;
     });
