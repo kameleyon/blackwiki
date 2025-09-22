@@ -16,13 +16,21 @@ function createSlug(title) {
 async function importCSV() {
   console.log('🚀 Starting CSV import...');
   
-  // First, check if we have any articles
+  // First, clear existing articles to import fresh dataset
   const existingCount = await prisma.article.count();
   console.log(`📊 Found ${existingCount} existing articles`);
   
   if (existingCount > 0) {
-    console.log('✅ Articles already exist. Skipping import.');
-    return;
+    console.log('🗑️ Clearing existing articles for fresh import...');
+    
+    // Delete related data first due to foreign key constraints
+    await prisma.watchlist.deleteMany({});
+    await prisma.comment.deleteMany({});
+    await prisma.edit.deleteMany({});
+    await prisma.auditLog.deleteMany({ where: { targetType: 'Article' } });
+    await prisma.article.deleteMany({});
+    
+    console.log('✅ Existing articles cleared');
   }
 
   // Create a default user for imports
@@ -52,7 +60,7 @@ async function importCSV() {
   const batchSize = 50; // Process in smaller batches
 
   return new Promise((resolve, reject) => {
-    fs.createReadStream('docs/blackinfo2.csv')
+    fs.createReadStream('docs/blackinfonolimit.csv')
       .pipe(csv())
       .on('data', (row) => {
         results.push(row);

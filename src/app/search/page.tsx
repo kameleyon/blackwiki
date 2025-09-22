@@ -1,535 +1,231 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { useState, useEffect, Suspense } from "react";
-import Link from "next/link";
-import { FiGrid, FiList, FiClock, FiEye, FiFilter, FiX, FiPlus, FiBookOpen } from "react-icons/fi";
-import { processArticleContent, markdownToHtml } from "@/lib/markdownCleaner";
-import AdvancedSearchFilters from "@/components/search/AdvancedSearchFilters";
-import { SearchResultSkeleton } from "@/components/ui/SkeletonLoader";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { useLiveRegion } from "@/components/accessibility/LiveRegion";
-import { ErrorState, useErrorHandler } from "@/components/ui/ErrorState";
-import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { SearchEmptyState } from "@/components/ui/EmptyState";
-import { useKeyboardNavigation, useFocusManager } from "@/hooks/useKeyboardNavigation";
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { FiSearch } from 'react-icons/fi';
+import AdvancedSearchForm, { SearchParams } from '@/components/search/AdvancedSearchForm';
+import SearchResults from '@/components/search/SearchResults';
+import { Metadata } from 'next';
 
-interface SearchResult {
+interface Article {
   id: string;
   title: string;
+  slug: string;
   summary: string;
-  url: string;
-  source: 'AfroWiki' | 'wikipedia';
-  categories?: { id: string; name: string }[];
-  tags?: { id: string; name: string }[];
-  author?: {
-    name: string;
-    email: string;
+  image?: string | null;
+  views: number;
+  likes: number;
+  createdAt: string;
+  contentLength: number;
+  readingTime: number;
+  titleHighlight?: string | null;
+  summaryHighlight?: string | null;
+  author: {
+    name: string | null;
+    image?: string | null;
   };
-  views?: number;
-  updatedAt?: Date;
+  categories: Array<{
+    name: string;
+  }>;
+  _count: {
+    comments: number;
+    edits: number;
+    watchers: number;
+  };
 }
 
 interface SearchResponse {
-  query: string;
-  filters?: {
-    categories: string[];
-    tags: string[];
-    authors: string[];
-    dateFrom?: string;
-    dateTo?: string;
-    sortBy: string;
-    sortOrder: string;
+  articles: Article[];
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+    totalPages: number;
+    currentPage: number;
   };
-  results: SearchResult[];
-  totalResults: number;
-  sources: {
-    AfroWiki: number;
-    wikipedia: number;
-  };
-}
-
-interface SearchFilters {
-  categories: string[];
-  tags: string[];
-  authors: string[];
-  dateFrom: string;
-  dateTo: string;
-  sortBy: 'relevance' | 'recent' | 'views' | 'title';
-  sortOrder: 'asc' | 'desc';
-}
-
-type ViewMode = 'grid' | 'list';
-type SortOption = 'relevance' | 'recent' | 'views';
-
-function SearchContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("q") || "";
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [searchData, setSearchData] = useState<SearchResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | Error | null>(null);
-  const { announce, LiveRegionComponent } = useLiveRegion();
-  const { getErrorType, handleError } = useErrorHandler();
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
-  
-  // Keyboard navigation
-  const { focusNext, focusPrevious, focusFirst } = useFocusManager();
-  useKeyboardNavigation({
-    onEscape: () => {
-      setShowFilters(false);
-      setShowAdvancedFilters(false);
-    },
-    onArrowDown: () => focusNext(),
-    onArrowUp: () => focusPrevious(),
-    enabled: true
-  });
-  // Remove redundant sortBy state - use advancedFilters.sortBy instead
-  const [showFilters, setShowFilters] = useState(false);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [selectedSource, setSelectedSource] = useState<'all' | 'AfroWiki' | 'wikipedia'>('all');
-  const [advancedFilters, setAdvancedFilters] = useState<SearchFilters>({
-    categories: [],
-    tags: [],
-    authors: [],
-    dateFrom: '',
-    dateTo: '',
-    sortBy: 'relevance',
-    sortOrder: 'desc'
-  });
-
-  useEffect(() => {
-    const fetchResults = async () => {
-      // Allow search with any filters including date-only searches
-      if (!query && advancedFilters.categories.length === 0 && 
-          advancedFilters.tags.length === 0 && advancedFilters.authors.length === 0 &&
-          !advancedFilters.dateFrom && !advancedFilters.dateTo) {
-        return;
-      }
-      
-      setLoading(true);
-      setError(null); // Clear any previous errors
-      
-      // Announce loading state for accessibility
-      announce('Loading search results...', 'polite');
-      
-      try {
-        // Build search URL with advanced filters
-        const searchUrl = new URL('/api/search', window.location.origin);
-        if (query) searchUrl.searchParams.set('q', query);
-        if (advancedFilters.categories.length > 0) {
-          searchUrl.searchParams.set('categories', advancedFilters.categories.join(','));
-        }
-        if (advancedFilters.tags.length > 0) {
-          searchUrl.searchParams.set('tags', advancedFilters.tags.join(','));
-        }
-        if (advancedFilters.authors.length > 0) {
-          searchUrl.searchParams.set('authors', advancedFilters.authors.join(','));
-        }
-        if (advancedFilters.dateFrom) {
-          searchUrl.searchParams.set('dateFrom', advancedFilters.dateFrom);
-        }
-        if (advancedFilters.dateTo) {
-          searchUrl.searchParams.set('dateTo', advancedFilters.dateTo);
-        }
-        searchUrl.searchParams.set('sortBy', advancedFilters.sortBy);
-        searchUrl.searchParams.set('sortOrder', advancedFilters.sortOrder);
-        
-        // Include Wikipedia results only if no local filters are applied
-        if (advancedFilters.categories.length === 0 && 
-            advancedFilters.tags.length === 0 && 
-            advancedFilters.authors.length === 0) {
-          searchUrl.searchParams.set('includeWikipedia', selectedSource !== 'AfroWiki' ? 'true' : 'false');
-        } else {
-          searchUrl.searchParams.set('includeWikipedia', 'false');
-        }
-
-        console.log('Fetching search results with URL:', searchUrl.toString());
-        const response = await fetch(searchUrl.toString());
-        
-        if (!response.ok) {
-          console.error('Search API response not OK:', response.status, response.statusText);
-          throw new Error(`Search API error: ${response.status}`);
-        }
-        
-        const data: SearchResponse = await response.json();
-        console.log('Raw search response data:', data);
-        setSearchData(data);
-        
-        // Announce search results for accessibility
-        if (query) {
-          if (data.totalResults === 0) {
-            announce(`No results found for "${query}".`, 'polite');
-          } else if (data.totalResults === 1) {
-            announce(`Found 1 result for "${query}".`, 'polite');
-          } else {
-            announce(`Found ${data.totalResults} results for "${query}".`, 'polite');
-          }
-        } else {
-          // Announce results for filter-only searches
-          if (data.totalResults === 0) {
-            announce('No results found with current filters.', 'polite');
-          } else if (data.totalResults === 1) {
-            announce('Found 1 result with current filters.', 'polite');
-          } else {
-            announce(`Found ${data.totalResults} results with current filters.`, 'polite');
-          }
-        }
-        
-        // Apply client-side source filtering (for backward compatibility)
-        let filteredResults = [...(data.results || [])];
-        if (selectedSource !== 'all') {
-          filteredResults = filteredResults.filter(result => result.source === selectedSource);
-        }
-        
-        console.log('Final filtered results:', filteredResults);
-        setResults(filteredResults);
-        
-        // Announce filtered results when source filter is applied
-        if (selectedSource !== 'all' && data.totalResults !== filteredResults.length) {
-          announce(`Filtered to ${filteredResults.length} results from ${selectedSource}.`, 'polite');
-        }
-      } catch (err) {
-        const errorInfo = handleError(err as Error, getErrorType(err as Error));
-        setError(errorInfo.error);
-        setResults([]);
-        setSearchData(null);
-        announce('Search failed. Please try again.', 'assertive');
-        console.error("Search error:", err);
-      } finally {
-        setLoading(false);
-      }
+  filters: any;
+  categoryStats: Array<{
+    name: string;
+    _count: {
+      articles: number;
     };
-
-    fetchResults();
-  }, [query, selectedSource, advancedFilters]);
-
-  const handleSourceFilter = (source: 'all' | 'AfroWiki' | 'wikipedia') => {
-    setSelectedSource(source);
+  }>;
+  searchStats: {
+    totalResults: number;
+    hasResults: boolean;
   };
-
-  const handleSortChange = (sort: 'relevance' | 'recent' | 'views') => {
-    const sortByMap = {
-      'relevance': 'relevance' as const,
-      'recent': 'recent' as const,
-      'views': 'views' as const
-    };
-    setAdvancedFilters(prev => ({
-      ...prev,
-      sortBy: sortByMap[sort]
-    }));
-  };
-
-  const hasFilters = advancedFilters.categories.length > 0 || 
-                    advancedFilters.tags.length > 0 || 
-                    advancedFilters.authors.length > 0 ||
-                    !!advancedFilters.dateFrom || 
-                    !!advancedFilters.dateTo;
-
-  // Handle error state
-  if (error) {
-    return (
-      <div className="space-y-8">
-        <LiveRegionComponent />
-        <ErrorState
-          type={getErrorType(error)}
-          error={error}
-          onRetry={() => {
-            setError(null);
-            // Trigger refetch by updating a dependency
-            setAdvancedFilters(prev => ({...prev}));
-          }}
-          retrying={loading}
-        />
-      </div>
-    );
-  }
-
-  if (!query && !hasFilters) {
-    return (
-      <div className="text-center text-white/70 py-12">
-        <h2 className="text-xl font-semibold mb-4">Enter a search term or apply filters to begin</h2>
-        <p className="max-w-md mx-auto">
-          Search for articles about Black history, culture, and knowledge. You can search by text, categories, tags, authors, or date ranges.
-        </p>
-      </div>
-    );
-  }
-
-  const getReadingTime = (summary: string) => {
-    const wordsPerMinute = 200;
-    const words = summary.split(/\s+/).length;
-    const minutes = Math.ceil(words / wordsPerMinute);
-    return `${minutes} min read`;
-  };
-
-  return (
-    <div className="space-y-8">
-      <LiveRegionComponent />
-      {/* Search Stats and Controls */}
-      {searchData && (
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/5 p-4 rounded-lg">
-          <div>
-            <p className="text-white/70">
-              Found {searchData.totalResults} results for &quot;{query}&quot;
-            </p>
-            <div className="flex gap-2 text-xs mt-1">
-              <span className="text-white/50">{searchData.sources.AfroWiki} from AfroWiki</span>
-              <span className="text-white/50">{searchData.sources.wikipedia} from Wikipedia</span>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-white/10 rounded-lg p-1">
-              <button 
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded ${viewMode === 'list' ? 'bg-white/20' : ''}`}
-                aria-label="List view"
-              >
-                <FiList size={16} />
-              </button>
-              <button 
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white/20' : ''}`}
-                aria-label="Grid view"
-              >
-                <FiGrid size={16} />
-              </button>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 text-sm"
-              >
-                <FiFilter size={14} />
-                <span>Basic Filters</span>
-              </button>
-              
-              <AdvancedSearchFilters
-                filters={advancedFilters}
-                onFiltersChange={setAdvancedFilters}
-                isVisible={showAdvancedFilters}
-                onToggle={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Filters Panel */}
-      {showFilters && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="bg-white/5 p-4 rounded-lg"
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold">Filter & Sort</h3>
-            <button 
-              onClick={() => setShowFilters(false)}
-              className="text-white/60 hover:text-white"
-            >
-              <FiX size={18} />
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="text-sm font-medium mb-2">Source</h4>
-              <div className="flex flex-wrap gap-2">
-                <button 
-                  onClick={() => handleSourceFilter('all')}
-                  className={`px-3 py-1 text-sm rounded-full ${
-                    selectedSource === 'all' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  All Sources
-                </button>
-                <button 
-                  onClick={() => handleSourceFilter('AfroWiki')}
-                  className={`px-3 py-1 text-sm rounded-full ${
-                    selectedSource === 'AfroWiki' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  AfroWiki
-                </button>
-                <button 
-                  onClick={() => handleSourceFilter('wikipedia')}
-                  className={`px-3 py-1 text-sm rounded-full ${
-                    selectedSource === 'wikipedia' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  Wikipedia
-                </button>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-sm font-medium mb-2">Sort By</h4>
-              <div className="flex flex-wrap gap-2">
-                <button 
-                  onClick={() => handleSortChange('relevance')}
-                  className={`px-3 py-1 text-sm rounded-full ${
-                    advancedFilters.sortBy === 'relevance' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  Relevance
-                </button>
-                <button 
-                  onClick={() => handleSortChange('recent')}
-                  className={`px-3 py-1 text-sm rounded-full ${
-                    advancedFilters.sortBy === 'recent' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  Most Recent
-                </button>
-                <button 
-                  onClick={() => handleSortChange('views')}
-                  className={`px-3 py-1 text-sm rounded-full ${
-                    advancedFilters.sortBy === 'views' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  Most Viewed
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-      
-      {/* Results */}
-      {loading ? (
-        <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-          {Array.from({ length: 6 }).map((_, index) => (
-            <SearchResultSkeleton key={index} />
-          ))}
-        </div>
-      ) : results.length > 0 ? (
-        <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-          {results.map((result, index) => (
-            <motion.article
-              key={result.title + index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              className={`bg-white/5 hover:bg-white/10 rounded-xl transition-colors ${
-                viewMode === 'grid' ? 'p-5 flex flex-col h-full' : 'p-6'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-3">
-                <Link 
-                  href={result.url}
-                  className="text-xl font-semibold hover:text-white/80 transition-colors line-clamp-2"
-                >
-                  {result.title}
-                </Link>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  result.source === 'AfroWiki' 
-                    ? 'bg-white/20 text-white' 
-                    : 'bg-blue-500/20 text-blue-200'
-                }`}>
-                  {result.source}
-                </span>
-              </div>
-              
-              <div 
-                className="text-white/70 text-sm line-clamp-3 mb-4"
-                dangerouslySetInnerHTML={{ 
-                  __html: result.source === 'AfroWiki' 
-                    ? markdownToHtml(processArticleContent(result.summary))
-                    : result.summary 
-                }}
-              />
-              
-              {result.source === 'AfroWiki' && (
-                <div className="mt-auto">
-                  {/* Categories and Tags */}
-                  {(result.categories?.length || result.tags?.length) && (
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {result.categories?.slice(0, 2).map(category => (
-                        <span key={category.id} className="px-2 py-1 bg-white/10 rounded-full text-xs">
-                          {category.name}
-                        </span>
-                      ))}
-                      {result.tags?.slice(0, 2).map(tag => (
-                        <span key={tag.id} className="px-2 py-1 bg-white/5 rounded-full text-xs">
-                          #{tag.name}
-                        </span>
-                      ))}
-                      {(result.categories?.length || 0) + (result.tags?.length || 0) > 4 && (
-                        <span className="px-2 py-1 bg-white/5 rounded-full text-xs">
-                          +{(result.categories?.length || 0) + (result.tags?.length || 0) - 4} more
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Metadata */}
-                  <div className="flex items-center gap-4 text-xs text-white/50">
-                    {result.author && (
-                      <span>By {result.author.name}</span>
-                    )}
-                    {result.views !== undefined && (
-                      <span className="flex items-center gap-1">
-                        <FiEye size={12} />
-                        {result.views}
-                      </span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <FiClock size={12} />
-                      {getReadingTime(result.summary)}
-                    </span>
-                  </div>
-                </div>
-              )}
-              
-              <div className="mt-4 pt-3 border-t border-white/10">
-                <Link
-                  href={result.url}
-                  className="text-white font-semibold hover:text-white/80 text-sm flex items-center"
-                >
-                  Read more →
-                </Link>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-      ) : (
-        <SearchEmptyState
-          title={query ? `No results for "${query}"` : 'No results with current filters'}
-          primaryAction={{
-            label: 'Create Article',
-            onClick: () => router.push('/articles/new'),
-            icon: <FiPlus className="w-4 h-4" />
-          }}
-          secondaryAction={{
-            label: 'Browse Articles',
-            onClick: () => router.push('/'),
-            icon: <FiBookOpen className="w-4 h-4" />
-          }}
-        />
-      )}
-    </div>
-  );
 }
 
 export default function SearchPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const [searchResults, setSearchResults] = useState<SearchResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  // Initial search from URL params
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (query || searchParams.toString()) {
+      handleSearch({
+        q: searchParams.get('q') || '',
+        category: searchParams.get('category') || '',
+        dateFrom: searchParams.get('dateFrom') || '',
+        dateTo: searchParams.get('dateTo') || '',
+        sortBy: searchParams.get('sortBy') || 'relevance',
+        contentType: searchParams.get('contentType') || '',
+        status: searchParams.get('status') || 'published'
+      });
+    }
+  }, [searchParams]);
+
+  const handleSearch = async (searchForm: SearchParams) => {
+    setIsLoading(true);
+    setError(null);
+    setHasSearched(true);
+
+    try {
+      // Build query parameters
+      const params = new URLSearchParams();
+      Object.entries(searchForm).forEach(([key, value]) => {
+        if (value) params.set(key, value);
+      });
+      
+      const response = await fetch(`/api/search/advanced?${params.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.statusText}`);
+      }
+      
+      const data: SearchResponse = await response.json();
+      setSearchResults(data);
+      
+    } catch (err) {
+      console.error('Search error:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred while searching');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    if (!searchResults || !searchResults.pagination.hasMore) return;
+    
+    setIsLoading(true);
+    
+    try {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('offset', (searchResults.pagination.offset + searchResults.pagination.limit).toString());
+      
+      const response = await fetch(`/api/search/advanced?${params.toString()}`);
+      const data: SearchResponse = await response.json();
+      
+      // Append new results
+      setSearchResults(prev => prev ? {
+        ...data,
+        articles: [...prev.articles, ...data.articles]
+      } : data);
+      
+    } catch (err) {
+      console.error('Load more error:', err);
+      setError('Failed to load more results');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <ErrorBoundary>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Search Results</h1>
-        <Suspense fallback={
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-          </div>
-        }>
-          <SearchContent />
-        </Suspense>
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <FiSearch className="text-white/60" size={32} />
+          <h1 className="text-3xl font-normal">Advanced Search</h1>
+        </div>
+        <p className="text-white/70">
+          Discover articles across our collection of {searchResults?.searchStats.totalResults || '2,125+'} 
+          articles about African and Black history, culture, and achievements.
+        </p>
       </div>
-    </ErrorBoundary>
+
+      {/* Advanced Search Form */}
+      <AdvancedSearchForm 
+        onSearch={handleSearch}
+        isLoading={isLoading}
+        categories={searchResults?.categoryStats.map(cat => ({
+          name: cat.name,
+          count: cat._count?.articles || 0
+        })) || []}
+      />
+
+      {/* Search Results */}
+      {hasSearched ? (
+        <SearchResults
+          articles={searchResults?.articles || []}
+          isLoading={isLoading}
+          error={error}
+          pagination={searchResults?.pagination || {
+            total: 0,
+            limit: 20,
+            offset: 0,
+            hasMore: false,
+            totalPages: 0,
+            currentPage: 1
+          }}
+          searchStats={searchResults?.searchStats || {
+            totalResults: 0,
+            hasResults: false
+          }}
+          query={searchResults?.filters?.query || ''}
+          onLoadMore={handleLoadMore}
+        />
+      ) : (
+        /* Search suggestions when no search has been made */
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🔍</div>
+          <h3 className="text-xl font-medium mb-2">Start Your Discovery</h3>
+          <p className="text-white/60 mb-8">
+            Search through our comprehensive collection of African and Black history articles
+          </p>
+          
+          {/* Popular search suggestions */}
+          <div className="max-w-4xl mx-auto">
+            <h4 className="text-lg font-medium mb-4 text-left">Popular Topics</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                'Ancient Egypt',
+                'Civil Rights Movement', 
+                'African Independence',
+                'Jazz Music',
+                'Black Literature',
+                'African Kingdoms',
+                'Slavery and Freedom',
+                'Contemporary Africa'
+              ].map((topic) => (
+                <button
+                  key={topic}
+                  onClick={() => handleSearch({ 
+                    q: topic, 
+                    category: '', 
+                    dateFrom: '', 
+                    dateTo: '', 
+                    sortBy: 'relevance', 
+                    contentType: '', 
+                    status: 'published' 
+                  })}
+                  className="p-4 bg-white/5 hover:bg-white/10 rounded-lg text-left transition-colors"
+                >
+                  <div className="font-medium">{topic}</div>
+                  <div className="text-sm text-white/60">Explore articles</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
