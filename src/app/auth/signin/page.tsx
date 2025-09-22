@@ -16,13 +16,18 @@ export default function SignIn() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && session?.user?.email) {
+      // Only redirect if we have a valid session with email
       const userRole = session?.user?.role;
       let redirectUrl = "/dashboard"; // Default to dashboard
       if (userRole === 'admin') {
         redirectUrl = "/admin";
       }
       router.push(redirectUrl);
+    } else if (status === "authenticated" && !session?.user?.email) {
+      // We have a broken session - clear it
+      console.log("Broken session detected - clearing...");
+      window.location.href = "/api/auth/clear-session";
     }
   }, [session, status, router]);
 
