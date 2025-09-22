@@ -204,16 +204,16 @@ export default function AdvancedStatistics({
           contributionData.reviews
         ],
         backgroundColor: [
-          'rgba(255, 99, 132, 0.7)',
-          'rgba(54, 162, 235, 0.7)',
-          'rgba(255, 206, 86, 0.7)',
-          'rgba(75, 192, 192, 0.7)'
+          'rgba(219, 39, 119, 0.8)',  // Pink/Magenta for Articles
+          'rgba(107, 114, 128, 0.8)',  // Gray for Edits  
+          'rgba(245, 158, 11, 0.8)',   // Golden for Comments
+          'rgba(20, 184, 166, 0.8)'    // True teal for Reviews
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)'
+          'rgba(219, 39, 119, 1)',     // Pink/Magenta border
+          'rgba(107, 114, 128, 1)',    // Gray border
+          'rgba(245, 158, 11, 1)',     // Golden border
+          'rgba(20, 184, 166, 1)'      // True teal border
         ],
         borderWidth: 1
       }
@@ -227,32 +227,32 @@ export default function AdvancedStatistics({
       {
         label: 'Views',
         data: articleImpactData.views,
-        borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+        borderColor: 'rgba(219, 39, 119, 1)',     // Pink/Magenta for Views
+        backgroundColor: 'rgba(219, 39, 119, 0.1)',
         tension: 0.4,
         fill: false
       },
       {
         label: 'Likes',
         data: articleImpactData.likes,
-        borderColor: 'rgba(54, 162, 235, 1)',
-        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+        borderColor: 'rgba(20, 184, 166, 1)',     // True teal for Likes
+        backgroundColor: 'rgba(20, 184, 166, 0.1)',
         tension: 0.4,
         fill: false
       },
       {
         label: 'Shares',
         data: articleImpactData.shares,
-        borderColor: 'rgba(255, 206, 86, 1)',
-        backgroundColor: 'rgba(255, 206, 86, 0.1)',
+        borderColor: 'rgba(245, 158, 11, 1)',     // Golden for Shares
+        backgroundColor: 'rgba(245, 158, 11, 0.1)',
         tension: 0.4,
         fill: false
       },
       {
         label: 'Comments',
         data: articleImpactData.comments,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        borderColor: 'rgba(107, 114, 128, 1)',    // Gray for Comments
+        backgroundColor: 'rgba(107, 114, 128, 0.1)',
         tension: 0.4,
         fill: false
       }
@@ -267,20 +267,20 @@ export default function AdvancedStatistics({
         label: 'Articles',
         data: categoryDistribution.data,
         backgroundColor: [
-          'rgba(255, 99, 132, 0.7)',
-          'rgba(54, 162, 235, 0.7)',
-          'rgba(255, 206, 86, 0.7)',
-          'rgba(75, 192, 192, 0.7)',
-          'rgba(153, 102, 255, 0.7)',
-          'rgba(255, 159, 64, 0.7)'
+          'rgba(219, 39, 119, 0.8)',   // Pink/Magenta
+          'rgba(20, 184, 166, 0.8)',   // True teal
+          'rgba(245, 158, 11, 0.8)',   // Golden
+          'rgba(16, 185, 129, 0.8)',   // Emerald
+          'rgba(139, 92, 246, 0.8)',   // Purple
+          'rgba(239, 68, 68, 0.8)'     // Red
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
+          'rgba(219, 39, 119, 1)',     // Pink/Magenta border
+          'rgba(20, 184, 166, 1)',     // True teal border
+          'rgba(245, 158, 11, 1)',     // Golden border
+          'rgba(16, 185, 129, 1)',     // Emerald border
+          'rgba(139, 92, 246, 1)',     // Purple border
+          'rgba(239, 68, 68, 1)'       // Red border
         ],
         borderWidth: 1
       }
@@ -294,24 +294,24 @@ export default function AdvancedStatistics({
       {
         label: 'Current Expertise',
         data: expertiseRadar.current,
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(20, 184, 166, 0.2)',     // True teal for Current
+        borderColor: 'rgba(20, 184, 166, 1)',
         borderWidth: 2,
-        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+        pointBackgroundColor: 'rgba(20, 184, 166, 1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(255, 99, 132, 1)'
+        pointHoverBorderColor: 'rgba(20, 184, 166, 1)'
       },
       {
         label: 'Target Expertise',
         data: expertiseRadar.target,
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(219, 39, 119, 0.2)',     // Pink/Magenta for Target
+        borderColor: 'rgba(219, 39, 119, 1)',
         borderWidth: 2,
-        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+        pointBackgroundColor: 'rgba(219, 39, 119, 1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+        pointHoverBorderColor: 'rgba(219, 39, 119, 1)'
       }
     ]
   };
@@ -328,14 +328,14 @@ export default function AdvancedStatistics({
           achievementsData.locked
         ],
         backgroundColor: [
-          'rgba(75, 192, 192, 0.7)',
-          'rgba(255, 206, 86, 0.7)',
-          'rgba(200, 200, 200, 0.3)'
+          'rgba(20, 184, 166, 0.8)',   // True teal for Completed
+          'rgba(245, 158, 11, 0.8)',   // Golden for In Progress  
+          'rgba(107, 114, 128, 0.4)'   // Dark gray for Locked
         ],
         borderColor: [
-          'rgba(75, 192, 192, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(200, 200, 200, 0.5)'
+          'rgba(20, 184, 166, 1)',     // True teal border
+          'rgba(245, 158, 11, 1)',     // Golden border
+          'rgba(107, 114, 128, 0.8)'   // Dark gray border
         ],
         borderWidth: 1
       }
@@ -488,13 +488,13 @@ export default function AdvancedStatistics({
                           className="w-3 h-3 rounded-full mr-2" 
                           style={{ 
                             backgroundColor: `rgba(${[
-                              [255, 99, 132],
-                              [54, 162, 235],
-                              [255, 206, 86],
-                              [75, 192, 192],
-                              [153, 102, 255],
-                              [255, 159, 64]
-                            ][index % 6].join(', ')}, 0.7)` 
+                              [219, 39, 119],   // Pink/Magenta
+                              [20, 184, 166],   // True teal
+                              [245, 158, 11],   // Golden
+                              [16, 185, 129],   // Emerald
+                              [139, 92, 246],   // Purple
+                              [239, 68, 68]     // Red
+                            ][index % 6].join(', ')}, 0.8)` 
                           }}
                         ></div>
                         <span className="text-sm">{label}</span>
