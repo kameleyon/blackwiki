@@ -20,6 +20,123 @@ import GreetingHeader from '@/components/dashboard/GreetingHeader';
 import AdvancedStatistics from '@/components/dashboard/AdvancedStatistics';
 import GoalsAndAchievements from '@/components/dashboard/GoalsAndAchievements';
 
+// Helper function to get article impact data over time
+async function getArticleImpactData(userId: string) {
+  // Get user's articles with views and likes
+  const articles = await prisma.article.findMany({
+    where: { authorId: userId },
+    select: {
+      id: true,
+      views: true,
+      likes: true,
+      createdAt: true,
+      comments: {
+        select: { id: true }
+      }
+    },
+    orderBy: { createdAt: 'asc' }
+  });
+
+  // Group data by month for the last 6 months
+  const now = new Date();
+  const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+  
+  const monthLabels = [];
+  const viewsData = [];
+  const likesData = [];
+  const sharesData = []; // Note: shares aren't in schema, using placeholder 0s
+  const commentsData = [];
+
+  for (let i = 5; i >= 0; i--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+    monthLabels.push(monthName);
+
+    // Filter articles created in this month
+    const monthArticles = articles.filter(article => {
+      const articleDate = new Date(article.createdAt);
+      return articleDate.getMonth() === date.getMonth() && 
+             articleDate.getFullYear() === date.getFullYear();
+    });
+
+    // Sum up metrics for this month
+    const totalViews = monthArticles.reduce((sum, article) => sum + article.views, 0);
+    const totalLikes = monthArticles.reduce((sum, article) => sum + article.likes, 0);
+    const totalComments = monthArticles.reduce((sum, article) => sum + article.comments.length, 0);
+
+    viewsData.push(totalViews);
+    likesData.push(totalLikes);
+    sharesData.push(0); // Placeholder - shares not implemented
+    commentsData.push(totalComments);
+  }
+
+  return {
+    views: viewsData,
+    likes: likesData,
+    shares: sharesData,
+    comments: commentsData,
+    labels: monthLabels
+  };
+}
+
+// Helper function to get user expertise data based on categories
+async function getUserExpertiseData(userId: string) {
+  // Get all categories and count user's articles in each
+  const categories = await prisma.category.findMany({
+    include: {
+      articles: {
+        where: { authorId: userId },
+        select: { id: true }
+      }
+    },
+    take: 6 // Limit to top 6 categories
+  });
+
+  const labels = categories.map(cat => cat.name);
+  const current = categories.map(cat => {
+    // Calculate expertise level based on number of articles (scale 1-10)
+    const articleCount = cat.articles.length;
+    return Math.min(10, Math.max(1, articleCount * 2)); // Scale: 1 article = 2 points
+  });
+  
+  const target = current.map(score => Math.min(10, score + 2)); // Target is always 2 points higher
+
+  return {
+    labels,
+    current,
+    target
+  };
+}
+
+// Helper function to get user achievements data
+async function getUserAchievementsData(userId: string) {
+  // Get user statistics
+  const [articleCount, reviewCount, commentCount] = await Promise.all([
+    prisma.article.count({ where: { authorId: userId, isPublished: true } }),
+    prisma.review.count({ where: { reviewerId: userId, status: 'completed' } }),
+    prisma.comment.count({ where: { authorId: userId } })
+  ]);
+
+  // Calculate achievements based on real metrics
+  let completed = 0;
+  let inProgress = 0;
+  let locked = 0;
+
+  // Example achievement logic:
+  if (articleCount >= 5) completed++; else if (articleCount >= 1) inProgress++; else locked++;
+  if (reviewCount >= 3) completed++; else if (reviewCount >= 1) inProgress++; else locked++;
+  if (commentCount >= 10) completed++; else if (commentCount >= 1) inProgress++; else locked++;
+  
+  // Add more achievements based on other criteria
+  locked += 4; // Additional locked achievements for variety
+
+  return {
+    completed,
+    inProgress,
+    locked
+  };
+}
+
 export default async function DashboardPage() {
   const session = await getServerSession();
   
@@ -279,38 +396,30 @@ export default async function DashboardPage() {
 
   // Calculate contribution statistics
   const totalEdits = await prisma.edit.count();
+  const totalComments = await prisma.comment.count({
+    where: { authorId: user.id }
+  });
+  const totalReviews = await prisma.review.count({
+    where: { reviewerId: user.id }
+  });
   
   const totalContributions = totalArticles + totalEdits;
   
-  // Mock data for advanced statistics
+  // Real data for advanced statistics
   const advancedStatisticsData = {
     contributionData: {
       articles: totalArticles,
       edits: totalEdits,
-      comments: Math.floor(Math.random() * 20), // Mock data
-      reviews: Math.floor(Math.random() * 10)   // Mock data
+      comments: totalComments,
+      reviews: totalReviews
     },
-    articleImpactData: {
-      views: [120, 230, 310, 290, 400, 450],
-      likes: [20, 40, 50, 45, 60, 70],
-      shares: [5, 10, 15, 12, 20, 25],
-      comments: [10, 20, 30, 25, 35, 40],
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-    },
+    articleImpactData: await getArticleImpactData(user.id),
     categoryDistribution: {
       labels: categories.slice(0, 6).map(c => c.name),
       data: categories.slice(0, 6).map(c => c.articles.length)
     },
-    expertiseRadar: {
-      labels: ['History', 'Culture', 'Art', 'Music', 'Literature', 'Politics'],
-      current: [7, 5, 8, 6, 4, 3],
-      target: [9, 8, 10, 8, 7, 6]
-    },
-    achievementsData: {
-      completed: 5,
-      inProgress: 3,
-      locked: 7
-    }
+    expertiseRadar: await getUserExpertiseData(user.id),
+    achievementsData: await getUserAchievementsData(user.id)
   };
   
   // Mock data for goals and achievements
