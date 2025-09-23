@@ -1,0 +1,298 @@
+# Fix Guide for AfroWiki Deployment on Render
+
+## File 1: Update `app/random/page.tsx` (or `page.js`)
+
+Replace your current `/random` page with this code to handle build-time database access:
+
+```typescript
+// app/random/page.tsx
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+import { prisma } from '@/lib/prisma';
+import { redirect } from 'next/navigation';
+
+async function getRandomArticle() {
+  try {
+    // Skip during build if no database URL
+    if (!process.env.DATABASE_URL) {
+      return null;
+    }
+    
+    const count = await prisma.article.count();
+    
+    if (count === 0) {
+      return null;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * count);
+    const article = await prisma.article.findFirst({
+      skip: randomIndex,
+    });
+    
+    return article;
+  } catch (error) {
+    console.error('Error fetching random article:', error);
+    return null;
+  }
+}
+
+export default async function RandomPage() {
+  const article = await getRandomArticle();
+  
+  if (!article) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">No Articles Found</h1>
+          <p className="text-gray-600">Please check back later.</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Redirect to the article page
+  redirect(`/article/${article.id}`);
+}
+```
+
+## File 2: Create `lib/prisma.ts`
+
+Create a singleton Prisma client to avoid connection issues:
+
+```typescript
+// lib/prisma.ts
+import { PrismaClient } from '@prisma/client';
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+
+export default prisma;
+```
+
+## File 3: Update `package.json`
+
+Ensure your `package.json` has the correct build scripts:
+
+```json
+{
+  "name": "afrowiki",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "next": "15.1.7",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.1.7",
+    "prisma": "^6.4.1",
+    "typescript": "^5"
+  }
+}
+```
+
+## File 4: Update `prisma/schema.prisma`
+
+Ensure your Prisma schema is correctly configured:
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  content     String?  @db.Text
+  summary     String?  @db.Text
+  url         String?
+  searchTerm  String?
+  categories  String[]
+  relevanceScore Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([searchTerm])
+  @@index([createdAt])
+}
+```
+
+## File 5: Create `.env.example`
+
+Create an example environment file:
+
+```bash
+# .env.example
+DATABASE_URL="postgresql://user:password@host:port/database?schema=public"
+NODE_ENV="production"
+```
+
+## Step-by-Step Deployment Fix on Render
+
+### 1. Create a PostgreSQL Database on Render
+1. Go to your Render dashboard
+2. Click "New +" → "PostgreSQL"
+3. Configure:
+   - Name: `afrowiki-db`
+   - Database: `afrowiki`
+   - User: `afrowiki`
+   - Region: Same as your web service
+   - Plan: Free tier is fine to start
+4. Click "Create Database"
+5. Wait for it to be created, then copy the **Internal Database URL**
+
+### 2. Configure Your Web Service Environment Variables
+1. Go to your Web Service on Render
+2. Navigate to "Environment" tab
+3. Add these environment variables:
+   ```
+   DATABASE_URL = [paste the Internal Database URL from step 1]
+   NODE_ENV = production
+   ```
+
+### 3. Update Build & Start Commands
+1. In your Web Service settings, go to "Settings" tab
+2. Update the commands:
+   - **Build Command**: 
+     ```bash
+     npm install && npx prisma generate && npx prisma db push && npm run build
+     ```
+   - **Start Command**: 
+     ```bash
+     npm start
+     ```
+
+### 4. Update Other Dynamic Pages
+
+If you have other pages that access the database during build, add these exports at the top:
+
+```typescript
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+```
+
+Common pages that need this:
+- `/app/page.tsx` (if it loads articles)
+- `/app/articles/page.tsx`
+- `/app/search/page.tsx`
+- Any page using `prisma` directly
+
+### 5. Handle Migration/Seed (Optional)
+
+If you need to seed your database with initial data:
+
+1. Create `prisma/seed.ts`:
+
+```typescript
+// prisma/seed.ts
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  // Add your seed data here
+  console.log('Seeding database...');
+  
+  // Example:
+  await prisma.article.create({
+    data: {
+      title: 'Welcome to AfroWiki',
+      content: 'This is the first article.',
+      summary: 'Welcome article',
+      searchTerm: 'welcome',
+      categories: ['general'],
+      relevanceScore: 1.0,
+    },
+  });
+  
+  console.log('Seeding complete!');
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
+```
+
+2. Add to `package.json`:
+
+```json
+{
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
+}
+```
+
+## Quick Fix Commands to Run Locally
+
+Before redeploying, test locally:
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Set up your local .env file with the DATABASE_URL
+cp .env.example .env
+# Edit .env and add your DATABASE_URL
+
+# 3. Generate Prisma Client
+npx prisma generate
+
+# 4. Push schema to database
+npx prisma db push
+
+# 5. Test the build
+npm run build
+
+# 6. Test locally
+npm start
+```
+
+## Final Checklist Before Redeploying
+
+- [ ] DATABASE_URL is set in Render environment variables
+- [ ] All database-dependent pages have `export const dynamic = 'force-dynamic'`
+- [ ] `prisma/schema.prisma` has correct PostgreSQL configuration
+- [ ] `package.json` has `postinstall: "prisma generate"`
+- [ ] Build command includes `prisma generate` and `prisma db push`
+- [ ] Created singleton Prisma client in `lib/prisma.ts`
+
+## After Deployment
+
+Once deployed successfully:
+1. Check your application logs in Render
+2. Verify database connection: `npx prisma studio` locally with production DATABASE_URL
+3. Monitor for any runtime errors
+
+This should completely fix your deployment issues!
