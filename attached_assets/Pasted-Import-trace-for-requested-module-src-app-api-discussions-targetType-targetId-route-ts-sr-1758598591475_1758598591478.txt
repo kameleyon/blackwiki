@@ -1,0 +1,110 @@
+Import trace for requested module:
+./src/app/api/discussions/[targetType]/[targetId]/route.ts
+./src/app/api/discussions/message/[messageId]/route.ts
+Attempted import error: 'authOptions' is not exported from '@/lib/auth' (imported as 'authOptions').
+Import trace for requested module:
+./src/app/api/discussions/message/[messageId]/route.ts
+./src/app/api/discussions/message/[messageId]/route.ts
+Attempted import error: 'authOptions' is not exported from '@/lib/auth' (imported as 'authOptions').
+Import trace for requested module:
+./src/app/api/discussions/message/[messageId]/route.ts
+./src/app/api/watchlist/[articleId]/mark-read/route.ts
+Attempted import error: 'authOptions' is not exported from '@/lib/auth' (imported as 'authOptions').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/mark-read/route.ts
+./src/app/api/watchlist/[articleId]/mark-read/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/mark-read/route.ts
+./src/app/api/watchlist/[articleId]/mark-read/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/mark-read/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: 'authOptions' is not exported from '@/lib/auth' (imported as 'authOptions').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: 'authOptions' is not exported from '@/lib/auth' (imported as 'authOptions').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/[articleId]/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/[articleId]/route.ts
+./src/app/api/watchlist/route.ts
+Attempted import error: 'authOptions' is not exported from '@/lib/auth' (imported as 'authOptions').
+Import trace for requested module:
+./src/app/api/watchlist/route.ts
+./src/app/api/watchlist/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/route.ts
+./src/app/api/watchlist/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/route.ts
+./src/app/api/watchlist/route.ts
+Attempted import error: '@/lib/db' does not contain a default export (imported as 'prisma').
+Import trace for requested module:
+./src/app/api/watchlist/route.ts
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/69) ...
+Error occurred prerendering page "/404". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: Cannot find module 'critters'
+Require stack:
+- /opt/render/project/src/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js
+- /opt/render/project/src/.next/server/pages/_document.js
+- /opt/render/project/src/node_modules/next/dist/server/require.js
+- /opt/render/project/src/node_modules/next/dist/server/load-components.js
+- /opt/render/project/src/node_modules/next/dist/build/utils.js
+- /opt/render/project/src/node_modules/next/dist/build/worker.js
+- /opt/render/project/src/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+    at /opt/render/project/src/node_modules/next/dist/server/require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (/opt/render/project/src/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at Object.critters (/opt/render/project/src/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:14:17410)
+    at r (/opt/render/project/src/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:14:17997)
+Export encountered an error on /_error: /404, exiting the build.
+ ⨯ Next.js build worker exited with code: 1 and signal: null
+==> Build failed 😞
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
