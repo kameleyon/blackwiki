@@ -162,11 +162,11 @@ export const sortArticles = (
 export const getSeverityColor = (severity: 'low' | 'medium' | 'high'): string => {
   switch (severity) {
     case 'low':
-      return 'text-yellow-400 bg-yellow-400/10';
+      return 'text-gray-400 bg-gray-400/10';
     case 'medium':
-      return 'text-orange-400 bg-orange-400/10';
+      return 'text-gray-500 bg-gray-500/10';
     case 'high':
-      return 'text-red-400 bg-red-400/10';
+      return 'text-gray-600 bg-gray-600/10';
     default:
       return 'text-white/60 bg-white/10';
   }
@@ -177,11 +177,11 @@ export const getSeverityColor = (severity: 'low' | 'medium' | 'high'): string =>
  */
 export const getScoreColor = (score: number): string => {
   if (score >= 90) {
-    return 'text-green-400';
+    return 'text-gray-300';
   } else if (score >= 70) {
-    return 'text-yellow-400';
+    return 'text-gray-400';
   } else {
-    return 'text-red-400';
+    return 'text-gray-500';
   }
 };
 
@@ -190,11 +190,11 @@ export const getScoreColor = (score: number): string => {
  */
 export const getScoreBackground = (score: number): string => {
   if (score >= 90) {
-    return 'bg-green-500/20';
+    return 'bg-gray-600/20';
   } else if (score >= 70) {
-    return 'bg-yellow-500/20';
+    return 'bg-gray-700/20';
   } else {
-    return 'bg-red-500/20';
+    return 'bg-gray-800/20';
   }
 };
 

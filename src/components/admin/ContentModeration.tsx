@@ -73,11 +73,11 @@ export default function ContentModeration({
   
   // Status badge color mapping
   const statusColors = {
-    pending: 'bg-yellow-500/20 text-yellow-300',
-    approved: 'bg-green-500/20 text-green-300',
-    rejected: 'bg-red-500/20 text-red-300',
-    reported: 'bg-orange-500/20 text-orange-300',
-    draft: 'bg-blue-500/20 text-blue-300'
+    pending: 'bg-gray-500/20 text-gray-300',
+    approved: 'bg-gray-700/20 text-gray-200',
+    rejected: 'bg-gray-800/20 text-gray-400',
+    reported: 'bg-gray-600/20 text-gray-300',
+    draft: 'bg-gray-400/20 text-gray-300'
   };
   
   // Handle sort toggle
