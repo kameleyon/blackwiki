@@ -149,24 +149,68 @@ export function addBasicStructureToContent(content: string): string {
 export function formatTextIntoProperParagraphs(content: string): string {
   if (!content) return '';
   
-  // Split content into sentences and group them into paragraphs
   let formatted = content;
   
-  // Break at sentence endings followed by capital letters to create paragraphs
-  formatted = formatted.replace(/([.!?])\s+([A-Z])/g, '$1\n\n$2');
+  // 1. Break at historical dates and timeline indicators (fixed regex)
+  formatted = formatted.replace(/(\d{3,4}s?)\b(?=[\s,]+[A-Z])/g, '$1\n\n');
+  formatted = formatted.replace(/(in\s+\d{3,4})\b(?=[\s,]+[A-Z])/gi, '$1\n\n');
   
-  // Break at years (often indicate new topics) 
-  formatted = formatted.replace(/(\d{4})([^0-9\s])/g, '$1\n\n$2');
+  // 2. Break before transition phrases and topic indicators (core set)
+  const transitionPhrases = [
+    'However', 'Additionally', 'Furthermore', 'Meanwhile', 'Moreover', 'Nevertheless', 
+    'On the other hand', 'In contrast', 'Similarly', 'Therefore', 'Thus', 'Consequently', 
+    'As a result', 'For example', 'In conclusion', 'Finally', 'According to',
+    'When the', 'During the', 'After the', 'Before the', 'By the way of',
+    'The word', 'Specifically', 'Years of'
+  ];
   
-  // Break before transition words that start new topics
-  const transitionWords = ['However', 'Additionally', 'Furthermore', 'Meanwhile', 'Moreover', 'Nevertheless', 'On the other hand', 'In contrast', 'Similarly', 'Therefore', 'Thus', 'Consequently', 'As a result', 'For example', 'In conclusion', 'Finally', 'According to'];
-  
-  transitionWords.forEach(word => {
-    const regex = new RegExp(`([.!?])\\s+(${word})`, 'gi');
+  transitionPhrases.forEach(phrase => {
+    const regex = new RegExp(`([.!?])\\s+(${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     formatted = formatted.replace(regex, '$1\n\n$2');
   });
   
-  // Clean up excessive line breaks
+  // 3. Break at proper nouns that start new topics (names of people, places, events)
+  formatted = formatted.replace(/([.!?])\s+(The\s+[A-Z][a-z]+\s+[A-Z][a-z]+|Christopher\s+Columbus|The\s+Spanish|The\s+French|The\s+Treaty\s+of)/g, '$1\n\n$2');
+  
+  // 4. Check if content still has very long paragraphs and apply fallback sentence breaking
+  const testParagraphs = formatted.split(/\n\n/);
+  const hasLongParagraphs = testParagraphs.some(para => para.length > 800);
+  
+  if (hasLongParagraphs) {
+    // Apply conservative sentence boundary paragraphizer as fallback
+    formatted = formatted.replace(/([.!?])\s+(?=[A-Z])/g, '$1\n\n');
+  }
+  
+  // 5. Smart sentence grouping - prevent very short paragraphs only when safe
+  const sentences = formatted.split(/\n\n/);
+  const groupedSentences = [];
+  
+  // List of transition cues that should not be merged
+  const transitionCues = /^(However|Additionally|Furthermore|Meanwhile|Moreover|Nevertheless|Therefore|Thus|Consequently|Finally|According|When|During|After|Before|By|The|In|On)/i;
+  
+  for (let i = 0; i < sentences.length; i++) {
+    const sentence = sentences[i].trim();
+    if (!sentence) continue;
+    
+    // Only merge if current is short, next exists, and next doesn't start with transition cue
+    if (sentence.length < 100 && i < sentences.length - 1) {
+      const nextSentence = sentences[i + 1]?.trim();
+      if (nextSentence && 
+          nextSentence.length < 150 && 
+          !transitionCues.test(nextSentence) &&
+          (sentence + ' ' + nextSentence).length < 300) {
+        groupedSentences.push(sentence + ' ' + nextSentence);
+        i++; // Skip the next sentence as we've combined it
+        continue;
+      }
+    }
+    
+    groupedSentences.push(sentence);
+  }
+  
+  formatted = groupedSentences.join('\n\n');
+  
+  // 6. Clean up formatting
   formatted = formatted.replace(/\n{3,}/g, '\n\n');
   formatted = formatted.trim();
   
