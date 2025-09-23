@@ -221,7 +221,7 @@
 }
 
 .media-table-action-delete {
-  @apply bg-red-500/20 text-red-400 hover:bg-red-500/30;
+  @apply bg-gray-600/20 text-gray-400 hover:bg-gray-600/30;
 }
 
 /* Media Organization */

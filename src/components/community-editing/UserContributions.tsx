@@ -160,7 +160,7 @@ export default function UserContributions({ userId, username, limit = 50 }: User
       </div>
       
       {error && (
-        <div className="bg-red-500/10 text-red-300 p-3 rounded-lg mb-4 flex items-center gap-2">
+        <div className="bg-gray-600/10 text-gray-300 p-3 rounded-lg mb-4 flex items-center gap-2">
           <FiAlertCircle />
           {error}
         </div>

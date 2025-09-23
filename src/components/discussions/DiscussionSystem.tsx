@@ -299,7 +299,7 @@ const DiscussionSystem: React.FC<DiscussionSystemProps> = ({
                     <button
                       onClick={() => handleEditMessage(message.id)}
                       disabled={isSubmitting || !editContent.trim()}
-                      className="px-3 py-1 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 rounded text-sm transition-colors"
+                      className="px-3 py-1 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600/50 rounded text-sm transition-colors"
                     >
                       Save
                     </button>
@@ -352,7 +352,7 @@ const DiscussionSystem: React.FC<DiscussionSystemProps> = ({
                     <button
                       onClick={() => handleAddMessage(true)}
                       disabled={isSubmitting || !replyContent.trim()}
-                      className="px-3 py-1 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 rounded text-sm transition-colors flex items-center gap-1"
+                      className="px-3 py-1 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600/50 rounded text-sm transition-colors flex items-center gap-1"
                     >
                       <FiSend size={12} />
                       Reply
@@ -418,7 +418,7 @@ const DiscussionSystem: React.FC<DiscussionSystemProps> = ({
               <button
                 onClick={() => handleAddMessage(false)}
                 disabled={isSubmitting || !newMessage.trim()}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 rounded-lg transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600/50 rounded-lg transition-colors flex items-center gap-2"
               >
                 <FiSend size={14} />
                 {isSubmitting ? 'Posting...' : 'Post Message'}

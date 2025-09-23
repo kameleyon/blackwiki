@@ -68,7 +68,7 @@ export default function UserDirectoryFilters() {
         <FiFilter size={16} />
         <span>Filters</span>
         {hasActiveFilters && (
-          <span className="px-2 py-0.5 bg-blue-500/30 text-blue-300 rounded-full text-xs">
+          <span className="px-2 py-0.5 bg-gray-600/30 text-gray-300 rounded-full text-xs">
             Active
           </span>
         )}
@@ -88,7 +88,7 @@ export default function UserDirectoryFilters() {
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 placeholder="Name, bio, expertise..."
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
               />
             </div>
 
@@ -100,7 +100,7 @@ export default function UserDirectoryFilters() {
               <select
                 value={filters.role}
                 onChange={(e) => handleFilterChange('role', e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gray-500/50"
               >
                 <option value="all">All Roles</option>
                 <option value="admin">Administrators</option>
@@ -119,7 +119,7 @@ export default function UserDirectoryFilters() {
                 value={filters.expertise}
                 onChange={(e) => handleFilterChange('expertise', e.target.value)}
                 placeholder="e.g., History, Music, Politics..."
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
               />
             </div>
 
@@ -131,7 +131,7 @@ export default function UserDirectoryFilters() {
               <select
                 value={filters.sort}
                 onChange={(e) => handleFilterChange('sort', e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gray-500/50"
               >
                 <option value="recent">Recently Active</option>
                 <option value="name">Name (A-Z)</option>

@@ -19,25 +19,25 @@ export default function UserStatisticsPanel({ userId, stats }: UserStatisticsPan
       icon: FiFileText,
       label: 'Articles Created',
       value: stats.articlesCreated,
-      color: 'text-green-400'
+      color: 'text-gray-300'
     },
     {
       icon: FiEdit,
       label: 'Total Edits',
       value: stats.totalEdits,
-      color: 'text-blue-400'
+      color: 'text-gray-400'
     },
     {
       icon: FiMessageSquare,
       label: 'Comments Posted',
       value: stats.commentsPosted,
-      color: 'text-purple-400'
+      color: 'text-gray-500'
     },
     {
       icon: FiAward,
       label: 'Reviews Completed',
       value: stats.reviewsCompleted,
-      color: 'text-yellow-400'
+      color: 'text-gray-600'
     }
   ];
 
@@ -64,13 +64,13 @@ export default function UserStatisticsPanel({ userId, stats }: UserStatisticsPan
           <div className="pt-4 border-t border-white/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-2 rounded-lg">
+                <div className="bg-gradient-to-br from-gray-400 to-gray-600 p-2 rounded-lg">
                   <FiAward className="text-white" size={16} />
                 </div>
                 <span className="text-sm text-white/70">Reputation Score</span>
               </div>
               <div className="text-right">
-                <div className="text-xl font-medium text-yellow-400">{stats.reputation}</div>
+                <div className="text-xl font-medium text-gray-300">{stats.reputation}</div>
                 <div className="text-xs text-white/50">
                   {stats.reputation >= 100 ? 'Trusted Contributor' :
                    stats.reputation >= 50 ? 'Active Member' :
@@ -96,10 +96,10 @@ export default function UserStatisticsPanel({ userId, stats }: UserStatisticsPan
                   'New';
                 
                 const levelColor =
-                  level === 'Very Active' ? 'text-green-400 bg-green-500/20' :
-                  level === 'Active' ? 'text-blue-400 bg-blue-500/20' :
-                  level === 'Moderate' ? 'text-yellow-400 bg-yellow-500/20' :
-                  level === 'Casual' ? 'text-purple-400 bg-purple-500/20' :
+                  level === 'Very Active' ? 'text-gray-300 bg-gray-600/20' :
+                  level === 'Active' ? 'text-gray-400 bg-gray-700/20' :
+                  level === 'Moderate' ? 'text-gray-500 bg-gray-800/20' :
+                  level === 'Casual' ? 'text-gray-600 bg-gray-900/20' :
                   'text-gray-400 bg-gray-500/20';
 
                 return (

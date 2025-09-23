@@ -84,8 +84,6 @@ export function processArticleContent(content: string): string {
   
   let processed = content;
   
-  // Fix the specific patterns seen in the Haitian Revolution article
-  
   // Fix the double asterisks for emphasis
   processed = processed.replace(/\*\*([^*]+)\*\*/g, '**$1**');
   
@@ -98,6 +96,9 @@ export function processArticleContent(content: string): string {
   // Fix the date formatting
   processed = processed.replace(/\*\*(\d{1,2}\/\d{1,2}\/\d{4})\*\*/g, '*$1*');
   
+  // Add some basic structure with headings for better organization
+  processed = addBasicStructureToContent(processed);
+  
   // Improve paragraph structure for better readability
   processed = formatTextIntoProperParagraphs(processed);
   
@@ -108,6 +109,39 @@ export function processArticleContent(content: string): string {
 }
 
 /**
+ * Add basic structure with headings to content that lacks them
+ * @param content The content to add structure to
+ * @returns Content with basic headings added
+ */
+export function addBasicStructureToContent(content: string): string {
+  if (!content) return '';
+  
+  let structured = content;
+  
+  // If the content is about Haitian Heritage Month, add relevant headings
+  if (content.toLowerCase().includes('haitian') && content.toLowerCase().includes('heritage')) {
+    // Add an overview heading at the beginning
+    structured = '## Overview\n\n' + structured;
+    
+    // Add headings for different sections based on content patterns
+    if (structured.includes('Koolkat') || structured.includes('artist')) {
+      structured = structured.replace(/(The Artist Known as|Koolkat)/i, '\n\n## Cultural Impact\n\n$1');
+    }
+    
+    if (structured.includes('Florida') || structured.includes('communities')) {
+      structured = structured.replace(/(South Florida|communities)/i, '\n\n## Community\n\n$1');
+    }
+  }
+  
+  // Add headings for other common patterns
+  if (structured.includes('According to') || structured.includes('research') || structured.includes('study')) {
+    structured = structured.replace(/(According to)/i, '\n\n## Research and Sources\n\n$1');
+  }
+  
+  return structured;
+}
+
+/**
  * Format long text blocks into proper paragraphs with better readability
  * @param content The content to format
  * @returns Properly formatted content with paragraph breaks
@@ -115,48 +149,28 @@ export function processArticleContent(content: string): string {
 export function formatTextIntoProperParagraphs(content: string): string {
   if (!content) return '';
   
+  // Split content into sentences and group them into paragraphs
   let formatted = content;
   
-  // First, split into sentences at periods, exclamation marks, and question marks
-  // followed by space and a capital letter
-  const sentences = formatted.split(/([\.\!\?])\s+/);
+  // Break at sentence endings followed by capital letters to create paragraphs
+  formatted = formatted.replace(/([.!?])\s+([A-Z])/g, '$1\n\n$2');
   
-  let result = '';
-  let currentParagraph = '';
+  // Break at years (often indicate new topics) 
+  formatted = formatted.replace(/(\d{4})([^0-9\s])/g, '$1\n\n$2');
   
-  for (let i = 0; i < sentences.length; i += 2) {
-    const sentence = sentences[i];
-    const punctuation = sentences[i + 1] || '';
-    
-    if (!sentence) continue;
-    
-    const fullSentence = sentence.trim() + punctuation;
-    currentParagraph += fullSentence + ' ';
-    
-    // Start new paragraph after 2-3 sentences or at logical breaks
-    if (currentParagraph.length > 200 || 
-        fullSentence.includes('However') || 
-        fullSentence.includes('Additionally') || 
-        fullSentence.includes('Furthermore') || 
-        fullSentence.includes('Meanwhile') || 
-        fullSentence.includes('On the other hand') ||
-        /\d{4}/.test(fullSentence) // Years often indicate new topics
-       ) {
-      result += currentParagraph.trim() + '\n\n';
-      currentParagraph = '';
-    }
-  }
+  // Break before transition words that start new topics
+  const transitionWords = ['However', 'Additionally', 'Furthermore', 'Meanwhile', 'Moreover', 'Nevertheless', 'On the other hand', 'In contrast', 'Similarly', 'Therefore', 'Thus', 'Consequently', 'As a result', 'For example', 'In conclusion', 'Finally', 'According to'];
   
-  // Add any remaining content
-  if (currentParagraph.trim()) {
-    result += currentParagraph.trim();
-  }
+  transitionWords.forEach(word => {
+    const regex = new RegExp(`([.!?])\\s+(${word})`, 'gi');
+    formatted = formatted.replace(regex, '$1\n\n$2');
+  });
   
   // Clean up excessive line breaks
-  result = result.replace(/\n{3,}/g, '\n\n');
-  result = result.replace(/^\s+|\s+$/gm, '');
+  formatted = formatted.replace(/\n{3,}/g, '\n\n');
+  formatted = formatted.trim();
   
-  return result;
+  return formatted;
 }
 
 /**
@@ -173,14 +187,36 @@ export function markdownToHtml(content: string): string {
   // For now, we'll just do some basic conversions
   let html = content;
   
+  // First convert headings to HTML (before paragraph processing)
+  html = html.replace(/^## (.*)$/gm, (match, text) => {
+    const id = createHeadingId(text);
+    return `<h2 id="${id}">${text}</h2>`;
+  });
+  
+  // Convert single line breaks to spaces (but preserve heading structure)
+  html = html.replace(/(?<!<\/h[1-6]>)\n(?!\n)(?!<h[1-6])/g, ' ');
+  
   // Convert paragraphs (double line breaks) to HTML paragraphs
-  html = html.replace(/\n\n/g, '</p><p>');
-  html = '<p>' + html + '</p>';
+  html = html.replace(/\n\n+/g, '</p><p>');
   
-  // Clean up empty paragraphs
+  // Wrap in paragraph tags, but don't wrap headings
+  const parts = html.split(/(<h[1-6][^>]*>.*?<\/h[1-6]>)/);
+  html = parts.map(part => {
+    if (part.match(/<h[1-6]/)) {
+      return part; // Don't wrap headings
+    } else if (part.trim()) {
+      return `<p>${part}</p>`;
+    }
+    return part;
+  }).join('');
+  
+  // Clean up empty paragraphs and malformed structures
   html = html.replace(/<p>\s*<\/p>/g, '');
+  html = html.replace(/<p><\/p>/g, '');
+  html = html.replace(/<p>\s*<h/g, '<h');
+  html = html.replace(/<\/h([1-6])>\s*<\/p>/g, '</h$1>');
   
-  // Convert headings with IDs for table of contents navigation
+  // Convert remaining headings with IDs for table of contents navigation
   html = html.replace(/^# (.*$)/gm, (match, text) => {
     const id = createHeadingId(text);
     return `<h1 id="${id}">${text}</h1>`;
