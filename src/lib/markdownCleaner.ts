@@ -117,35 +117,46 @@ export function formatTextIntoProperParagraphs(content: string): string {
   
   let formatted = content;
   
-  // Split on sentence endings followed by capital letters (likely new sentences/topics)
-  // Look for periods, exclamation marks, or question marks followed by space and capital letter
-  formatted = formatted.replace(/([\.\!\?])\s+([A-Z][a-z])/g, '$1\n\n$2');
+  // First, split into sentences at periods, exclamation marks, and question marks
+  // followed by space and a capital letter
+  const sentences = formatted.split(/([\.\!\?])\s+/);
   
-  // Split very long sentences (over 200 characters) at logical break points
-  formatted = formatted.replace(/([^\n]{200,}?)([,;]\s+)([A-Z][a-z])/g, '$1$2\n\n$3');
+  let result = '';
+  let currentParagraph = '';
   
-  // Split at transition words that often start new paragraphs
-  const transitionWords = [
-    'According to', 'Additionally', 'Furthermore', 'However', 'Moreover', 
-    'Nevertheless', 'On the other hand', 'In contrast', 'Similarly', 'For example',
-    'In conclusion', 'Finally', 'First', 'Second', 'Third', 'Meanwhile',
-    'Subsequently', 'Consequently', 'As a result', 'Therefore', 'Thus',
-    'In fact', 'Indeed', 'Specifically', 'Notably', 'Importantly'
-  ];
+  for (let i = 0; i < sentences.length; i += 2) {
+    const sentence = sentences[i];
+    const punctuation = sentences[i + 1] || '';
+    
+    if (!sentence) continue;
+    
+    const fullSentence = sentence.trim() + punctuation;
+    currentParagraph += fullSentence + ' ';
+    
+    // Start new paragraph after 2-3 sentences or at logical breaks
+    if (currentParagraph.length > 200 || 
+        fullSentence.includes('However') || 
+        fullSentence.includes('Additionally') || 
+        fullSentence.includes('Furthermore') || 
+        fullSentence.includes('Meanwhile') || 
+        fullSentence.includes('On the other hand') ||
+        /\d{4}/.test(fullSentence) // Years often indicate new topics
+       ) {
+      result += currentParagraph.trim() + '\n\n';
+      currentParagraph = '';
+    }
+  }
   
-  transitionWords.forEach(word => {
-    const regex = new RegExp(`([^\n\.]\.)\s+(${word})\s+`, 'g');
-    formatted = formatted.replace(regex, '$1\n\n$2 ');
-  });
+  // Add any remaining content
+  if (currentParagraph.trim()) {
+    result += currentParagraph.trim();
+  }
   
-  // Split at year references that often indicate new topics/events
-  formatted = formatted.replace(/([^\n]{100,}?)\s+(\d{4}[^\d])/g, '$1\n\n$2');
+  // Clean up excessive line breaks
+  result = result.replace(/\n{3,}/g, '\n\n');
+  result = result.replace(/^\s+|\s+$/gm, '');
   
-  // Clean up excessive line breaks and ensure proper spacing
-  formatted = formatted.replace(/\n{3,}/g, '\n\n');
-  formatted = formatted.replace(/^\s+|\s+$/gm, '');
-  
-  return formatted;
+  return result;
 }
 
 /**
@@ -161,6 +172,13 @@ export function markdownToHtml(content: string): string {
   
   // For now, we'll just do some basic conversions
   let html = content;
+  
+  // Convert paragraphs (double line breaks) to HTML paragraphs
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = '<p>' + html + '</p>';
+  
+  // Clean up empty paragraphs
+  html = html.replace(/<p>\s*<\/p>/g, '');
   
   // Convert headings with IDs for table of contents navigation
   html = html.replace(/^# (.*$)/gm, (match, text) => {

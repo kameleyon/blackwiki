@@ -8,7 +8,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const articleId = params.id;
+    const { id } = await params;
+    const articleId = id;
     const { searchParams } = new URL(request.url);
     const section = searchParams.get('section') || 'general';
 

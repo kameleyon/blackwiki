@@ -7,7 +7,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const articleId = params.id;
+  const { id } = await params;
+  const articleId = id;
 
   try {
     // Check if the Comment table exists
@@ -55,7 +56,8 @@ export async function POST(
     );
   }
 
-  const articleId = params.id;
+  const { id } = await params;
+  const articleId = id;
   const { content, parentId } = await request.json();
 
   if (!content || content.trim() === '') {
