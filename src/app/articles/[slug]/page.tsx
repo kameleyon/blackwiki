@@ -15,6 +15,7 @@ import RelatedArticles from '@/components/articles/RelatedArticles'
 import CommentSystem from '@/components/collaboration/CommentSystem'
 import CommunityEditingTabs from '@/components/community-editing/CommunityEditingTabs'
 import ArticleVersionControl from '@/components/articles/ArticleVersionControl'
+import TableOfContents from '@/components/articles/TableOfContents'
 import GreetingHeader from "@/components/dashboard/GreetingHeader";
 import UserNav from "@/components/user/UserNav";
 import { FiClock, FiEye, FiCalendar } from 'react-icons/fi'
@@ -241,13 +242,8 @@ export default async function ArticlePage({ params }: PageProps) {
               currentArticleId={article.id}
             />
             
-            {/* Table of Contents - Placeholder for future implementation */}
-            <div className="bg-white/5 rounded-lg p-4">
-              <h3 className="text-lg font-normal mb-4">Table of Contents</h3>
-              <div className="text-sm text-white/70">
-                <p>This feature will be implemented soon.</p>
-              </div>
-            </div>
+            {/* Table of Contents */}
+            <TableOfContents content={article.content} />
           </div>
         </div>
       </div>

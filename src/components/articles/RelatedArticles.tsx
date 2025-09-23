@@ -43,38 +43,27 @@ export default function RelatedArticles({ categories, tags, currentArticleId }: 
       setLoading(true);
       setError(null);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Build query parameters - API fetches categories/tags server-side for security
+      const params = new URLSearchParams({
+        articleId: currentArticleId,
+        limit: '5'
+      });
       
-      // Mock data - in a real implementation, this would come from the API
-      const mockArticles: Article[] = [
-        {
-          id: '1',
-          title: 'The Harlem Renaissance',
-          slug: 'harlem-renaissance', 
-          summary: 'A cultural revival of African American art, literature, and music centered in Harlem, New York City, in the 1920s.',
-          createdAt: new Date('2025-01-15'),
-          views: 342
-        },
-        {
-          id: '2',
-          title: 'Civil Rights Movement',
-          slug: 'civil-rights-movement',
-          summary: 'A decades-long struggle by African Americans to end legalized racial discrimination, disenfranchisement, and racial segregation.',
-          createdAt: new Date('2025-01-20'),
-          views: 287
-        },
-        {
-          id: '3',
-          title: 'African American Literature',
-          slug: 'african-american-literature',
-          summary: 'The body of literature produced in the United States by writers of African descent.',
-          createdAt: new Date('2025-02-05'),
-          views: 156
-        }
-      ].filter(article => article.id !== currentArticleId);
+      const response = await fetch(`/api/articles/related?${params}`);
       
-      setArticles(mockArticles);
+      if (!response.ok) {
+        throw new Error('Failed to fetch related articles');
+      }
+      
+      const relatedArticlesData = await response.json();
+      
+      // Convert date strings back to Date objects
+      const processedArticles = relatedArticlesData.map((article: any) => ({
+        ...article,
+        createdAt: new Date(article.createdAt)
+      }));
+      
+      setArticles(processedArticles);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching related articles:', err);

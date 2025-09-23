@@ -5,8 +5,20 @@
  * across all articles in the AfroWiki platform.
  */
 
-import { linkableTerms, shouldLinkTerm, getCanonicalTerm } from '@/config/linkable-terms';
-// Note: linkingRules is imported but not used directly in this file
+import { linkableTerms, shouldLinkTerm, getCanonicalTerm, linkingRules } from '@/config/linkable-terms';
+import DOMPurify from 'isomorphic-dompurify';
+
+/**
+ * Helper function to create URL-friendly IDs from heading text
+ */
+function createHeadingId(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with dashes
+    .replace(/-+/g, '-') // Replace multiple dashes with single
+    .replace(/^-|-$/g, ''); // Remove leading/trailing dashes
+}
 
 /**
  * Clean and normalize markdown content
@@ -86,10 +98,54 @@ export function processArticleContent(content: string): string {
   // Fix the date formatting
   processed = processed.replace(/\*\*(\d{1,2}\/\d{1,2}\/\d{4})\*\*/g, '*$1*');
   
+  // Improve paragraph structure for better readability
+  processed = formatTextIntoProperParagraphs(processed);
+  
   // Apply general markdown cleaning
   processed = cleanMarkdown(processed);
   
   return processed;
+}
+
+/**
+ * Format long text blocks into proper paragraphs with better readability
+ * @param content The content to format
+ * @returns Properly formatted content with paragraph breaks
+ */
+export function formatTextIntoProperParagraphs(content: string): string {
+  if (!content) return '';
+  
+  let formatted = content;
+  
+  // Split on sentence endings followed by capital letters (likely new sentences/topics)
+  // Look for periods, exclamation marks, or question marks followed by space and capital letter
+  formatted = formatted.replace(/([\.\!\?])\s+([A-Z][a-z])/g, '$1\n\n$2');
+  
+  // Split very long sentences (over 200 characters) at logical break points
+  formatted = formatted.replace(/([^\n]{200,}?)([,;]\s+)([A-Z][a-z])/g, '$1$2\n\n$3');
+  
+  // Split at transition words that often start new paragraphs
+  const transitionWords = [
+    'According to', 'Additionally', 'Furthermore', 'However', 'Moreover', 
+    'Nevertheless', 'On the other hand', 'In contrast', 'Similarly', 'For example',
+    'In conclusion', 'Finally', 'First', 'Second', 'Third', 'Meanwhile',
+    'Subsequently', 'Consequently', 'As a result', 'Therefore', 'Thus',
+    'In fact', 'Indeed', 'Specifically', 'Notably', 'Importantly'
+  ];
+  
+  transitionWords.forEach(word => {
+    const regex = new RegExp(`([^\n\.]\.)\s+(${word})\s+`, 'g');
+    formatted = formatted.replace(regex, '$1\n\n$2 ');
+  });
+  
+  // Split at year references that often indicate new topics/events
+  formatted = formatted.replace(/([^\n]{100,}?)\s+(\d{4}[^\d])/g, '$1\n\n$2');
+  
+  // Clean up excessive line breaks and ensure proper spacing
+  formatted = formatted.replace(/\n{3,}/g, '\n\n');
+  formatted = formatted.replace(/^\s+|\s+$/gm, '');
+  
+  return formatted;
 }
 
 /**
@@ -106,11 +162,31 @@ export function markdownToHtml(content: string): string {
   // For now, we'll just do some basic conversions
   let html = content;
   
-  // Convert headings
-  html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-  html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-  html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-  html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+  // Convert headings with IDs for table of contents navigation
+  html = html.replace(/^# (.*$)/gm, (match, text) => {
+    const id = createHeadingId(text);
+    return `<h1 id="${id}">${text}</h1>`;
+  });
+  html = html.replace(/^## (.*$)/gm, (match, text) => {
+    const id = createHeadingId(text);
+    return `<h2 id="${id}">${text}</h2>`;
+  });
+  html = html.replace(/^### (.*$)/gm, (match, text) => {
+    const id = createHeadingId(text);
+    return `<h3 id="${id}">${text}</h3>`;
+  });
+  html = html.replace(/^#### (.*$)/gm, (match, text) => {
+    const id = createHeadingId(text);
+    return `<h4 id="${id}">${text}</h4>`;
+  });
+  html = html.replace(/^##### (.*$)/gm, (match, text) => {
+    const id = createHeadingId(text);
+    return `<h5 id="${id}">${text}</h5>`;
+  });
+  html = html.replace(/^###### (.*$)/gm, (match, text) => {
+    const id = createHeadingId(text);
+    return `<h6 id="${id}">${text}</h6>`;
+  });
   
   // Convert emphasis with proper styling - only make explicitly marked text bold
   html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="text-white"><em>$1</em></strong>');
@@ -121,11 +197,19 @@ export function markdownToHtml(content: string): string {
   html = html.replace(/^\s*- (.*$)/gm, '<li>$1</li>');
   html = html.replace(/(<li>.*<\/li>\n)+/g, '<ul>$&</ul>');
   
-  // Convert paragraphs with proper styling
-  html = html.replace(/^(?!<[a-z])(.*$)/gm, '<p class="text-white/80">$1</p>');
-  
-  // Convert line breaks
-  html = html.replace(/\n/g, '');
+  // Split content into paragraphs based on double line breaks
+  const paragraphs = html.split(/\n\s*\n/);
+  html = paragraphs
+    .filter(p => p.trim().length > 0) // Remove empty paragraphs
+    .map(p => {
+      const trimmed = p.trim();
+      // Skip if it's already an HTML element
+      if (trimmed.startsWith('<')) {
+        return trimmed;
+      }
+      return `<p class="text-white/80 mb-4 leading-relaxed">${trimmed}</p>`;
+    })
+    .join('\n');
   
   // Track linked terms to enforce first-occurrence-only rule
   const linkedTerms = new Set<string>();
@@ -161,8 +245,45 @@ export function markdownToHtml(content: string): string {
       });
     });
 
-    return `<p class="text-white/80">${processedContent}</p>`;
+    return `<p class="text-white/80 mb-4 leading-relaxed">${processedContent}</p>`;
+  });
+  
+  // Sanitize HTML to prevent XSS attacks using DOMPurify
+  html = DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'strong', 'em', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre'],
+    ALLOWED_ATTR: ['href', 'id', 'class'],
+    ALLOW_DATA_ATTR: false
   });
   
   return html;
+}
+
+/**
+ * Extract headings from markdown content to generate table of contents
+ * @param content The markdown content to analyze
+ * @returns Array of heading objects with text, level, and id
+ */
+export function extractTableOfContents(content: string): Array<{text: string, level: number, id: string}> {
+  if (!content) return [];
+  
+  const headings: Array<{text: string, level: number, id: string}> = [];
+  const headingRegex = /^(#{1,6})\s+(.*$)/gm;
+  let match;
+  
+  while ((match = headingRegex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    
+    // Create URL-friendly id from heading text
+    const id = text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with dashes
+      .replace(/-+/g, '-') // Replace multiple dashes with single
+      .replace(/^-|-$/g, ''); // Remove leading/trailing dashes
+    
+    headings.push({ text, level, id });
+  }
+  
+  return headings;
 }
