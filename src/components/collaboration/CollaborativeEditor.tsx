@@ -36,7 +36,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   placeholder = 'Write your article content here...',
   documentId,
   username,
-  userColor = '#' + Math.floor(Math.random() * 16777215).toString(16) // Random color if not provided
+  userColor = '#' + ['808080', '999999', '666666', 'aaaaaa', '777777'][Math.floor(Math.random() * 5)] // Random grayscale color
 }) => {
   const [editorView, setEditorView] = useState<'edit' | 'split' | 'preview'>('edit');
   const [isFullscreen, setIsFullscreen] = useState(false);
