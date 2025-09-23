@@ -282,7 +282,7 @@ export default function ContentModeration({
                       {article.status.charAt(0).toUpperCase() + article.status.slice(1)}
                     </span>
                     {article.flagCount > 0 && (
-                      <span className="ml-2 px-2 py-1 bg-red-500/20 text-red-300 rounded-full text-xs">
+                      <span className="ml-2 px-2 py-1 bg-gray-700/20 text-gray-400 rounded-full text-xs">
                         {article.flagCount} {article.flagCount === 1 ? 'flag' : 'flags'}
                       </span>
                     )}
@@ -300,9 +300,9 @@ export default function ContentModeration({
                       <div className="w-16 bg-white/10 rounded-full h-1.5 mr-2">
                         <div 
                           className={`h-1.5 rounded-full ${
-                            article.qualityScore >= 7 ? 'bg-green-500' : 
-                            article.qualityScore >= 4 ? 'bg-yellow-500' : 
-                            'bg-red-500'
+                            article.qualityScore >= 7 ? 'bg-gray-400' : 
+                            article.qualityScore >= 4 ? 'bg-gray-500' : 
+                            'bg-gray-600'
                           }`}
                           style={{ width: `${article.qualityScore * 10}%` }}
                         ></div>
@@ -325,7 +325,7 @@ export default function ContentModeration({
                         <FiEdit size={16} />
                       </button>
                       <button 
-                        className="p-1.5 bg-green-500/10 rounded-lg hover:bg-green-500/20 text-green-400"
+                        className="p-1.5 bg-gray-600/10 rounded-lg hover:bg-gray-600/20 text-gray-300"
                         title="Approve"
                         onClick={() => handleApprove(article.id)}
                         disabled={isProcessing}
@@ -333,7 +333,7 @@ export default function ContentModeration({
                         <FiCheck size={16} />
                       </button>
                       <button 
-                        className="p-1.5 bg-red-500/10 rounded-lg hover:bg-red-500/20 text-red-400"
+                        className="p-1.5 bg-gray-700/10 rounded-lg hover:bg-gray-700/20 text-gray-400"
                         title="Reject"
                         onClick={() => handleReject(article.id)}
                         disabled={isProcessing}
@@ -341,7 +341,7 @@ export default function ContentModeration({
                         <FiX size={16} />
                       </button>
                       <button 
-                        className="p-1.5 bg-yellow-500/10 rounded-lg hover:bg-yellow-500/20 text-yellow-400"
+                        className="p-1.5 bg-gray-500/10 rounded-lg hover:bg-gray-500/20 text-gray-300"
                         title="Flag"
                         onClick={() => handleFlagClick(article.id)}
                         disabled={isProcessing}
@@ -349,7 +349,7 @@ export default function ContentModeration({
                         <FiFlag size={16} />
                       </button>
                       <button 
-                        className="p-1.5 bg-white/5 rounded-lg hover:bg-red-500/10 text-white/60 hover:text-red-400"
+                        className="p-1.5 bg-white/5 rounded-lg hover:bg-gray-700/10 text-white/60 hover:text-gray-400"
                         title="Delete"
                         onClick={() => handleDelete(article.id)}
                         disabled={isProcessing}
@@ -423,9 +423,9 @@ export default function ContentModeration({
                   <div className="w-16 bg-white/10 rounded-full h-1.5 mr-2">
                     <div 
                       className={`h-1.5 rounded-full ${
-                        selectedArticle.qualityScore >= 7 ? 'bg-green-500' : 
-                        selectedArticle.qualityScore >= 4 ? 'bg-yellow-500' : 
-                        'bg-red-500'
+                        selectedArticle.qualityScore >= 7 ? 'bg-gray-400' : 
+                        selectedArticle.qualityScore >= 4 ? 'bg-gray-500' : 
+                        'bg-gray-600'
                       }`}
                       style={{ width: `${selectedArticle.qualityScore * 10}%` }}
                     ></div>
@@ -467,7 +467,7 @@ export default function ContentModeration({
                     <span>Edit</span>
                   </Link>
                   <button 
-                    className="flex items-center gap-1 px-3 py-1.5 bg-green-500/10 rounded-lg text-xs text-green-400 hover:bg-green-500/20"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-gray-600/10 rounded-lg text-xs text-gray-300 hover:bg-gray-600/20"
                     onClick={() => handleApprove(selectedArticle.id)}
                     disabled={isProcessing}
                   >
@@ -475,7 +475,7 @@ export default function ContentModeration({
                     <span>Approve</span>
                   </button>
                   <button 
-                    className="flex items-center gap-1 px-3 py-1.5 bg-red-500/10 rounded-lg text-xs text-red-400 hover:bg-red-500/20"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-gray-700/10 rounded-lg text-xs text-gray-400 hover:bg-gray-700/20"
                     onClick={() => handleReject(selectedArticle.id)}
                     disabled={isProcessing}
                   >
@@ -483,7 +483,7 @@ export default function ContentModeration({
                     <span>Reject</span>
                   </button>
                   <button 
-                    className="flex items-center gap-1 px-3 py-1.5 bg-yellow-500/10 rounded-lg text-xs text-yellow-400 hover:bg-yellow-500/20"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-gray-500/10 rounded-lg text-xs text-gray-300 hover:bg-gray-500/20"
                     onClick={() => handleFlagClick(selectedArticle.id)}
                     disabled={isProcessing}
                   >
@@ -491,7 +491,7 @@ export default function ContentModeration({
                     <span>Flag</span>
                   </button>
                   <button 
-                    className="flex items-center gap-1 px-3 py-1.5 bg-white/5 rounded-lg text-xs text-white/80 hover:bg-red-500/10 hover:text-red-400"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-white/5 rounded-lg text-xs text-white/80 hover:bg-gray-700/10 hover:text-gray-400"
                     onClick={() => handleDelete(selectedArticle.id)}
                     disabled={isProcessing}
                   >
@@ -512,9 +512,9 @@ export default function ContentModeration({
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Sentiment</span>
                       <span className={`px-2 py-0.5 rounded-full text-xs ${
-                        selectedArticle.aiAnalysis.sentiment === 'positive' ? 'bg-green-500/20 text-green-300' :
-                        selectedArticle.aiAnalysis.sentiment === 'negative' ? 'bg-red-500/20 text-red-300' :
-                        'bg-blue-500/20 text-blue-300'
+                        selectedArticle.aiAnalysis.sentiment === 'positive' ? 'bg-gray-600/20 text-gray-300' :
+                        selectedArticle.aiAnalysis.sentiment === 'negative' ? 'bg-gray-700/20 text-gray-400' :
+                        'bg-gray-500/20 text-gray-300'
                       }`}>
                         {selectedArticle.aiAnalysis.sentiment.charAt(0).toUpperCase() + selectedArticle.aiAnalysis.sentiment.slice(1)}
                       </span>
@@ -522,14 +522,14 @@ export default function ContentModeration({
                   </div>
                   
                   {selectedArticle.aiAnalysis.contentWarnings.length > 0 && (
-                    <div className="p-3 rounded-lg bg-red-500/10">
+                    <div className="p-3 rounded-lg bg-gray-800/10">
                       <h5 className="text-sm font-medium mb-2 flex items-center">
-                        <FiAlertTriangle className="mr-1 text-red-400" size={14} />
+                        <FiAlertTriangle className="mr-1 text-gray-400" size={14} />
                         <span>Content Warnings</span>
                       </h5>
                       <ul className="space-y-1">
                         {selectedArticle.aiAnalysis.contentWarnings.map((warning, index) => (
-                          <li key={index} className="text-xs text-red-300 flex items-start">
+                          <li key={index} className="text-xs text-gray-400 flex items-start">
                             <span className="mr-1">•</span>
                             <span>{warning}</span>
                           </li>
@@ -539,14 +539,14 @@ export default function ContentModeration({
                   )}
                   
                   {selectedArticle.aiAnalysis.qualityIssues.length > 0 && (
-                    <div className="p-3 rounded-lg bg-yellow-500/10">
+                    <div className="p-3 rounded-lg bg-gray-600/10">
                       <h5 className="text-sm font-medium mb-2 flex items-center">
-                        <FiFlag className="mr-1 text-yellow-400" size={14} />
+                        <FiFlag className="mr-1 text-gray-400" size={14} />
                         <span>Quality Issues</span>
                       </h5>
                       <ul className="space-y-1">
                         {selectedArticle.aiAnalysis.qualityIssues.map((issue, index) => (
-                          <li key={index} className="text-xs text-yellow-300 flex items-start">
+                          <li key={index} className="text-xs text-gray-300 flex items-start">
                             <span className="mr-1">•</span>
                             <span>{issue}</span>
                           </li>
@@ -556,14 +556,14 @@ export default function ContentModeration({
                   )}
                   
                   {selectedArticle.aiAnalysis.suggestedImprovements.length > 0 && (
-                    <div className="p-3 rounded-lg bg-blue-500/10">
+                    <div className="p-3 rounded-lg bg-gray-500/10">
                       <h5 className="text-sm font-medium mb-2 flex items-center">
-                        <FiStar className="mr-1 text-blue-400" size={14} />
+                        <FiStar className="mr-1 text-gray-400" size={14} />
                         <span>Suggested Improvements</span>
                       </h5>
                       <ul className="space-y-1">
                         {selectedArticle.aiAnalysis.suggestedImprovements.map((suggestion, index) => (
-                          <li key={index} className="text-xs text-blue-300 flex items-start">
+                          <li key={index} className="text-xs text-gray-300 flex items-start">
                             <span className="mr-1">•</span>
                             <span>{suggestion}</span>
                           </li>
@@ -614,7 +614,7 @@ export default function ContentModeration({
                 Cancel
               </button>
               <button
-                className="px-4 py-2 bg-yellow-500/20 rounded-lg text-sm text-yellow-300 hover:bg-yellow-500/30"
+                className="px-4 py-2 bg-gray-600/20 rounded-lg text-sm text-gray-300 hover:bg-gray-600/30"
                 onClick={handleFlagSubmit}
                 disabled={!flagReason || isProcessing}
               >
