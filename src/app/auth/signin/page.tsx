@@ -5,10 +5,20 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
+import { validateLoginForm, sanitizeInput, canonicalizeEmail, type LoginFormData, type LoginValidationResult } from "@/lib/validation";
 
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<LoginValidationResult['errors']>({
+    email: [],
+    password: [],
+    general: []
+  });
+  const [touched, setTouched] = useState({
+    email: false,
+    password: false
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,10 +36,49 @@ export default function SignIn() {
     }
   }, [session, status, router]);
 
+  const handleBlur = (fieldName: string) => {
+    setTouched(prev => ({ ...prev, [fieldName]: true }));
+    const validation = validateLoginForm({ email, password } as LoginFormData);
+    setFieldErrors(validation.errors);
+  };
+  
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const canonicalizedEmail = canonicalizeEmail(e.target.value);
+    setEmail(canonicalizedEmail);
+    
+    // Real-time validation
+    const validation = validateLoginForm({ email: canonicalizedEmail, password } as LoginFormData);
+    setFieldErrors(validation.errors);
+  };
+  
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const passwordValue = e.target.value; // Don't modify passwords
+    setPassword(passwordValue);
+    
+    // Real-time validation
+    const validation = validateLoginForm({ email, password: passwordValue } as LoginFormData);
+    setFieldErrors(validation.errors);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage("");
+    
+    // Mark all fields as touched for validation display
+    setTouched({
+      email: true,
+      password: true
+    });
+    
+    // Validate form
+    const validation = validateLoginForm({ email, password } as LoginFormData);
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+      setErrorMessage("Please fix the errors below");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const result = await signIn("credentials", {
@@ -76,10 +125,22 @@ export default function SignIn() {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary"
+              onChange={handleEmailChange}
+              onBlur={() => handleBlur('email')}
+              className={`w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 transition-colors ${
+                touched.email && fieldErrors.email.length > 0 
+                  ? 'border border-red-500 focus:ring-red-500' 
+                  : 'focus:ring-primary'
+              }`}
               required
             />
+            {touched.email && fieldErrors.email.length > 0 && (
+              <div className="mt-1">
+                {fieldErrors.email.map((error, index) => (
+                  <p key={index} className="text-red-400 text-xs">{error}</p>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="relative">
@@ -91,8 +152,13 @@ export default function SignIn() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary pr-10"
+                onChange={handlePasswordChange}
+                onBlur={() => handleBlur('password')}
+                className={`w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 transition-colors pr-10 ${
+                  touched.password && fieldErrors.password.length > 0 
+                    ? 'border border-red-500 focus:ring-red-500' 
+                    : 'focus:ring-primary'
+                }`}
                 required
               />
               <button
@@ -115,6 +181,13 @@ export default function SignIn() {
                 )}
               </button>
             </div>
+            {touched.password && fieldErrors.password.length > 0 && (
+              <div className="mt-1">
+                {fieldErrors.password.map((error, index) => (
+                  <p key={index} className="text-red-400 text-xs">{error}</p>
+                ))}
+              </div>
+            )}
           </div>
 
           <button

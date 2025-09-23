@@ -3,6 +3,7 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { validateLoginForm, canonicalizeEmail, type LoginFormData } from "@/lib/validation";
 
 const handler = NextAuth({
   providers: [
@@ -20,9 +21,20 @@ const handler = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing credentials");
         }
+        
+        // Validate and canonicalize credentials
+        const loginData: LoginFormData = {
+          email: canonicalizeEmail(credentials.email),
+          password: credentials.password // Don't modify password
+        };
+        
+        const validation = validateLoginForm(loginData);
+        if (!validation.isValid) {
+          throw new Error("Invalid email or password format");
+        }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email: loginData.email },
           select: {
             id: true,
             email: true,
@@ -64,9 +76,12 @@ const handler = NextAuth({
     async jwt({ token, account }) {
       if (account) {
         try {
+          // Canonicalize email for consistent lookups
+          const canonicalEmail = canonicalizeEmail(token.email || "");
+          
           // Check if user exists in our database
           const dbUser = await prisma.user.findUnique({
-            where: { email: token.email || "" },
+            where: { email: canonicalEmail },
             select: {
               id: true,
               role: true,
@@ -87,7 +102,7 @@ const handler = NextAuth({
             // Create new user if they don't exist
             const newUser = await prisma.user.create({
               data: {
-                email: token.email || "",
+                email: canonicalEmail,
                 name: token.name || "",
                 image: token.picture,
                 role: "user", // Default role

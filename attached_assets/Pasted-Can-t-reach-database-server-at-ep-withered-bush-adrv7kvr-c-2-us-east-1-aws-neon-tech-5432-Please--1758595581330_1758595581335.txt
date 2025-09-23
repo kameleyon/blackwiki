@@ -1,0 +1,123 @@
+Can't reach database server at `ep-withered-bush-adrv7kvr.c-2.us-east-1.aws.neon.tech:5432`
+
+Please make sure your database server is running at `ep-withered-bush-adrv7kvr.c-2.us-east-1.aws.neon.tech:5432`.
+    at async getCurrentUser (auth.ts:39:16)
+    at async NewArticlePage (page.tsx:11:23)
+    at resolveErrorDev (react-server-dom-webpack-client.browser.development.js:1792:63)
+    at processFullStringRow (react-server-dom-webpack-client.browser.development.js:2071:17)
+    at processFullBinaryRow (react-server-dom-webpack-client.browser.development.js:2059:7)
+    at progress (react-server-dom-webpack-client.browser.development.js:2262:17)
+
+The above error occurred in the <NewArticlePage> component. It was handled by the <ReactDevOverlay> error boundary. Error Component Stack
+    at NewArticlePage [Server] (<anonymous>)
+    at InnerLayoutRouter (layout-router.js:231:11)
+    at RedirectErrorBoundary (redirect-boundary.js:75:9)
+    at RedirectBoundary (redirect-boundary.js:83:11)
+    at HTTPAccessFallbackBoundary (error-boundary.js:98:11)
+    at LoadingBoundary (layout-router.js:328:11)
+    at ErrorBoundary (error-boundary.js:166:11)
+    at InnerScrollAndFocusHandler (layout-router.js:139:9)
+    at ScrollAndFocusHandler (layout-router.js:216:11)
+    at RenderFromTemplateContext (render-from-template-context.js:16:44)
+    at OuterLayoutRouter (layout-router.js:365:11)
+    at InnerLayoutRouter (layout-router.js:231:11)
+    at RedirectErrorBoundary (redirect-boundary.js:75:9)
+    at RedirectBoundary (redirect-boundary.js:83:11)
+    at HTTPAccessFallbackBoundary (error-boundary.js:98:11)
+    at LoadingBoundary (layout-router.js:328:11)
+    at ErrorBoundary (error-boundary.js:166:11)
+    at InnerScrollAndFocusHandler (layout-router.js:139:9)
+    at ScrollAndFocusHandler (layout-router.js:216:11)
+    at RenderFromTemplateContext (render-from-template-context.js:16:44)
+    at OuterLayoutRouter (layout-router.js:365:11)
+    at InnerLayoutRouter (layout-router.js:231:11)
+    at RedirectErrorBoundary (redirect-boundary.js:75:9)
+    at RedirectBoundary (redirect-boundary.js:83:11)
+    at HTTPAccessFallbackErrorBoundary (error-boundary.js:90:9)
+    at HTTPAccessFallbackBoundary (error-boundary.js:98:11)
+    at LoadingBoundary (layout-router.js:328:11)
+    at ErrorBoundary (error-boundary.js:166:11)
+    at InnerScrollAndFocusHandler (layout-router.js:139:9)
+    at ScrollAndFocusHandler (layout-router.js:216:11)
+    at RenderFromTemplateContext (render-from-template-context.js:16:44)
+    at OuterLayoutRouter (layout-router.js:365:11)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MotionConfig (index.mjs:33:11)
+    at QueryClientProvider (QueryClientProvider.js:27:11)
+    at ReactQueryProvider (react-query-provider.tsx:10:46)
+    at SessionProvider (index.js:365:24)
+    at SessionProvider (SessionProvider.tsx:5:35)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+    at RedirectErrorBoundary (redirect-boundary.js:75:9)
+    at RedirectBoundary (redirect-boundary.js:83:11)
+    at HTTPAccessFallbackErrorBoundary (error-boundary.js:90:9)
+    at HTTPAccessFallbackBoundary (error-boundary.js:98:11)
+    at DevRootHTTPAccessFallbackBoundary (dev-root-http-access-fallback-boundary.js:33:11)
+    at ReactDevOverlay (ReactDevOverlay.js:80:9)
+    at HotReload (hot-reloader-client.js:379:11)
+    at Router (app-router.js:183:11)
+    at ErrorBoundaryHandler (error-boundary.js:120:9)
+    at ErrorBoundary (error-boundary.js:166:11)
+    at AppRouter (app-router.js:563:11)
+    at ServerRoot (app-index.js:145:46)
+    at Root (app-index.js:165:11)
+    at ReactDevOverlay (ReactDevOverlay.js:80:9)
+overrideMethod @ installHook.js:1
+onCaughtError @ app-router.js:53
+logCaughtError @ react-dom-client.development.js:7498
+runWithFiberInDEV @ react-dom-client.development.js:544
+update.callback @ react-dom-client.development.js:7531
+callCallback @ react-dom-client.development.js:10686
+commitCallbacks @ react-dom-client.development.js:10706
+runWithFiberInDEV @ react-dom-client.development.js:544
+commitClassCallbacks @ react-dom-client.development.js:10925
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11496
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11419
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11419
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11424
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11419
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11419
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11419
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11419
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11601
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11424
+recursivelyTraverseLayoutEffects @ react-dom-client.development.js:12428
+commitLayoutEffectOnFiber @ react-dom-client.development.js:11501
+commitLayoutEffects @ react-dom-client.development.js:12422
+commitRootImpl @ react-dom-client.development.js:15375
+commitRoot @ react-dom-client.development.js:15273
+commitRootWhenReady @ react-dom-client.development.js:14584
+performWorkOnRoot @ react-dom-client.development.js:14505
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:15955
+performWorkUntilDeadline @ scheduler.development.js:44Understand this error
+new:1 The resource https://1ce28abb-c608-400a-a1c6-487b73131f74-00-179ezzmc5ilhn.worf.replit.dev/_next/static/css/app/articles/new/page.css?v=1758595392675 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.Understand this warning
+new:1 The resource https://1ce28abb-c608-400a-a1c6-487b73131f74-00-179ezzmc5ilhn.worf.replit.dev/_next/static/media/e4af272ccee01ff0-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.Understand this warning
+new:1 The resource https://1ce28abb-c608-400a-a1c6-487b73131f74-00-179ezzmc5ilhn.worf.replit.dev/_next/static/css/app/layout.css?v=1758595392675 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.Understand this warning

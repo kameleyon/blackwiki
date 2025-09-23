@@ -4,11 +4,25 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { validateRegistrationForm, sanitizeInput, canonicalizeEmail, type RegistrationFormData, type RegistrationValidationResult } from "@/lib/validation";
 
 export default function Register() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<RegistrationValidationResult['errors']>({
+    name: [],
+    email: [],
+    password: [],
+    confirmPassword: [],
+    general: []
+  });
+  const [touched, setTouched] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,16 +34,47 @@ export default function Register() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    let processedValue = value;
+    
+    // Only sanitize non-password fields and canonicalize email
+    if (name === 'email') {
+      processedValue = canonicalizeEmail(value);
+    } else if (name !== 'password' && name !== 'confirmPassword') {
+      processedValue = sanitizeInput(value);
+    }
+    
+    setFormData(prev => ({ ...prev, [name]: processedValue }));
+    
+    // Real-time validation
+    const currentData = { ...formData, [name]: processedValue };
+    const validation = validateRegistrationForm(currentData as RegistrationFormData);
+    setFieldErrors(validation.errors);
+  };
+  
+  const handleBlur = (fieldName: string) => {
+    setTouched(prev => ({ ...prev, [fieldName]: true }));
+    const validation = validateRegistrationForm(formData as RegistrationFormData);
+    setFieldErrors(validation.errors);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    
+    // Mark all fields as touched for validation display
+    setTouched({
+      name: true,
+      email: true,
+      password: true,
+      confirmPassword: true
+    });
+    
+    // Validate form
+    const validation = validateRegistrationForm(formData as RegistrationFormData);
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+      setError("Please fix the errors below");
       setIsLoading(false);
       return;
     }
@@ -42,13 +87,25 @@ export default function Register() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          confirmPassword: formData.confirmPassword,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to register");
+        // Handle detailed validation errors from server
+        if (data.details) {
+          setFieldErrors(prev => ({
+            ...prev,
+            ...data.details
+          }));
+          setError(data.message || "Please fix the errors below");
+        } else {
+          setError(data.error || "Failed to register");
+        }
+        setIsLoading(false);
+        return;
       }
 
       // Redirect to sign in page on success
@@ -90,9 +147,21 @@ export default function Register() {
               type="text"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary"
+              onBlur={() => handleBlur('name')}
+              className={`w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 transition-colors ${
+                touched.name && fieldErrors.name.length > 0 
+                  ? 'border border-red-500 focus:ring-red-500' 
+                  : 'focus:ring-primary'
+              }`}
               required
             />
+            {touched.name && fieldErrors.name.length > 0 && (
+              <div className="mt-1">
+                {fieldErrors.name.map((error, index) => (
+                  <p key={index} className="text-red-400 text-xs">{error}</p>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -105,9 +174,21 @@ export default function Register() {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary"
+              onBlur={() => handleBlur('email')}
+              className={`w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 transition-colors ${
+                touched.email && fieldErrors.email.length > 0 
+                  ? 'border border-red-500 focus:ring-red-500' 
+                  : 'focus:ring-primary'
+              }`}
               required
             />
+            {touched.email && fieldErrors.email.length > 0 && (
+              <div className="mt-1">
+                {fieldErrors.email.map((error, index) => (
+                  <p key={index} className="text-red-400 text-xs">{error}</p>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="relative">
@@ -121,9 +202,13 @@ export default function Register() {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary pr-10"
+                onBlur={() => handleBlur('password')}
+                className={`w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 transition-colors pr-10 ${
+                  touched.password && fieldErrors.password.length > 0 
+                    ? 'border border-red-500 focus:ring-red-500' 
+                    : 'focus:ring-primary'
+                }`}
                 required
-                minLength={8}
               />
               <button
                 type="button"
@@ -145,6 +230,13 @@ export default function Register() {
                 )}
               </button>
             </div>
+            {touched.password && fieldErrors.password.length > 0 && (
+              <div className="mt-1">
+                {fieldErrors.password.map((error, index) => (
+                  <p key={index} className="text-red-400 text-xs">{error}</p>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="relative">
@@ -158,7 +250,12 @@ export default function Register() {
                 type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 focus:ring-primary pr-10"
+                onBlur={() => handleBlur('confirmPassword')}
+                className={`w-full px-3 py-2 bg-white/5 rounded-lg focus:ring-2 transition-colors pr-10 ${
+                  touched.confirmPassword && fieldErrors.confirmPassword.length > 0 
+                    ? 'border border-red-500 focus:ring-red-500' 
+                    : 'focus:ring-primary'
+                }`}
                 required
               />
               <button
@@ -181,6 +278,13 @@ export default function Register() {
                 )}
               </button>
             </div>
+            {touched.confirmPassword && fieldErrors.confirmPassword.length > 0 && (
+              <div className="mt-1">
+                {fieldErrors.confirmPassword.map((error, index) => (
+                  <p key={index} className="text-red-400 text-xs">{error}</p>
+                ))}
+              </div>
+            )}
           </div>
 
           <button
