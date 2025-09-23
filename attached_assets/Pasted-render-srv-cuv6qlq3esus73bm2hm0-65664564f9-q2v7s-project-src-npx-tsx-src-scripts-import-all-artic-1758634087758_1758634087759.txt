@@ -1,0 +1,684 @@
+render@srv-cuv6qlq3esus73bm2hm0-65664564f9-q2v7s:~/project/src$ npx tsx src/scripts/import-all-articles.ts
+Starting complete article import...
+
+Loading existing articles...
+Found 0 existing articles
+
+Reading CSV file...
+Total rows in CSV: 8273
+Unique articles in CSV: 8261
+Duplicates in CSV: 12
+Articles to import: 8261
+
+Processing batch 1 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 0.6% (50 imported, 0 errors)
+
+Processing batch 2 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 1.2% (100 imported, 0 errors)
+
+Processing batch 3 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 1.8% (150 imported, 0 errors)
+
+Processing batch 4 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 2.4% (200 imported, 0 errors)
+
+Processing batch 5 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 3.0% (250 imported, 0 errors)
+
+Processing batch 6 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 3.6% (300 imported, 0 errors)
+
+Processing batch 7 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 4.2% (350 imported, 0 errors)
+
+Processing batch 8 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 4.8% (400 imported, 0 errors)
+
+Processing batch 9 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 5.4% (450 imported, 0 errors)
+
+Processing batch 10 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 6.1% (500 imported, 0 errors)
+
+Processing batch 11 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 6.7% (550 imported, 0 errors)
+
+Processing batch 12 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 7.3% (600 imported, 0 errors)
+
+Processing batch 13 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 7.9% (650 imported, 0 errors)
+
+Processing batch 14 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 8.5% (700 imported, 0 errors)
+
+Processing batch 15 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 9.1% (750 imported, 0 errors)
+
+Processing batch 16 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 9.7% (800 imported, 0 errors)
+
+Processing batch 17 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 10.3% (850 imported, 0 errors)
+
+Processing batch 18 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 10.9% (900 imported, 0 errors)
+
+Processing batch 19 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 11.5% (950 imported, 0 errors)
+
+Processing batch 20 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 12.1% (1000 imported, 0 errors)
+
+Processing batch 21 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 12.7% (1050 imported, 0 errors)
+
+Processing batch 22 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 13.3% (1100 imported, 0 errors)
+
+Processing batch 23 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 13.9% (1150 imported, 0 errors)
+
+Processing batch 24 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 14.5% (1200 imported, 0 errors)
+
+Processing batch 25 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 15.1% (1250 imported, 0 errors)
+
+Processing batch 26 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 15.7% (1300 imported, 0 errors)
+
+Processing batch 27 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 16.3% (1350 imported, 0 errors)
+
+Processing batch 28 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 16.9% (1400 imported, 0 errors)
+
+Processing batch 29 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 17.6% (1450 imported, 0 errors)
+
+Processing batch 30 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 18.2% (1500 imported, 0 errors)
+
+Processing batch 31 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 18.8% (1550 imported, 0 errors)
+
+Processing batch 32 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 19.4% (1600 imported, 0 errors)
+
+Processing batch 33 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 20.0% (1650 imported, 0 errors)
+
+Processing batch 34 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 20.6% (1700 imported, 0 errors)
+
+Processing batch 35 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 21.2% (1750 imported, 0 errors)
+
+Processing batch 36 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 21.8% (1800 imported, 0 errors)
+
+Processing batch 37 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 22.4% (1850 imported, 0 errors)
+
+Processing batch 38 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 23.0% (1900 imported, 0 errors)
+
+Processing batch 39 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 23.6% (1950 imported, 0 errors)
+
+Processing batch 40 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 24.2% (2000 imported, 0 errors)
+
+Processing batch 41 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 24.8% (2050 imported, 0 errors)
+
+Processing batch 42 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 25.4% (2100 imported, 0 errors)
+
+Processing batch 43 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 26.0% (2150 imported, 0 errors)
+
+Processing batch 44 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 26.6% (2200 imported, 0 errors)
+
+Processing batch 45 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 27.2% (2250 imported, 0 errors)
+
+Processing batch 46 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 27.8% (2300 imported, 0 errors)
+
+Processing batch 47 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 28.4% (2350 imported, 0 errors)
+
+Processing batch 48 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 29.1% (2400 imported, 0 errors)
+
+Processing batch 49 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 29.7% (2450 imported, 0 errors)
+
+Processing batch 50 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 30.3% (2500 imported, 0 errors)
+
+Processing batch 51 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 30.9% (2550 imported, 0 errors)
+
+Processing batch 52 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 31.5% (2600 imported, 0 errors)
+
+Processing batch 53 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 32.1% (2650 imported, 0 errors)
+
+Processing batch 54 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 32.7% (2700 imported, 0 errors)
+
+Processing batch 55 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 33.3% (2750 imported, 0 errors)
+
+Processing batch 56 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 33.9% (2800 imported, 0 errors)
+
+Processing batch 57 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 34.5% (2850 imported, 0 errors)
+
+Processing batch 58 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 35.1% (2900 imported, 0 errors)
+
+Processing batch 59 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 35.7% (2950 imported, 0 errors)
+
+Processing batch 60 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 36.3% (3000 imported, 0 errors)
+
+Processing batch 61 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 36.9% (3050 imported, 0 errors)
+
+Processing batch 62 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 37.5% (3100 imported, 0 errors)
+
+Processing batch 63 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 38.1% (3150 imported, 0 errors)
+
+Processing batch 64 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 38.7% (3200 imported, 0 errors)
+
+Processing batch 65 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 39.3% (3250 imported, 0 errors)
+
+Processing batch 66 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 39.9% (3300 imported, 0 errors)
+
+Processing batch 67 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 40.6% (3350 imported, 0 errors)
+
+Processing batch 68 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 41.2% (3400 imported, 0 errors)
+
+Processing batch 69 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 41.8% (3450 imported, 0 errors)
+
+Processing batch 70 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 42.4% (3500 imported, 0 errors)
+
+Processing batch 71 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 43.0% (3550 imported, 0 errors)
+
+Processing batch 72 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 43.6% (3600 imported, 0 errors)
+
+Processing batch 73 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 44.2% (3650 imported, 0 errors)
+
+Processing batch 74 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 44.8% (3700 imported, 0 errors)
+
+Processing batch 75 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 45.4% (3750 imported, 0 errors)
+
+Processing batch 76 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 46.0% (3800 imported, 0 errors)
+
+Processing batch 77 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 46.6% (3850 imported, 0 errors)
+
+Processing batch 78 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 47.2% (3900 imported, 0 errors)
+
+Processing batch 79 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 47.8% (3950 imported, 0 errors)
+
+Processing batch 80 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 48.4% (4000 imported, 0 errors)
+
+Processing batch 81 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 49.0% (4050 imported, 0 errors)
+
+Processing batch 82 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 49.6% (4100 imported, 0 errors)
+
+Processing batch 83 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 50.2% (4150 imported, 0 errors)
+
+Processing batch 84 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 50.8% (4200 imported, 0 errors)
+
+Processing batch 85 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 51.4% (4250 imported, 0 errors)
+
+Processing batch 86 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 52.1% (4300 imported, 0 errors)
+
+Processing batch 87 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 52.7% (4350 imported, 0 errors)
+
+Processing batch 88 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 53.3% (4400 imported, 0 errors)
+
+Processing batch 89 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 53.9% (4450 imported, 0 errors)
+
+Processing batch 90 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 54.5% (4500 imported, 0 errors)
+
+Processing batch 91 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 55.1% (4550 imported, 0 errors)
+
+Processing batch 92 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 55.7% (4600 imported, 0 errors)
+
+Processing batch 93 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 56.3% (4650 imported, 0 errors)
+
+Processing batch 94 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 56.9% (4700 imported, 0 errors)
+
+Processing batch 95 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 57.5% (4750 imported, 0 errors)
+
+Processing batch 96 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 58.1% (4800 imported, 0 errors)
+
+Processing batch 97 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 58.7% (4850 imported, 0 errors)
+
+Processing batch 98 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 59.3% (4900 imported, 0 errors)
+
+Processing batch 99 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 59.9% (4950 imported, 0 errors)
+
+Processing batch 100 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 60.5% (5000 imported, 0 errors)
+
+Processing batch 101 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 61.1% (5050 imported, 0 errors)
+
+Processing batch 102 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 61.7% (5100 imported, 0 errors)
+
+Processing batch 103 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 62.3% (5150 imported, 0 errors)
+
+Processing batch 104 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 62.9% (5200 imported, 0 errors)
+
+Processing batch 105 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 63.6% (5250 imported, 0 errors)
+
+Processing batch 106 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 64.2% (5300 imported, 0 errors)
+
+Processing batch 107 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 64.8% (5350 imported, 0 errors)
+
+Processing batch 108 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 65.4% (5400 imported, 0 errors)
+
+Processing batch 109 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 66.0% (5450 imported, 0 errors)
+
+Processing batch 110 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 66.6% (5500 imported, 0 errors)
+
+Processing batch 111 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 67.2% (5550 imported, 0 errors)
+
+Processing batch 112 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 67.8% (5600 imported, 0 errors)
+
+Processing batch 113 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 68.4% (5650 imported, 0 errors)
+
+Processing batch 114 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 69.0% (5700 imported, 0 errors)
+
+Processing batch 115 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 69.6% (5750 imported, 0 errors)
+
+Processing batch 116 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 70.2% (5800 imported, 0 errors)
+
+Processing batch 117 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 70.8% (5850 imported, 0 errors)
+
+Processing batch 118 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 71.4% (5900 imported, 0 errors)
+
+Processing batch 119 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 72.0% (5950 imported, 0 errors)
+
+Processing batch 120 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 72.6% (6000 imported, 0 errors)
+
+Processing batch 121 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 73.2% (6050 imported, 0 errors)
+
+Processing batch 122 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 73.8% (6100 imported, 0 errors)
+
+Processing batch 123 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 74.4% (6150 imported, 0 errors)
+
+Processing batch 124 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 75.1% (6200 imported, 0 errors)
+
+Processing batch 125 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 75.7% (6250 imported, 0 errors)
+
+Processing batch 126 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 76.3% (6300 imported, 0 errors)
+
+Processing batch 127 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 76.9% (6350 imported, 0 errors)
+
+Processing batch 128 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 77.5% (6400 imported, 0 errors)
+
+Processing batch 129 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 78.1% (6450 imported, 0 errors)
+
+Processing batch 130 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 78.7% (6500 imported, 0 errors)
+
+Processing batch 131 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 79.3% (6550 imported, 0 errors)
+
+Processing batch 132 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 79.9% (6600 imported, 0 errors)
+
+Processing batch 133 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 80.5% (6650 imported, 0 errors)
+
+Processing batch 134 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 81.1% (6700 imported, 0 errors)
+
+Processing batch 135 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 81.7% (6750 imported, 0 errors)
+
+Processing batch 136 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 82.3% (6800 imported, 0 errors)
+
+Processing batch 137 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 82.9% (6850 imported, 0 errors)
+
+Processing batch 138 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 83.5% (6900 imported, 0 errors)
+
+Processing batch 139 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 84.1% (6950 imported, 0 errors)
+
+Processing batch 140 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 84.7% (7000 imported, 0 errors)
+
+Processing batch 141 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 85.3% (7050 imported, 0 errors)
+
+Processing batch 142 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 85.9% (7100 imported, 0 errors)
+
+Processing batch 143 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 86.6% (7150 imported, 0 errors)
+
+Processing batch 144 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 87.2% (7200 imported, 0 errors)
+
+Processing batch 145 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 87.8% (7250 imported, 0 errors)
+
+Processing batch 146 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 88.4% (7300 imported, 0 errors)
+
+Processing batch 147 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 89.0% (7350 imported, 0 errors)
+
+Processing batch 148 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 89.6% (7400 imported, 0 errors)
+
+Processing batch 149 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 90.2% (7450 imported, 0 errors)
+
+Processing batch 150 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 90.8% (7500 imported, 0 errors)
+
+Processing batch 151 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 91.4% (7550 imported, 0 errors)
+
+Processing batch 152 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 92.0% (7600 imported, 0 errors)
+
+Processing batch 153 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 92.6% (7650 imported, 0 errors)
+
+Processing batch 154 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 93.2% (7700 imported, 0 errors)
+
+Processing batch 155 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 93.8% (7750 imported, 0 errors)
+
+Processing batch 156 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 94.4% (7800 imported, 0 errors)
+
+Processing batch 157 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 95.0% (7850 imported, 0 errors)
+
+Processing batch 158 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 95.6% (7900 imported, 0 errors)
+
+Processing batch 159 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 96.2% (7950 imported, 0 errors)
+
+Processing batch 160 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 96.8% (8000 imported, 0 errors)
+
+Processing batch 161 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 97.4% (8050 imported, 0 errors)
+
+Processing batch 162 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 98.1% (8100 imported, 0 errors)
+
+Processing batch 163 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 98.7% (8150 imported, 0 errors)
+
+Processing batch 164 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 99.3% (8200 imported, 0 errors)
+
+Processing batch 165 of 166 (50 articles)...
+  Batch complete: 50 created, 0 skipped
+  Overall progress: 99.9% (8250 imported, 0 errors)
+
+Processing batch 166 of 166 (11 articles)...
+  Batch complete: 11 created, 0 skipped
+  Overall progress: 100.0% (8261 imported, 0 errors)
+
+
+=== IMPORT COMPLETE ===
+Total articles in database: 8261
+Articles imported in this run: 8261
+Errors/skipped: 0
+Time elapsed: 1049.8 seconds
+Average: 7.9 articles/second
+render@srv-cuv6qlq3esus73bm2hm0-65664564f9-q2v7s:~/project/src$ 

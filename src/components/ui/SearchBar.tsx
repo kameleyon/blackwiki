@@ -19,25 +19,25 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
 
   return (
     <motion.div 
-      className="search-container "
+      className="search-container"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="relative">
         <input
           type="text"
-          className="search-input p-6 text-sm"
+          className="search-input p-6 text-sm pr-16"
           placeholder="Search Black culture, and knowledge..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         <button
           type="submit"
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-600/20 hover:bg-gray-500/30 transition-colors z-10"
         >
           <svg
-            className="w-6 h-6 text-primary"
+            className="w-6 h-6 text-gray-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
