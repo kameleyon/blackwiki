@@ -107,7 +107,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-400 underline',
+          class: 'text-gray-300 underline',
         },
       }),
       CodeBlock.configure({
@@ -120,7 +120,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
       }),
       Highlight.configure({
         HTMLAttributes: {
-          class: 'bg-yellow-500/20 text-white',
+          class: 'bg-gray-600/20 text-white',
         },
       }),
       Underline,

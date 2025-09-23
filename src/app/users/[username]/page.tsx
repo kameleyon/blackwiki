@@ -137,15 +137,15 @@ export default async function UserPage({ params }: PageProps) {
               {/* Role Badge */}
               <div className="flex items-center gap-2">
                 <span className={`px-3 py-1 rounded-full text-sm ${
-                  user.role === 'admin' ? 'bg-red-500/20 text-red-300' :
-                  user.role === 'editor' ? 'bg-blue-500/20 text-blue-300' :
+                  user.role === 'admin' ? 'bg-gray-700/30 text-gray-200' :
+                  user.role === 'editor' ? 'bg-gray-600/30 text-gray-300' :
                   'bg-gray-500/20 text-gray-300'
                 }`}>
                   {user.role}
                 </span>
                 
                 {user.reviewerReputation > 0 && (
-                  <div className="flex items-center gap-1 px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">
+                  <div className="flex items-center gap-1 px-3 py-1 bg-gray-600/20 text-gray-300 rounded-full text-sm">
                     <FiAward size={14} />
                     <span>{user.reviewerReputation} reputation</span>
                   </div>
@@ -214,7 +214,7 @@ export default async function UserPage({ params }: PageProps) {
                 <h3 className="text-sm font-medium text-white/80 mb-2">Expertise</h3>
                 <div className="flex flex-wrap gap-2">
                   {expertiseTags.map((tag, index) => (
-                    <span key={index} className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                    <span key={index} className="px-3 py-1 bg-gray-600/20 text-gray-300 rounded-full text-sm">
                       {tag}
                     </span>
                   ))}

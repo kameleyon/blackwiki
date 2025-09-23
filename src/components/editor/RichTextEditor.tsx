@@ -41,7 +41,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-400 underline',
+          class: 'text-gray-300 underline',
         },
       }),
       CodeBlock.configure({
@@ -54,7 +54,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       }),
       Highlight.configure({
         HTMLAttributes: {
-          class: 'bg-yellow-500/20 text-white',
+          class: 'bg-gray-600/20 text-white',
         },
       }),
       Underline,
