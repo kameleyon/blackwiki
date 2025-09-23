@@ -30,7 +30,7 @@ function highlightText(text: string, query: string): React.ReactNode {
   searchTerms.forEach(term => {
     const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape regex chars
     const regex = new RegExp(`(${escapedTerm})`, 'gi');
-    result = result.replace(regex, '<mark class="bg-yellow-400 text-black px-1 rounded">$1</mark>');
+    result = result.replace(regex, '<mark class="bg-gray-600 text-white px-1 rounded">$1</mark>');
   });
   
   // Only return JSX if highlighting was applied, otherwise return plain text
@@ -99,8 +99,8 @@ export default function SearchResults({
 
   if (error) {
     return (
-      <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 text-center">
-        <div className="text-red-400 mb-2">Search Error</div>
+      <div className="bg-gray-600/10 border border-gray-600/20 rounded-lg p-6 text-center">
+        <div className="text-gray-400 mb-2">Search Error</div>
         <p className="text-white/70">{error}</p>
       </div>
     );
@@ -169,13 +169,13 @@ export default function SearchResults({
           <span className="text-sm text-white/50">View:</span>
           <button
             onClick={() => setViewMode('list')}
-            className={`p-2 rounded ${viewMode === 'list' ? 'bg-blue-500' : 'bg-white/10'}`}
+            className={`p-2 rounded ${viewMode === 'list' ? 'bg-gray-600' : 'bg-white/10'}`}
           >
             <FiEdit size={16} />
           </button>
           <button
             onClick={() => setViewMode('grid')}
-            className={`p-2 rounded ${viewMode === 'grid' ? 'bg-blue-500' : 'bg-white/10'}`}
+            className={`p-2 rounded ${viewMode === 'grid' ? 'bg-gray-600' : 'bg-white/10'}`}
           >
             <FiBookmark size={16} />
           </button>
@@ -210,7 +210,7 @@ export default function SearchResults({
                 {/* Title */}
                 <Link 
                   href={`/articles/${article.slug}`}
-                  className="block font-medium text-lg hover:text-blue-400 transition-colors mb-2"
+                  className="block font-medium text-lg hover:text-gray-300 transition-colors mb-2"
                 >
                   {highlightText(article.title, query)}
                 </Link>
@@ -227,7 +227,7 @@ export default function SearchResults({
                       <Link
                         key={index}
                         href={`/search?category=${encodeURIComponent(category.name)}`}
-                        className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs hover:bg-blue-500/30 transition-colors"
+                        className="px-2 py-1 bg-gray-600/20 text-gray-300 rounded text-xs hover:bg-gray-600/30 transition-colors"
                       >
                         {category.name}
                       </Link>
@@ -281,7 +281,7 @@ export default function SearchResults({
           <button
             onClick={onLoadMore}
             disabled={isLoading}
-            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg transition-colors"
+            className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:opacity-50 text-white rounded-lg transition-colors"
           >
             {isLoading ? 'Loading...' : 'Load More Articles'}
           </button>
