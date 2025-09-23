@@ -8,13 +8,11 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Await params for Next.js 15 compatibility
+    const { id } = await params;
 
     const article = await prisma.article.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         author: {
           select: {
@@ -28,13 +26,22 @@ export async function GET(
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
-    // Only allow author or admin to view versions
-    if (article.author.id !== user.id && user.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Allow anyone to view versions for published articles
+    // Only restrict access for unpublished articles
+    if (!article.isPublished) {
+      const user = await getCurrentUser();
+      if (!user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+
+      // Only allow author or admin to view versions of unpublished articles
+      if (article.author.id !== user.id && user.role !== 'admin') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
     }
 
     const versions = await prisma.version.findMany({
-      where: { articleId: params.id },
+      where: { articleId: id },
       orderBy: { number: 'desc' },
       include: {
         edit: {
@@ -67,13 +74,16 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Await params for Next.js 15 compatibility
+    const { id } = await params;
+    
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const article = await prisma.article.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         author: {
           select: {
@@ -97,7 +107,7 @@ export async function POST(
 
     // Get the latest version number
     const latestVersion = await prisma.version.findFirst({
-      where: { articleId: params.id },
+      where: { articleId: id },
       orderBy: { number: 'desc' },
     });
 
@@ -111,7 +121,7 @@ export async function POST(
           type,
           summary,
           userId: user.id,
-          articleId: params.id,
+          articleId: id,
         },
       });
 
@@ -119,7 +129,7 @@ export async function POST(
         data: {
           number: newVersionNumber,
           content,
-          articleId: params.id,
+          articleId: id,
           editId: edit.id,
         },
       });

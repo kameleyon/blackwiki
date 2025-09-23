@@ -6,7 +6,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = params.id;
+    // Await params for Next.js 15 compatibility
+    const { id: userId } = await params;
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'all'; // all, articles, edits, reviews, comments
     const limit = parseInt(searchParams.get('limit') || '50');
