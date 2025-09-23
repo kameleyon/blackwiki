@@ -1,3 +1,7 @@
+// Use dynamic rendering to prevent build-time database access
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { getArticleBySlug, incrementArticleViews } from '@/lib/db'
 import { prisma } from "@/lib/db";
 import { notFound } from 'next/navigation'

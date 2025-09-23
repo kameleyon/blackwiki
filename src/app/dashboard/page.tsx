@@ -1,3 +1,7 @@
+// Use dynamic rendering to prevent build-time database access
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { getCurrentUser } from '@/lib/auth';
 import { getServerSession } from "next-auth";
 import { redirect } from 'next/navigation';
