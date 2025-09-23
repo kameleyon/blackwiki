@@ -1,39 +1,71 @@
+// This file fixes the build error by using dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 
-export default async function RandomArticlePage() {
-  // Get total count of published articles
-  const totalArticles = await prisma.article.count({
-    where: {
-      isPublished: true,
-      isArchived: false
+async function getRandomArticle() {
+  try {
+    // Skip during build if no database URL
+    if (!process.env.DATABASE_URL) {
+      console.log('No DATABASE_URL found, skipping database query');
+      return null;
     }
-  });
-
-  if (totalArticles === 0) {
-    redirect('/search?message=No articles available');
+    
+    const count = await prisma.article.count({
+      where: {
+        isPublished: true,
+        isArchived: false
+      }
+    });
+    
+    if (count === 0) {
+      return null;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * count);
+    const article = await prisma.article.findFirst({
+      where: {
+        isPublished: true,
+        isArchived: false
+      },
+      select: {
+        id: true,
+        slug: true
+      },
+      skip: randomIndex,
+    });
+    
+    return article;
+  } catch (error) {
+    console.error('Error fetching random article:', error);
+    return null;
   }
+}
 
-  // Generate random offset
-  const randomOffset = Math.floor(Math.random() * totalArticles);
-
-  // Get random article
-  const randomArticle = await prisma.article.findFirst({
-    where: {
-      isPublished: true,
-      isArchived: false
-    },
-    select: {
-      slug: true
-    },
-    skip: randomOffset,
-    take: 1
-  });
-
-  if (!randomArticle) {
-    redirect('/search?message=No articles found');
+export default async function RandomArticlePage() {
+  const article = await getRandomArticle();
+  
+  if (!article) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">No Articles Found</h1>
+          <p className="text-gray-600 mb-4">
+            The database might be empty or not connected. Please check back later.
+          </p>
+          <a 
+            href="/search" 
+            className="text-blue-600 hover:text-blue-800 underline"
+          >
+            Browse articles instead
+          </a>
+        </div>
+      </div>
+    );
   }
-
-  // Redirect to the random article
-  redirect(`/articles/${randomArticle.slug}`);
+  
+  // Redirect to the article page
+  redirect(`/articles/${article.slug}`);
 }
