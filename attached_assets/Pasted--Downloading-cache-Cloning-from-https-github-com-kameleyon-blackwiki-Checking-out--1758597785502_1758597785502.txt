@@ -1,0 +1,41 @@
+==> Downloading cache...
+==> Cloning from https://github.com/kameleyon/blackwiki
+==> Checking out commit 6243c4434c0e7e17bc8bd0026d3c4e99904a37d3 in branch main
+==> Transferred 894MB in 12s. Extraction took 31s.
+==> Using Node.js version 22.12.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Running build command 'npm install; npm run build'...
+> afrowiki@0.1.0 postinstall
+> prisma generate
+Prisma schema loaded from prisma/schema.prisma
+✔ Generated Prisma Client (v6.4.1) to ./node_modules/@prisma/client in 460ms
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+up to date, audited 787 packages in 7s
+290 packages are looking for funding
+  run `npm fund` for details
+13 vulnerabilities (9 low, 1 moderate, 1 high, 2 critical)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> afrowiki@0.1.0 build
+> prisma generate && next build
+Prisma schema loaded from prisma/schema.prisma
+✔ Generated Prisma Client (v6.4.1) to ./node_modules/@prisma/client in 370ms
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+   ▲ Next.js 15.1.7
+   - Experiments (use with caution):
+     · optimizeCss
+   Creating an optimized production build ...
+(node:162) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Failed to compile.
+./src/app/api/articles/[id]/diff/route.ts
+Module not found: Can't resolve 'diff'
+https://nextjs.org/docs/messages/module-not-found
+> Build failed because of webpack errors
+==> Build failed 😞
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
