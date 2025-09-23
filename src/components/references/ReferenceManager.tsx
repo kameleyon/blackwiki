@@ -263,21 +263,23 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({
             Reference Management
           </span>
           {!isAddingReference && !editingReference && (
-            <div className="flex gap-2">
+            <div className="flex gap-1 sm:gap-2 flex-wrap">
               <button
                 onClick={handleShowBulkImport}
                 className="reference-action-button"
                 type="button" // Explicitly set type to button
+                title="Bulk Import"
               >
                 <FiList size={16} />
-                <span>Bulk Import</span>
+                <span className="hidden sm:inline">Bulk Import</span>
               </button>
               <button
                 onClick={() => setIsAddingReference(true)}
                 className="reference-action-button primary"
+                title="Add Reference"
               >
                 <FiPlus size={16} />
-                <span>Add Reference</span>
+                <span className="hidden sm:inline">Add Reference</span>
               </button>
             </div>
           )}

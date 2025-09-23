@@ -348,51 +348,55 @@ export default function AdvancedStatistics({
         <h2 className="text-lg font-medium">Advanced Statistics</h2>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex border-b border-gray-700">
+      {/* Tab Navigation - Mobile responsive with icons only on small screens */}
+      <div className="flex border-b border-gray-700 overflow-x-auto scrollbar-none">
         <button
-          className={`flex items-center gap-2 px-4 py-3 ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 min-w-0 flex-shrink-0 ${
             activeTab === 'contributions'
               ? 'text-white border-b-2 border-white/60'
               : 'text-gray-400 hover:text-white'
           }`}
           onClick={() => setActiveTab('contributions')}
+          title="Contributions"
         >
-          <FiBarChart2 size={16} />
-          <span className="text-sm">Contributions</span>
+          <FiBarChart2 size={18} className="flex-shrink-0" />
+          <span className="text-sm hidden sm:inline whitespace-nowrap">Contributions</span>
         </button>
         <button
-          className={`flex items-center gap-2 px-4 py-3 ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 min-w-0 flex-shrink-0 ${
             activeTab === 'impact'
               ? 'text-white border-b-2 border-white/60'
               : 'text-gray-400 hover:text-white'
           }`}
           onClick={() => setActiveTab('impact')}
+          title="Article Impact"
         >
-          <FiTrendingUp size={16} />
-          <span className="text-sm">Article Impact</span>
+          <FiTrendingUp size={18} className="flex-shrink-0" />
+          <span className="text-sm hidden sm:inline whitespace-nowrap">Article Impact</span>
         </button>
         <button
-          className={`flex items-center gap-2 px-4 py-3 ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 min-w-0 flex-shrink-0 ${
             activeTab === 'categories'
               ? 'text-white border-b-2 border-white/60'
               : 'text-gray-400 hover:text-white'
           }`}
           onClick={() => setActiveTab('categories')}
+          title="Categories"
         >
-          <FiPieChart size={16} />
-          <span className="text-sm">Categories</span>
+          <FiPieChart size={18} className="flex-shrink-0" />
+          <span className="text-sm hidden sm:inline whitespace-nowrap">Categories</span>
         </button>
         <button
-          className={`flex items-center gap-2 px-4 py-3 ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-3 min-w-0 flex-shrink-0 ${
             activeTab === 'expertise'
               ? 'text-white border-b-2 border-white/60'
               : 'text-gray-400 hover:text-white'
           }`}
           onClick={() => setActiveTab('expertise')}
+          title="Expertise"
         >
-          <FiTarget size={16} />
-          <span className="text-sm">Expertise</span>
+          <FiTarget size={18} className="flex-shrink-0" />
+          <span className="text-sm hidden sm:inline whitespace-nowrap">Expertise</span>
         </button>
       </div>
 
@@ -437,28 +441,28 @@ export default function AdvancedStatistics({
             <div className="h-64">
               <Line options={chartOptions} data={impactChartData} />
             </div>
-            <div className="mt-4 grid grid-cols-4 gap-2">
-              <div className="bg-white/5 rounded-lg p-3">
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="bg-white/5 rounded-lg p-2 sm:p-3">
                 <h4 className="text-xs text-gray-400 mb-1">Total Views</h4>
-                <p className="text-lg font-semibold">
+                <p className="text-sm sm:text-lg font-semibold">
                   {articleImpactData.views.reduce((a, b) => a + b, 0)}
                 </p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
+              <div className="bg-white/5 rounded-lg p-2 sm:p-3">
                 <h4 className="text-xs text-gray-400 mb-1">Total Likes</h4>
-                <p className="text-lg font-semibold">
+                <p className="text-sm sm:text-lg font-semibold">
                   {articleImpactData.likes.reduce((a, b) => a + b, 0)}
                 </p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
+              <div className="bg-white/5 rounded-lg p-2 sm:p-3">
                 <h4 className="text-xs text-gray-400 mb-1">Total Shares</h4>
-                <p className="text-lg font-semibold">
+                <p className="text-sm sm:text-lg font-semibold">
                   {articleImpactData.shares.reduce((a, b) => a + b, 0)}
                 </p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
+              <div className="bg-white/5 rounded-lg p-2 sm:p-3">
                 <h4 className="text-xs text-gray-400 mb-1">Total Comments</h4>
-                <p className="text-lg font-semibold">
+                <p className="text-sm sm:text-lg font-semibold">
                   {articleImpactData.comments.reduce((a, b) => a + b, 0)}
                 </p>
               </div>
