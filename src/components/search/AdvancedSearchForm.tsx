@@ -107,7 +107,7 @@ export default function AdvancedSearchForm({ onSearch, isLoading, categories = [
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               placeholder="Search articles, topics, people, places..."
-              className="w-full pl-10 pr-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-gray-400"
             />
             {searchForm.q && (
               <button

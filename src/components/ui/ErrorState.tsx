@@ -98,8 +98,8 @@ export function ErrorState({
     >
       {/* Error Icon */}
       <div className="mb-6">
-        <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
-          <errorConfig.icon className="w-8 h-8 text-red-400" aria-hidden="true" />
+        <div className="w-16 h-16 bg-gray-600/20 rounded-full flex items-center justify-center">
+          <errorConfig.icon className="w-8 h-8 text-gray-400" aria-hidden="true" />
         </div>
       </div>
 
@@ -114,7 +114,7 @@ export function ErrorState({
 
         {/* Offline indicator */}
         {isOffline && type === 'network' && (
-          <div className="mt-4 flex items-center justify-center gap-2 text-orange-400">
+          <div className="mt-4 flex items-center justify-center gap-2 text-gray-400">
             <FiWifi className="w-4 h-4" />
             <span className="text-sm">You appear to be offline</span>
           </div>
