@@ -172,13 +172,26 @@ export function formatTextIntoProperParagraphs(content: string): string {
   // 3. Break at proper nouns that start new topics (names of people, places, events)
   formatted = formatted.replace(/([.!?])\s+(The\s+[A-Z][a-z]+\s+[A-Z][a-z]+|Christopher\s+Columbus|The\s+Spanish|The\s+French|The\s+Treaty\s+of)/g, '$1\n\n$2');
   
-  // 4. Check if content still has very long paragraphs and apply fallback sentence breaking
-  const testParagraphs = formatted.split(/\n\n/);
-  const hasLongParagraphs = testParagraphs.some(para => para.length > 800);
+  // 4. AGGRESSIVE paragraph breaking - ensure no wall of text remains
+  // Always apply sentence boundary breaking for any long content
+  formatted = formatted.replace(/([.!?])\s+(?=[A-Z])/g, '$1\n\n');
   
-  if (hasLongParagraphs) {
-    // Apply conservative sentence boundary paragraphizer as fallback
-    formatted = formatted.replace(/([.!?])\s+(?=[A-Z])/g, '$1\n\n');
+  // Additional aggressive breaking for very long sentences
+  const testParagraphs = formatted.split(/\n\n/);
+  const stillHasLongParagraphs = testParagraphs.some(para => para.length > 400);
+  
+  if (stillHasLongParagraphs) {
+    // Break at commas followed by capital letters (for long lists and compound sentences)
+    formatted = formatted.replace(/,\s+([A-Z][a-z]{2,})/g, ',\n\n$1');
+    
+    // Break at semicolons
+    formatted = formatted.replace(/;\s+([A-Z])/g, ';\n\n$1');
+    
+    // Break at "and" when followed by capital letters indicating new clauses
+    formatted = formatted.replace(/\s+and\s+([A-Z][a-z]+\s+[A-Z][a-z]+)/g, '\n\nAnd $1');
+    
+    // Break at coordinate conjunctions starting new clauses
+    formatted = formatted.replace(/,\s+(but|yet|so|for)\s+([A-Z])/g, ',\n\n$1 $2');
   }
   
   // 5. Smart sentence grouping - prevent very short paragraphs only when safe
