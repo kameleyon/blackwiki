@@ -1,8 +1,6 @@
-import OpenAI from "openai";
 import { prisma } from './db';
 
-// This integration uses OpenAI API - the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Using OpenRouter API to access GPT-5 - the newest OpenAI model is "gpt-5" which was released August 7, 2025
 
 interface RewriteResult {
   originalLength: number;
@@ -34,24 +32,43 @@ export class ArticleRewriterAgent {
   /**
    * Make OpenAI request with retry logic and rate limiting
    */
-  private static async makeOpenAIRequest(
+  private static async makeOpenRouterRequest(
     model: string,
     messages: any[],
     options: any = {}
   ): Promise<any> {
     for (let attempt = 1; attempt <= this.MAX_RETRIES; attempt++) {
       try {
-        const response = await openai.chat.completions.create({
-          model,
-          messages,
-          ...options
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'HTTP-Referer': 'https://AfroWiki.com',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            ...options
+          }),
         });
-        return response;
+
+        if (!response.ok) {
+          throw new Error(`OpenRouter API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        
+        // Guard against missing choices
+        if (!data.choices || !data.choices.length) {
+          throw new Error('Invalid response format from OpenRouter - no choices');
+        };
+        return data;
       } catch (error: any) {
-        console.error(`OpenAI API attempt ${attempt}/${this.MAX_RETRIES} failed:`, error?.message);
+        console.error(`OpenRouter API attempt ${attempt}/${this.MAX_RETRIES} failed:`, error?.message);
         
         if (attempt === this.MAX_RETRIES) {
-          throw new Error(`OpenAI API failed after ${this.MAX_RETRIES} attempts: ${error?.message}`);
+          throw new Error(`OpenRouter API failed after ${this.MAX_RETRIES} attempts: ${error?.message}`);
         }
         
         // Exponential backoff: wait longer on each retry
@@ -232,8 +249,8 @@ Respond in JSON format with:
   "factualOpportunities": ["fact1", "fact2", ...]
 }`;
 
-    const response = await this.makeOpenAIRequest(
-      "gpt-5", // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    const response = await this.makeOpenRouterRequest(
+      "openai/gpt-5", // GPT-5 through OpenRouter - the newest OpenAI model
       [
         {
           role: "system",
@@ -285,8 +302,8 @@ Instructions:
 
 The expanded article should feel comprehensive and authoritative while remaining accessible to readers.`;
 
-    const response = await this.makeOpenAIRequest(
-      "gpt-5", // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    const response = await this.makeOpenRouterRequest(
+      "openai/gpt-5", // GPT-5 through OpenRouter - the newest OpenAI model
       [
         {
           role: "system",
@@ -335,8 +352,8 @@ Ensure all additions are:
 - Appropriate for an educational encyclopedia
 - Culturally sensitive and respectful`;
 
-    const response = await this.makeOpenAIRequest(
-      "gpt-5", // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    const response = await this.makeOpenRouterRequest(
+      "openai/gpt-5", // GPT-5 through OpenRouter - the newest OpenAI model
       [
         {
           role: "system",
@@ -369,8 +386,8 @@ The summary should:
 4. Be engaging and informative
 5. Serve as a strong introduction to the full article`;
 
-    const response = await this.makeOpenAIRequest(
-      "gpt-5", // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    const response = await this.makeOpenRouterRequest(
+      "openai/gpt-5", // GPT-5 through OpenRouter - the newest OpenAI model
       [
         {
           role: "system",
@@ -404,8 +421,8 @@ Evaluate based on:
 
 Respond with just a number from 1-10.`;
 
-    const response = await this.makeOpenAIRequest(
-      "gpt-5", // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    const response = await this.makeOpenRouterRequest(
+      "openai/gpt-5", // GPT-5 through OpenRouter - the newest OpenAI model
       [
         {
           role: "system",
